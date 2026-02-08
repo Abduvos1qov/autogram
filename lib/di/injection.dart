@@ -1,0 +1,296 @@
+import 'package:get_it/get_it.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+import '../core/network/api_client.dart';
+import '../core/network/network_info.dart';
+import '../core/services/secure_storage_service.dart';
+import '../core/services/storage_service.dart';
+
+// Auth
+import '../features/auth/data/datasources/auth_local_datasource.dart';
+import '../features/auth/data/datasources/auth_remote_datasource.dart';
+import '../features/auth/data/repositories/auth_repository_impl.dart';
+import '../features/auth/domain/repositories/auth_repository.dart';
+import '../features/auth/domain/usecases/get_current_user_usecase.dart';
+import '../features/auth/domain/usecases/logout_usecase.dart';
+import '../features/auth/domain/usecases/register_usecase.dart';
+import '../features/auth/domain/usecases/send_otp_usecase.dart';
+import '../features/auth/domain/usecases/verify_otp_usecase.dart';
+import '../features/auth/presentation/bloc/auth_bloc.dart';
+
+// Home
+import '../features/home/data/datasources/home_remote_datasource.dart';
+import '../features/home/data/repositories/home_repository_impl.dart';
+import '../features/home/domain/repositories/home_repository.dart';
+import '../features/home/domain/usecases/get_feed_usecase.dart';
+import '../features/home/presentation/bloc/home_bloc.dart';
+
+// Reels
+import '../features/reels/data/datasources/reels_remote_datasource.dart';
+import '../features/reels/data/repositories/reels_repository_impl.dart';
+import '../features/reels/domain/repositories/reels_repository.dart';
+import '../features/reels/domain/usecases/get_reels_usecase.dart';
+import '../features/reels/domain/usecases/like_reel_usecase.dart';
+import '../features/reels/domain/usecases/save_reel_usecase.dart';
+import '../features/reels/presentation/bloc/reels_bloc.dart';
+
+// Search
+import '../features/search/data/datasources/search_local_datasource.dart';
+import '../features/search/data/datasources/search_remote_datasource.dart';
+import '../features/search/data/repositories/search_repository_impl.dart';
+import '../features/search/domain/repositories/search_repository.dart';
+import '../features/search/domain/usecases/get_brands_usecase.dart';
+import '../features/search/domain/usecases/search_listings_usecase.dart';
+import '../features/search/presentation/bloc/search_bloc.dart';
+
+// Listing
+import '../features/listing/data/datasources/listing_remote_datasource.dart';
+import '../features/listing/data/repositories/listing_repository_impl.dart';
+import '../features/listing/domain/repositories/listing_repository.dart';
+import '../features/listing/domain/usecases/get_listing_usecase.dart';
+import '../features/listing/presentation/bloc/listing_bloc.dart';
+
+// Saved
+import '../features/saved/data/datasources/saved_remote_datasource.dart';
+import '../features/saved/data/repositories/saved_repository_impl.dart';
+import '../features/saved/domain/repositories/saved_repository.dart';
+import '../features/saved/presentation/bloc/saved_bloc.dart';
+
+// Chat
+import '../features/chat/data/datasources/chat_remote_datasource.dart';
+import '../features/chat/data/repositories/chat_repository_impl.dart';
+import '../features/chat/domain/repositories/chat_repository.dart';
+import '../features/chat/presentation/bloc/conversations_bloc.dart';
+
+// Profile
+// Profile - TODO: Implement when needed
+// Notifications - TODO: Implement when needed
+
+final sl = GetIt.instance;
+
+Future<void> initDependencies() async {
+  // External
+  sl.registerLazySingleton<SupabaseClient>(() => Supabase.instance.client);
+
+  // Core
+  await _initCore();
+
+  // Features
+  _initAuth();
+  _initHome();
+  _initReels();
+  _initSearch();
+  _initListing();
+  _initSaved();
+  _initChat();
+  _initProfile();
+  _initNotifications();
+}
+
+Future<void> _initCore() async {
+  // Services
+  final storageService = StorageService();
+  await storageService.init();
+  sl.registerLazySingleton<StorageService>(() => storageService);
+
+  sl.registerLazySingleton<SecureStorageService>(() => SecureStorageService());
+  sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl());
+  sl.registerLazySingleton<ApiClient>(() => ApiClient(supabase: sl(),
+      ));
+}
+
+void _initAuth() {
+  // Data sources
+  sl.registerLazySingleton<AuthRemoteDataSource>(
+    () => AuthRemoteDataSourceImpl(supabase: sl()),
+  );
+  sl.registerLazySingleton<AuthLocalDataSource>(
+    () => AuthLocalDataSourceImpl(
+      storageService: sl(),
+      secureStorageService: sl(),
+    ),
+  );
+
+  // Repository
+  sl.registerLazySingleton<AuthRepository>(
+    () => AuthRepositoryImpl(
+      remoteDataSource: sl(),
+      localDataSource: sl(),
+      networkInfo: sl(),
+    ),
+  );
+
+  // Use cases
+  sl.registerLazySingleton(() => SendOtpUseCase(sl()));
+  sl.registerLazySingleton(() => VerifyOtpUseCase(sl()));
+  sl.registerLazySingleton(() => RegisterUseCase(sl()));
+  sl.registerLazySingleton(() => LogoutUseCase(sl()));
+  sl.registerLazySingleton(() => GetCurrentUserUseCase(sl()));
+
+  // BLoC
+  sl.registerFactory(() => AuthBloc(
+        sendOtpUseCase: sl(),
+        verifyOtpUseCase: sl(),
+        registerUseCase: sl(),
+        logoutUseCase: sl(),
+        getCurrentUserUseCase: sl(),
+      ));
+}
+
+void _initHome() {
+  // Data sources
+  sl.registerLazySingleton<HomeRemoteDataSource>(
+    () => HomeRemoteDataSourceImpl(supabase: sl()),
+  );
+
+  // Repository
+  sl.registerLazySingleton<HomeRepository>(
+    () => HomeRepositoryImpl(
+      remoteDataSource: sl(),
+      networkInfo: sl(),
+    ),
+  );
+
+  // Use cases
+  sl.registerLazySingleton(() => GetFeedUseCase(sl()));
+
+  // BLoC
+  sl.registerFactory(() => HomeBloc(
+        getFeedUseCase: sl(),
+        repository: sl(),
+      ));
+}
+
+void _initReels() {
+  // Data sources
+  sl.registerLazySingleton<ReelsRemoteDataSource>(
+    () => ReelsRemoteDataSourceImpl( supabase: sl()),
+  );
+
+  // Repository
+  sl.registerLazySingleton<ReelsRepository>(
+    () => ReelsRepositoryImpl(
+      remoteDataSource: sl(),
+      networkInfo: sl(),
+    ),
+  );
+
+  // Use cases
+  sl.registerLazySingleton(() => GetReelsUseCase(sl()));
+  sl.registerLazySingleton(() => LikeReelUseCase(sl()));
+  sl.registerLazySingleton(() => SaveReelUseCase(sl()));
+
+  // BLoC
+  sl.registerFactory(() => ReelsBloc(
+        getReelsUseCase: sl(),
+        likeReelUseCase: sl(),
+        saveReelUseCase: sl(),
+        repository: sl(),
+      ));
+}
+
+void _initSearch() {
+  // Data sources
+  sl.registerLazySingleton<SearchRemoteDataSource>(
+    () => SearchRemoteDataSourceImpl(supabaseClient: sl()),
+  );
+  sl.registerLazySingleton<SearchLocalDataSource>(
+    () => SearchLocalDataSourceImpl(storageService: sl()),
+  );
+
+  // Repository
+  sl.registerLazySingleton<SearchRepository>(
+    () => SearchRepositoryImpl(
+      remoteDataSource: sl(),
+      localDataSource: sl(),
+      networkInfo: sl(),
+    ),
+  );
+
+  // Use cases
+  sl.registerLazySingleton(() => SearchListingsUseCase(sl()));
+  sl.registerLazySingleton(() => GetBrandsUseCase(sl()));
+
+  // BLoC
+  sl.registerFactory(() => SearchBloc(
+        searchListingsUseCase: sl(),
+        getBrandsUseCase: sl(),
+        repository: sl(),
+      ));
+}
+
+void _initListing() {
+  // Data sources
+  sl.registerLazySingleton<ListingRemoteDataSource>(
+    () => ListingRemoteDataSourceImpl(supabaseClient: sl()),
+  );
+
+  // Repository
+  sl.registerLazySingleton<ListingRepository>(
+    () => ListingRepositoryImpl(
+      remoteDataSource: sl(),
+      networkInfo: sl(),
+    ),
+  );
+
+  // Use cases
+  sl.registerLazySingleton(() => GetListingUseCase(sl()));
+
+  // BLoC
+  sl.registerFactory(() => ListingBloc(
+        getListingUseCase: sl(),
+        repository: sl(),
+      ));
+}
+
+void _initSaved() {
+  // Data sources
+  sl.registerLazySingleton<SavedRemoteDataSource>(
+    () => SavedRemoteDataSourceImpl(supabaseClient: sl()),
+  );
+
+  // Repository
+  sl.registerLazySingleton<SavedRepository>(
+    () => SavedRepositoryImpl(
+      remoteDataSource: sl(),
+      networkInfo: sl(),
+    ),
+  );
+
+  // BLoC
+  sl.registerFactory(() => SavedBloc(repository: sl()));
+}
+
+void _initChat() {
+  // Data sources
+  sl.registerLazySingleton<ChatRemoteDataSource>(
+    () => ChatRemoteDataSourceImpl(supabaseClient: sl()),
+  );
+
+  // Repository
+  sl.registerLazySingleton<ChatRepository>(
+    () => ChatRepositoryImpl(
+      remoteDataSource: sl(),
+      networkInfo: sl(),
+    ),
+  );
+
+  // BLoC
+  sl.registerFactory(() => ConversationsBloc(repository: sl()));
+}
+
+void _initProfile() {
+  // Repository - needs implementation
+  // sl.registerLazySingleton<ProfileRepository>(() => ProfileRepositoryImpl(...));
+
+  // BLoC - commented until repository is implemented
+  // sl.registerFactory(() => ProfileBloc(repository: sl()));
+}
+
+void _initNotifications() {
+  // Repository - needs implementation
+  // sl.registerLazySingleton<NotificationRepository>(() => NotificationRepositoryImpl(...));
+
+  // BLoC - commented until repository is implemented
+  // sl.registerFactory(() => NotificationsBloc(repository: sl()));
+}

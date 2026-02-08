@@ -1,0 +1,220 @@
+{
+  "app_name": "Autogram",
+
+  "common": {
+    "loading": "Yuklanmoqda...",
+    "error": "Xatolik",
+    "retry": "Qaytadan",
+    "cancel": "Bekor qilish",
+    "save": "Saqlash",
+    "delete": "O'chirish",
+    "edit": "Tahrirlash",
+    "done": "Tayyor",
+    "next": "Keyingi",
+    "back": "Orqaga",
+    "close": "Yopish",
+    "search": "Qidirish",
+    "filter": "Filtr",
+    "sort": "Saralash",
+    "all": "Barchasi",
+    "yes": "Ha",
+    "no": "Yo'q",
+    "ok": "OK"
+  },
+
+  "auth": {
+    "welcome": "Xush kelibsiz!",
+    "login": "Kirish",
+    "register": "Ro'yxatdan o'tish",
+    "logout": "Chiqish",
+    "phone": "Telefon raqam",
+    "phone_hint": "+998 90 123 45 67",
+    "send_code": "Kod yuborish",
+    "verify": "Tasdiqlash",
+    "otp_sent": "Tasdiqlash kodi yuborildi",
+    "enter_otp": "Kodni kiriting",
+    "resend_code": "Kodni qayta yuborish",
+    "resend_in": "Qayta yuborish: {seconds} s",
+    "full_name": "To'liq ism",
+    "full_name_hint": "Ism familiyangiz",
+    "continue": "Davom etish",
+    "logout_confirm": "Haqiqatan ham chiqmoqchimisiz?"
+  },
+
+  "home": {
+    "title": "Bosh sahifa",
+    "feed": "Lenta",
+    "stories": "Hikoyalar",
+    "no_posts": "Hozircha e'lonlar yo'q",
+    "pull_to_refresh": "Yangilash uchun torting"
+  },
+
+  "reels": {
+    "title": "Reels",
+    "no_videos": "Videolar yo'q",
+    "video_error": "Video yuklanmadi",
+    "retry_video": "Qaytadan"
+  },
+
+  "search": {
+    "title": "Qidiruv",
+    "hint": "Marka yoki model qidiring...",
+    "recent": "So'nggi qidiruvlar",
+    "popular": "Mashhur qidiruvlar",
+    "clear_recent": "Tozalash",
+    "no_results": "Natija topilmadi",
+    "results_count": "{count} ta natija",
+    "filters": "Filtrlar",
+    "apply_filters": "Natijalarni ko'rish",
+    "clear_filters": "Tozalash",
+    "price": "Narx",
+    "price_range": "Narx ({currency})",
+    "brand": "Marka",
+    "model": "Model",
+    "year": "Yil",
+    "year_from": "Dan",
+    "year_to": "Gacha",
+    "mileage": "Yurgan masofasi",
+    "fuel_type": "Yoqilg'i turi",
+    "transmission": "Uzatmalar qutisi",
+    "body_type": "Kuzov turi",
+    "color": "Rang",
+    "city": "Shahar",
+    "verified_only": "Faqat tasdiqlangan sotuvchilar",
+    "no_accident": "Avariyasiz",
+    "first_owner": "Birinchi egasidan"
+  },
+
+  "listing": {
+    "details": "Batafsil",
+    "specs": "Xususiyatlar",
+    "description": "Tavsif",
+    "seller": "Sotuvchi",
+    "similar": "O'xshash e'lonlar",
+    "call": "Qo'ng'iroq",
+    "message": "Xabar",
+    "share": "Ulashish",
+    "save": "Saqlash",
+    "saved": "Saqlandi",
+    "report": "Shikoyat",
+    "negotiable": "Kelishiladi",
+    "views": "ko'rish",
+    "likes": "yoqdi",
+    "year": "Yil",
+    "mileage": "Yurgan",
+    "engine": "Dvigatel",
+    "transmission": "Uzatma",
+    "color": "Rang",
+    "condition": "Holati",
+    "accident": "Avariya",
+    "owners": "Egalar soni",
+    "features": "Qo'shimcha jihozlar"
+  },
+
+  "seller": {
+    "profile": "Sotuvchi profili",
+    "listings": "E'lonlar",
+    "reviews": "Sharhlar",
+    "sold": "sotilgan",
+    "rating": "Reyting",
+    "follow": "Kuzatish",
+    "following": "Kuzatilmoqda",
+    "verified": "Tasdiqlangan",
+    "location": "Joylashuv",
+    "contact": "Bog'lanish",
+    "working_hours": "Ish vaqti"
+  },
+
+  "chat": {
+    "title": "Xabarlar",
+    "no_messages": "Xabarlar yo'q",
+    "new_chat": "Yangi suhbat",
+    "type_message": "Xabar yozing...",
+    "send": "Yuborish"
+  },
+
+  "saved": {
+    "title": "Saqlanganlar",
+    "empty": "Saqlanganlar yo'q",
+    "empty_desc": "E'lonlarni saqlang va ular shu yerda ko'rinadi",
+    "clear_all": "Barchasini o'chirish"
+  },
+
+  "notifications": {
+    "title": "Bildirishnomalar",
+    "empty": "Bildirishnomalar yo'q",
+    "mark_all_read": "Barchasini o'qildi"
+  },
+
+  "profile": {
+    "title": "Profil",
+    "edit": "Profilni tahrirlash",
+    "settings": "Sozlamalar",
+    "saved": "Saqlanganlar",
+    "liked": "Yoqtirilganlar",
+    "history": "Ko'rishlar tarixi",
+    "become_seller": "Sotuvchi bo'lish",
+    "notifications": "Bildirishnomalar",
+    "language": "Til",
+    "help": "Yordam",
+    "about": "Ilova haqida",
+    "logout": "Chiqish"
+  },
+
+  "settings": {
+    "title": "Sozlamalar",
+    "notifications": "Bildirishnomalar",
+    "privacy": "Maxfiylik",
+    "language": "Til",
+    "theme": "Mavzu",
+    "dark_mode": "Qorong'u rejim"
+  },
+
+  "errors": {
+    "network": "Internet aloqasi yo'q",
+    "server": "Server xatosi",
+    "unknown": "Noma'lum xato",
+    "auth": "Avtorizatsiya xatosi",
+    "not_found": "Topilmadi"
+  },
+
+  "sort_options": {
+    "newest": "Eng yangi",
+    "oldest": "Eng eski",
+    "price_low": "Arzon",
+    "price_high": "Qimmat",
+    "popular": "Mashhur",
+    "mileage_low": "Kam yurgan"
+  },
+
+  "fuel_types": {
+    "petrol": "Benzin",
+    "diesel": "Dizel",
+    "gas": "Gaz",
+    "electric": "Elektr",
+    "hybrid": "Gibrid"
+  },
+
+  "transmission_types": {
+    "automatic": "Avtomat",
+    "manual": "Mexanik"
+  },
+
+  "body_types": {
+    "sedan": "Sedan",
+    "suv": "SUV",
+    "hatchback": "Xetchbek",
+    "wagon": "Universal",
+    "coupe": "Kupe",
+    "convertible": "Kabriolet",
+    "minivan": "Miniven",
+    "pickup": "Pikap"
+  },
+
+  "conditions": {
+    "new": "Yangi",
+    "excellent": "A'lo",
+    "good": "Yaxshi",
+    "fair": "Qoniqarli"
+  }
+}

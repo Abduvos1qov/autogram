@@ -1,0 +1,220 @@
+{
+  "app_name": "Autogram",
+
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "retry": "Retry",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "done": "Done",
+    "next": "Next",
+    "back": "Back",
+    "close": "Close",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "all": "All",
+    "yes": "Yes",
+    "no": "No",
+    "ok": "OK"
+  },
+
+  "auth": {
+    "welcome": "Welcome!",
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout",
+    "phone": "Phone number",
+    "phone_hint": "+998 90 123 45 67",
+    "send_code": "Send code",
+    "verify": "Verify",
+    "otp_sent": "Verification code sent",
+    "enter_otp": "Enter code",
+    "resend_code": "Resend code",
+    "resend_in": "Resend in: {seconds}s",
+    "full_name": "Full name",
+    "full_name_hint": "Your name",
+    "continue": "Continue",
+    "logout_confirm": "Are you sure you want to logout?"
+  },
+
+  "home": {
+    "title": "Home",
+    "feed": "Feed",
+    "stories": "Stories",
+    "no_posts": "No listings yet",
+    "pull_to_refresh": "Pull to refresh"
+  },
+
+  "reels": {
+    "title": "Reels",
+    "no_videos": "No videos",
+    "video_error": "Video failed to load",
+    "retry_video": "Retry"
+  },
+
+  "search": {
+    "title": "Search",
+    "hint": "Search brand or model...",
+    "recent": "Recent searches",
+    "popular": "Popular searches",
+    "clear_recent": "Clear",
+    "no_results": "No results found",
+    "results_count": "{count} results",
+    "filters": "Filters",
+    "apply_filters": "Show results",
+    "clear_filters": "Clear",
+    "price": "Price",
+    "price_range": "Price ({currency})",
+    "brand": "Brand",
+    "model": "Model",
+    "year": "Year",
+    "year_from": "From",
+    "year_to": "To",
+    "mileage": "Mileage",
+    "fuel_type": "Fuel type",
+    "transmission": "Transmission",
+    "body_type": "Body type",
+    "color": "Color",
+    "city": "City",
+    "verified_only": "Verified sellers only",
+    "no_accident": "No accidents",
+    "first_owner": "First owner"
+  },
+
+  "listing": {
+    "details": "Details",
+    "specs": "Specifications",
+    "description": "Description",
+    "seller": "Seller",
+    "similar": "Similar listings",
+    "call": "Call",
+    "message": "Message",
+    "share": "Share",
+    "save": "Save",
+    "saved": "Saved",
+    "report": "Report",
+    "negotiable": "Negotiable",
+    "views": "views",
+    "likes": "likes",
+    "year": "Year",
+    "mileage": "Mileage",
+    "engine": "Engine",
+    "transmission": "Transmission",
+    "color": "Color",
+    "condition": "Condition",
+    "accident": "Accident",
+    "owners": "Owners",
+    "features": "Features"
+  },
+
+  "seller": {
+    "profile": "Seller profile",
+    "listings": "Listings",
+    "reviews": "Reviews",
+    "sold": "sold",
+    "rating": "Rating",
+    "follow": "Follow",
+    "following": "Following",
+    "verified": "Verified",
+    "location": "Location",
+    "contact": "Contact",
+    "working_hours": "Working hours"
+  },
+
+  "chat": {
+    "title": "Messages",
+    "no_messages": "No messages",
+    "new_chat": "New chat",
+    "type_message": "Type a message...",
+    "send": "Send"
+  },
+
+  "saved": {
+    "title": "Saved",
+    "empty": "No saved items",
+    "empty_desc": "Save listings and they will appear here",
+    "clear_all": "Clear all"
+  },
+
+  "notifications": {
+    "title": "Notifications",
+    "empty": "No notifications",
+    "mark_all_read": "Mark all as read"
+  },
+
+  "profile": {
+    "title": "Profile",
+    "edit": "Edit profile",
+    "settings": "Settings",
+    "saved": "Saved",
+    "liked": "Liked",
+    "history": "View history",
+    "become_seller": "Become a seller",
+    "notifications": "Notifications",
+    "language": "Language",
+    "help": "Help",
+    "about": "About",
+    "logout": "Logout"
+  },
+
+  "settings": {
+    "title": "Settings",
+    "notifications": "Notifications",
+    "privacy": "Privacy",
+    "language": "Language",
+    "theme": "Theme",
+    "dark_mode": "Dark mode"
+  },
+
+  "errors": {
+    "network": "No internet connection",
+    "server": "Server error",
+    "unknown": "Unknown error",
+    "auth": "Authentication error",
+    "not_found": "Not found"
+  },
+
+  "sort_options": {
+    "newest": "Newest first",
+    "oldest": "Oldest first",
+    "price_low": "Price: Low to High",
+    "price_high": "Price: High to Low",
+    "popular": "Most popular",
+    "mileage_low": "Lowest mileage"
+  },
+
+  "fuel_types": {
+    "petrol": "Petrol",
+    "diesel": "Diesel",
+    "gas": "Gas",
+    "electric": "Electric",
+    "hybrid": "Hybrid"
+  },
+
+  "transmission_types": {
+    "automatic": "Automatic",
+    "manual": "Manual"
+  },
+
+  "body_types": {
+    "sedan": "Sedan",
+    "suv": "SUV",
+    "hatchback": "Hatchback",
+    "wagon": "Wagon",
+    "coupe": "Coupe",
+    "convertible": "Convertible",
+    "minivan": "Minivan",
+    "pickup": "Pickup"
+  },
+
+  "conditions": {
+    "new": "New",
+    "excellent": "Excellent",
+    "good": "Good",
+    "fair": "Fair"
+  }
+}
