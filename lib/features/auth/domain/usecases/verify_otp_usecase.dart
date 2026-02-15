@@ -17,21 +17,21 @@ class VerifyOtpUseCase implements UseCase<User?, VerifyOtpParams> {
   @override
   Future<Either<Failure, User?>> call(VerifyOtpParams params) {
     return _repository.verifyOtp(
-      phone: params.phone,
+      email: params.email,
       code: params.code,
     );
   }
 }
 
 class VerifyOtpParams extends Equatable {
-  final String phone;
+  final String email;
   final String code;
 
   const VerifyOtpParams({
-    required this.phone,
+    required this.email,
     required this.code,
   });
 
   @override
-  List<Object?> get props => [phone, code];
+  List<Object?> get props => [email, code];
 }

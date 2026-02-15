@@ -5,10 +5,10 @@ import '../constants/app_constants.dart';
 class Validators {
   Validators._();
 
-  // Phone validation
+  // Phone validation (optional)
   static String? validatePhone(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Telefon raqamini kiriting';
+    if (value == null || value.trim().isEmpty) {
+      return null; // Phone is optional
     }
 
     final phone = value.replaceAll(RegExp(r'[^\d+]'), '');
@@ -37,7 +37,7 @@ class Validators {
     return null;
   }
 
-  // Email validation
+  // Email validation (optional)
   static String? validateEmail(String? value) {
     if (value == null || value.isEmpty) {
       return null; // Email is optional
@@ -48,6 +48,23 @@ class Validators {
     );
 
     if (!emailRegex.hasMatch(value)) {
+      return 'Noto\'g\'ri email formati';
+    }
+
+    return null;
+  }
+
+  // Email validation (required - for login)
+  static String? validateEmailRequired(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Email manzilingizni kiriting';
+    }
+
+    final emailRegex = RegExp(
+      r'^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+',
+    );
+
+    if (!emailRegex.hasMatch(value.trim())) {
       return 'Noto\'g\'ri email formati';
     }
 

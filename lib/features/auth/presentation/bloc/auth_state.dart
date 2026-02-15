@@ -34,22 +34,22 @@ class AuthUnauthenticated extends AuthState {
 
 /// OTP sent state
 class AuthOtpSent extends AuthState {
-  final String phone;
+  final String email;
 
-  const AuthOtpSent(this.phone);
+  const AuthOtpSent(this.email);
 
   @override
-  List<Object?> get props => [phone];
+  List<Object?> get props => [email];
 }
 
-/// OTP verified, but user needs to register
+/// OTP verified, but user needs to complete profile
 class AuthNeedsRegistration extends AuthState {
-  final String phone;
+  final String email;
 
-  const AuthNeedsRegistration(this.phone);
+  const AuthNeedsRegistration(this.email);
 
   @override
-  List<Object?> get props => [phone];
+  List<Object?> get props => [email];
 }
 
 /// Authenticated state
@@ -78,10 +78,10 @@ class AuthError extends AuthState {
 
 /// OTP resent state
 class AuthOtpResent extends AuthState {
-  final String phone;
+  final String email;
 
-  const AuthOtpResent(this.phone);
+  const AuthOtpResent(this.email);
 
   @override
-  List<Object?> get props => [phone];
+  List<Object?> get props => [email];
 }

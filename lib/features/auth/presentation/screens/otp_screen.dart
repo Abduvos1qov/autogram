@@ -18,11 +18,11 @@ import '../widgets/otp_input.dart';
 /// OTP verification screen
 
 class OtpScreen extends StatefulWidget {
-  final String phone;
+  final String email;
 
   const OtpScreen({
     super.key,
-    required this.phone,
+    required this.email,
   });
 
   @override
@@ -58,7 +58,7 @@ class _OtpScreenState extends State<OtpScreen> {
 
   void _resendOtp() {
     if (_canResend) {
-      context.read<AuthBloc>().add(AuthOtpResendRequested(widget.phone));
+      context.read<AuthBloc>().add(AuthOtpResendRequested(widget.email));
       _startTimer();
     }
   }
@@ -66,7 +66,7 @@ class _OtpScreenState extends State<OtpScreen> {
   void _verifyOtp(String code) {
     if (code.length == AppConfig.otpLength) {
       context.read<AuthBloc>().add(
-            AuthOtpVerified(phone: widget.phone, code: code),
+            AuthOtpVerified(email: widget.email, code: code),
           );
     }
   }
@@ -91,7 +91,7 @@ class _OtpScreenState extends State<OtpScreen> {
         if (state is AuthAuthenticated) {
           context.go('/home');
         } else if (state is AuthNeedsRegistration) {
-          context.push('/register', extra: state.phone);
+          context.push('/register', extra: state.email);
         } else if (state is AuthOtpResent) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -139,15 +139,15 @@ class _OtpScreenState extends State<OtpScreen> {
                         color: AppColors.textSecondary,
                       ),
                       children: [
-                        const TextSpan(text: 'SMS kod '),
+                        const TextSpan(text: 'Tasdiqlash kodi '),
                         TextSpan(
-                          text: widget.phone,
+                          text: widget.email,
                           style: const TextStyle(
                             fontWeight: FontWeight.w600,
                             color: AppColors.textPrimary,
                           ),
                         ),
-                        const TextSpan(text: ' raqamiga yuborildi'),
+                        const TextSpan(text: ' manziliga yuborildi'),
                       ],
                     ),
                   ),

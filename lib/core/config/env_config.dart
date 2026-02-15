@@ -25,13 +25,13 @@ class EnvConfig {
     switch (_environment) {
       case Environment.development:
         return const String.fromEnvironment(
-          'SUPABASE_URL',
-          defaultValue: 'https://your-project.supabase.co',
+          'https://kgopjdapitfggskllcal.supabase.co',
+          defaultValue: 'https://kgopjdapitfggskllcal.supabase.co',
         );
       case Environment.staging:
-        return const String.fromEnvironment('SUPABASE_STAGING_URL');
+        return const String.fromEnvironment('https://kgopjdapitfggskllcal.supabase.co');
       case Environment.production:
-        return const String.fromEnvironment('SUPABASE_PROD_URL');
+        return const String.fromEnvironment('https://kgopjdapitfggskllcal.supabase.co');
     }
   }
 
@@ -39,13 +39,13 @@ class EnvConfig {
     switch (_environment) {
       case Environment.development:
         return const String.fromEnvironment(
-          'SUPABASE_ANON_KEY',
-          defaultValue: 'your-anon-key',
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtnb3BqZGFwaXRmZ2dza2xsY2FsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEwMjQyMjQsImV4cCI6MjA4NjYwMDIyNH0.vso8IxialhJc4p3LOh5U9f_r12wbAzpsu51B_jxfd2M',
+          defaultValue: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtnb3BqZGFwaXRmZ2dza2xsY2FsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEwMjQyMjQsImV4cCI6MjA4NjYwMDIyNH0.vso8IxialhJc4p3LOh5U9f_r12wbAzpsu51B_jxfd2M',
         );
       case Environment.staging:
-        return const String.fromEnvironment('SUPABASE_STAGING_ANON_KEY');
+        return const String.fromEnvironment('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtnb3BqZGFwaXRmZ2dza2xsY2FsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEwMjQyMjQsImV4cCI6MjA4NjYwMDIyNH0.vso8IxialhJc4p3LOh5U9f_r12wbAzpsu51B_jxfd2M');
       case Environment.production:
-        return const String.fromEnvironment('SUPABASE_PROD_ANON_KEY');
+        return const String.fromEnvironment('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtnb3BqZGFwaXRmZ2dza2xsY2FsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEwMjQyMjQsImV4cCI6MjA4NjYwMDIyNH0.vso8IxialhJc4p3LOh5U9f_r12wbAzpsu51B_jxfd2M');
     }
   }
 

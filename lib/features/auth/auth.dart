@@ -5,7 +5,7 @@ export 'domain/entities/user.dart';
 export 'domain/repositories/auth_repository.dart';
 export 'domain/usecases/send_otp_usecase.dart';
 export 'domain/usecases/verify_otp_usecase.dart';
-export 'domain/usecases/register_usecase.dart';
+export 'domain/usecases/complete_profile_usecase.dart';
 export 'domain/usecases/logout_usecase.dart';
 export 'domain/usecases/get_current_user_usecase.dart';
 

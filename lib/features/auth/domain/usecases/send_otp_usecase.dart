@@ -5,7 +5,7 @@ import '../../../../core/errors/failures.dart';
 import '../../../../core/usecases/usecase.dart';
 import '../repositories/auth_repository.dart';
 
-/// Send OTP to phone number use case
+/// Send OTP to email use case
 
 class SendOtpUseCase implements UseCase<void, SendOtpParams> {
   final AuthRepository _repository;
@@ -14,15 +14,15 @@ class SendOtpUseCase implements UseCase<void, SendOtpParams> {
 
   @override
   Future<Either<Failure, void>> call(SendOtpParams params) {
-    return _repository.sendOtp(params.phone);
+    return _repository.sendOtp(email: params.email);
   }
 }
 
 class SendOtpParams extends Equatable {
-  final String phone;
+  final String email;
 
-  const SendOtpParams({required this.phone});
+  const SendOtpParams({required this.email});
 
   @override
-  List<Object?> get props => [phone];
+  List<Object?> get props => [email];
 }

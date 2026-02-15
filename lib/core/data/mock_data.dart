@@ -810,6 +810,15 @@ class MockData {
     }
   }
 
+  // Get user by email
+  static User? getUserByEmail(String email) {
+    try {
+      return mockUsers.firstWhere((user) => user.email == email);
+    } catch (e) {
+      return null;
+    }
+  }
+
   // Search listings
   static List<Listing> searchListings({
     String? query,

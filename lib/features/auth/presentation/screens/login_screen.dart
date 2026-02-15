@@ -9,12 +9,12 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/buttons/primary_button.dart';
-import '../../../../core/widgets/inputs/phone_input.dart';
+import '../../../../core/widgets/inputs/app_text_field.dart';
 import '../bloc/auth_bloc.dart';
 import '../bloc/auth_event.dart';
 import '../bloc/auth_state.dart';
 
-/// Login screen - phone number input
+/// Login screen - email input
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -25,25 +25,18 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _phoneController = TextEditingController();
-  String _fullPhone = '';
+  final _emailController = TextEditingController();
 
   @override
   void dispose() {
-    _phoneController.dispose();
+    _emailController.dispose();
     super.dispose();
   }
 
-  void _onPhoneChanged(String phone) {
-    _fullPhone = phone;
-  }
-
-  void _submitPhone() {
+  void _submitEmail() {
     if (_formKey.currentState?.validate() ?? false) {
-      // context.read<AuthBloc>().add(AuthOtpRequested(_fullPhone));
+      context.read<AuthBloc>().add(AuthOtpRequested(_emailController.text.trim()));
     }
-    context.read<AuthBloc>().add(AuthOtpRequested(_fullPhone));
-
   }
 
   @override
@@ -51,7 +44,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return BlocConsumer<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is AuthOtpSent) {
-          context.push('/otp', extra: state.phone);
+          context.push('/otp', extra: state.email);
         } else if (state is AuthError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -82,7 +75,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     AppSpacing.gapVerticalSm,
                     Text(
-                      'Davom etish uchun telefon raqamingizni kiriting',
+                      'Davom etish uchun email manzilingizni kiriting',
                       style: AppTypography.bodyMedium.copyWith(
                         color: AppColors.textSecondary,
                       ),
@@ -91,14 +84,17 @@ class _LoginScreenState extends State<LoginScreen> {
                     AppSpacing.gapVerticalXl,
                     AppSpacing.gapVerticalLg,
 
-                    // Phone input
-                    PhoneInput(
-                      controller: _phoneController,
-                      label: 'Telefon raqami',
-                      onChanged: _onPhoneChanged,
+                    // Email input
+                    AppTextField(
+                      controller: _emailController,
+                      label: 'Email',
+                      hint: 'email@example.com',
+                      keyboardType: TextInputType.emailAddress,
+                      textInputAction: TextInputAction.done,
+                      prefixIcon: const Icon(Icons.email_outlined),
+                      validator: Validators.validateEmailRequired,
                       autofocus: true,
-                      // validator: Validators.validatePhone,
-                      onEditingComplete: _submitPhone,
+                      onEditingComplete: _submitEmail,
                     ),
 
                     AppSpacing.gapVerticalXl,
@@ -106,7 +102,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     // Submit button
                     PrimaryButton(
                       text: 'Davom etish',
-                      onPressed: isLoading ? null : _submitPhone,
+                      onPressed: isLoading ? null : _submitEmail,
                       isLoading: isLoading,
                     ),
 
@@ -145,13 +141,13 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                             AppSpacing.gapVerticalSm,
                             Text(
-                              'Sinov uchun telefon raqami: ${TestConfig.testPhoneList.first}',
+                              'Sinov uchun email: ${TestConfig.testEmailList.first}',
                               style: AppTypography.bodySmall.copyWith(
                                 color: AppColors.textSecondary,
                               ),
                             ),
                             Text(
-                              'OTP kodi: 1234',
+                              'OTP kodi: 123456',
                               style: AppTypography.bodySmall.copyWith(
                                 color: AppColors.textSecondary,
                               ),

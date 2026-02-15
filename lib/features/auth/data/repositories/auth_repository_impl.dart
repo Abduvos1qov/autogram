@@ -24,13 +24,13 @@ class AuthRepositoryImpl implements AuthRepository {
         _networkInfo = networkInfo;
 
   @override
-  Future<Either<Failure, void>> sendOtp(String phone) async {
+  Future<Either<Failure, void>> sendOtp({required String email}) async {
     if (!await _networkInfo.isConnected) {
       return const Left(NetworkFailure());
     }
 
     try {
-      await _remoteDataSource.sendOtp(phone);
+      await _remoteDataSource.sendOtp(email: email);
       return const Right(null);
     } catch (e) {
       return Left(ErrorHandler.handleException(e));
@@ -39,7 +39,7 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<Either<Failure, User?>> verifyOtp({
-    required String phone,
+    required String email,
     required String code,
   }) async {
     if (!await _networkInfo.isConnected) {
@@ -48,7 +48,7 @@ class AuthRepositoryImpl implements AuthRepository {
 
     try {
       final user = await _remoteDataSource.verifyOtp(
-        phone: phone,
+        email: email,
         code: code,
       );
 
@@ -63,20 +63,18 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<Failure, User>> register({
-    required String phone,
+  Future<Either<Failure, User>> completeProfile({
     required String fullName,
-    String? email,
+    String? phone,
   }) async {
     if (!await _networkInfo.isConnected) {
       return const Left(NetworkFailure());
     }
 
     try {
-      final user = await _remoteDataSource.register(
-        phone: phone,
+      final user = await _remoteDataSource.completeProfile(
         fullName: fullName,
-        email: email,
+        phone: phone,
       );
 
       await _localDataSource.cacheUser(user);

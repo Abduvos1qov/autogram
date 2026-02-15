@@ -4,7 +4,7 @@ class ApiEndpoints {
   ApiEndpoints._();
 
   // Supabase Tables
-  static const String users = 'users';
+  static const String profiles = 'profiles';
   static const String sellerProfiles = 'seller_profiles';
   static const String sellerMembers = 'seller_members';
   static const String categories = 'categories';

@@ -6,20 +6,19 @@ import '../entities/user.dart';
 /// Auth repository interface - defines contract for auth operations
 
 abstract class AuthRepository {
-  /// Send OTP to phone number
-  Future<Either<Failure, void>> sendOtp(String phone);
+  /// Send OTP to email
+  Future<Either<Failure, void>> sendOtp({required String email});
 
   /// Verify OTP code
   Future<Either<Failure, User?>> verifyOtp({
-    required String phone,
+    required String email,
     required String code,
   });
 
-  /// Register new user
-  Future<Either<Failure, User>> register({
-    required String phone,
+  /// Complete profile after OTP verification
+  Future<Either<Failure, User>> completeProfile({
     required String fullName,
-    String? email,
+    String? phone,
   });
 
   /// Get current authenticated user

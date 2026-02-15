@@ -1,9 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/utils/logger.dart';
+import '../../domain/usecases/complete_profile_usecase.dart';
 import '../../domain/usecases/get_current_user_usecase.dart';
 import '../../domain/usecases/logout_usecase.dart';
-import '../../domain/usecases/register_usecase.dart';
 import '../../domain/usecases/send_otp_usecase.dart';
 import '../../domain/usecases/verify_otp_usecase.dart';
 import 'auth_event.dart';
@@ -14,26 +14,26 @@ import 'auth_state.dart';
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final SendOtpUseCase _sendOtpUseCase;
   final VerifyOtpUseCase _verifyOtpUseCase;
-  final RegisterUseCase _registerUseCase;
+  final CompleteProfileUseCase _completeProfileUseCase;
   final GetCurrentUserUseCase _getCurrentUserUseCase;
   final LogoutUseCase _logoutUseCase;
 
   AuthBloc({
     required SendOtpUseCase sendOtpUseCase,
     required VerifyOtpUseCase verifyOtpUseCase,
-    required RegisterUseCase registerUseCase,
+    required CompleteProfileUseCase completeProfileUseCase,
     required GetCurrentUserUseCase getCurrentUserUseCase,
     required LogoutUseCase logoutUseCase,
   })  : _sendOtpUseCase = sendOtpUseCase,
         _verifyOtpUseCase = verifyOtpUseCase,
-        _registerUseCase = registerUseCase,
+        _completeProfileUseCase = completeProfileUseCase,
         _getCurrentUserUseCase = getCurrentUserUseCase,
         _logoutUseCase = logoutUseCase,
         super(const AuthInitial()) {
     on<AuthCheckRequested>(_onCheckRequested);
     on<AuthOtpRequested>(_onOtpRequested);
     on<AuthOtpVerified>(_onOtpVerified);
-    on<AuthRegisterRequested>(_onRegisterRequested);
+    on<AuthCompleteProfileRequested>(_onCompleteProfileRequested);
     on<AuthLogoutRequested>(_onLogoutRequested);
     on<AuthOtpResendRequested>(_onOtpResendRequested);
   }
@@ -54,7 +54,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       },
       (user) {
         if (user != null) {
-          AppLogger.info('User is authenticated: ${user.phone}');
+          AppLogger.info('User is authenticated: ${user.email}');
           emit(AuthAuthenticated(user));
         } else {
           AppLogger.info('User is not authenticated');
@@ -68,10 +68,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     AuthOtpRequested event,
     Emitter<AuthState> emit,
   ) async {
-    AppLogger.info('Sending OTP to ${event.phone}');
-    emit(const AuthLoading(message: 'SMS yuborilmoqda...'));
+    AppLogger.info('Sending OTP to ${event.email}');
+    emit(const AuthLoading(message: 'Kod yuborilmoqda...'));
 
-    final result = await _sendOtpUseCase(SendOtpParams(phone: event.phone));
+    final result = await _sendOtpUseCase(SendOtpParams(email: event.email));
 
     result.fold(
       (failure) {
@@ -80,7 +80,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       },
       (_) {
         AppLogger.info('OTP sent successfully');
-        emit(AuthOtpSent(event.phone));
+        emit(AuthOtpSent(event.email));
       },
     );
   }
@@ -89,11 +89,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     AuthOtpVerified event,
     Emitter<AuthState> emit,
   ) async {
-    AppLogger.info('Verifying OTP for ${event.phone}');
+    AppLogger.info('Verifying OTP for ${event.email}');
     emit(const AuthLoading(message: 'Tekshirilmoqda...'));
 
     final result = await _verifyOtpUseCase(
-      VerifyOtpParams(phone: event.phone, code: event.code),
+      VerifyOtpParams(email: event.email, code: event.code),
     );
 
     result.fold(
@@ -101,7 +101,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         AppLogger.error('OTP verification failed: ${failure.message}');
         emit(AuthError(
           failure: failure,
-          previousState: AuthOtpSent(event.phone),
+          previousState: AuthOtpSent(event.email),
         ));
       },
       (user) {
@@ -110,37 +110,36 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           emit(AuthAuthenticated(user));
         } else {
           AppLogger.info('OTP verified, new user needs registration');
-          emit(AuthNeedsRegistration(event.phone));
+          emit(AuthNeedsRegistration(event.email));
         }
       },
     );
   }
 
-  Future<void> _onRegisterRequested(
-    AuthRegisterRequested event,
+  Future<void> _onCompleteProfileRequested(
+    AuthCompleteProfileRequested event,
     Emitter<AuthState> emit,
   ) async {
-    AppLogger.info('Registering user: ${event.phone}');
+    AppLogger.info('Completing profile for: ${event.email}');
     emit(const AuthLoading(message: 'Ro\'yxatdan o\'tilmoqda...'));
 
-    final result = await _registerUseCase(
-      RegisterParams(
-        phone: event.phone,
+    final result = await _completeProfileUseCase(
+      CompleteProfileParams(
         fullName: event.fullName,
-        email: event.email,
+        phone: event.phone,
       ),
     );
 
     result.fold(
       (failure) {
-        AppLogger.error('Registration failed: ${failure.message}');
+        AppLogger.error('Profile completion failed: ${failure.message}');
         emit(AuthError(
           failure: failure,
-          previousState: AuthNeedsRegistration(event.phone),
+          previousState: AuthNeedsRegistration(event.email),
         ));
       },
       (user) {
-        AppLogger.info('Registration successful');
+        AppLogger.info('Profile completed successfully');
         emit(AuthAuthenticated(user));
       },
     );
@@ -171,22 +170,22 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     AuthOtpResendRequested event,
     Emitter<AuthState> emit,
   ) async {
-    AppLogger.info('Resending OTP to ${event.phone}');
+    AppLogger.info('Resending OTP to ${event.email}');
     emit(const AuthLoading(message: 'Qayta yuborilmoqda...'));
 
-    final result = await _sendOtpUseCase(SendOtpParams(phone: event.phone));
+    final result = await _sendOtpUseCase(SendOtpParams(email: event.email));
 
     result.fold(
       (failure) {
         AppLogger.error('Failed to resend OTP: ${failure.message}');
         emit(AuthError(
           failure: failure,
-          previousState: AuthOtpSent(event.phone),
+          previousState: AuthOtpSent(event.email),
         ));
       },
       (_) {
         AppLogger.info('OTP resent successfully');
-        emit(AuthOtpResent(event.phone));
+        emit(AuthOtpResent(event.email));
       },
     );
   }

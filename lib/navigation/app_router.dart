@@ -40,26 +40,36 @@ GoRouter createRouter(AuthBloc authBloc) {
           state.matchedLocation == RoutePaths.otp ||
           state.matchedLocation == RoutePaths.register;
 
-      // If checking auth, stay on splash
-      if (authState is AuthInitial || authState is AuthLoading) {
+      // If initial check, stay on splash
+      if (authState is AuthInitial) {
         return RoutePaths.splash;
       }
 
+      // During auth flow (loading, OTP sent, needs registration, etc.)
+      // don't redirect — let BlocConsumer in screens handle navigation
+      if (authState is AuthLoading ||
+          authState is AuthOtpSent ||
+          authState is AuthOtpResent ||
+          authState is AuthNeedsRegistration ||
+          authState is AuthError) {
+        return null;
+      }
+
       // If not authenticated, go to login
-      // if (authState is AuthUnauthenticated) {
-      //   if (!isAuthRoute) {
-      //     return RoutePaths.login;
-      //   }
-      //   return null;
-      // }
+      if (authState is AuthUnauthenticated) {
+        if (!isAuthRoute) {
+          return RoutePaths.login;
+        }
+        return null;
+      }
 
       // If authenticated, redirect away from auth routes
-      // if (authState is AuthAuthenticated) {
+      if (authState is AuthAuthenticated) {
         if (isAuthRoute) {
           return RoutePaths.home;
         }
-        // return null;
-      // }
+        return null;
+      }
 
       return null;
     },
@@ -84,14 +94,17 @@ GoRouter createRouter(AuthBloc authBloc) {
         path: RoutePaths.otp,
         name: RouteNames.otp,
         builder: (context, state) {
-          final phone = state.extra as String? ?? '';
-          return OtpScreen(phone: phone);
+          final email = state.extra as String? ?? '';
+          return OtpScreen(email: email);
         },
       ),
       GoRoute(
         path: RoutePaths.register,
         name: RouteNames.register,
-        builder: (context, state) => const RegisterScreen(phone: ''),
+        builder: (context, state) {
+          final email = state.extra as String? ?? '';
+          return RegisterScreen(email: email);
+        },
       ),
 
       // Main shell with bottom navigation

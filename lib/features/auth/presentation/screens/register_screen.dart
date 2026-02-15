@@ -13,14 +13,14 @@ import '../bloc/auth_bloc.dart';
 import '../bloc/auth_event.dart';
 import '../bloc/auth_state.dart';
 
-/// Register screen - new user registration
+/// Register screen - new user profile completion
 
 class RegisterScreen extends StatefulWidget {
-  final String phone;
+  final String email;
 
   const RegisterScreen({
     super.key,
-    required this.phone,
+    required this.email,
   });
 
   @override
@@ -30,23 +30,23 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
-  final _emailController = TextEditingController();
+  final _phoneController = TextEditingController();
 
   @override
   void dispose() {
     _nameController.dispose();
-    _emailController.dispose();
+    _phoneController.dispose();
     super.dispose();
   }
 
   void _submit() {
     if (_formKey.currentState?.validate() ?? false) {
       context.read<AuthBloc>().add(
-            AuthRegisterRequested(
-              phone: widget.phone,
+            AuthCompleteProfileRequested(
+              email: widget.email,
               fullName: _nameController.text.trim(),
-              email: _emailController.text.trim().isNotEmpty
-                  ? _emailController.text.trim()
+              phone: _phoneController.text.trim().isNotEmpty
+                  ? _phoneController.text.trim()
                   : null,
             ),
           );
@@ -118,22 +118,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                     AppSpacing.gapVerticalLg,
 
-                    // Email input (optional)
+                    // Phone input (optional)
                     AppTextField(
-                      controller: _emailController,
-                      label: 'Email (ixtiyoriy)',
-                      hint: 'email@example.com',
-                      keyboardType: TextInputType.emailAddress,
+                      controller: _phoneController,
+                      label: 'Telefon raqami (ixtiyoriy)',
+                      hint: '+998 XX XXX XX XX',
+                      keyboardType: TextInputType.phone,
                       textInputAction: TextInputAction.done,
-                      prefixIcon: const Icon(Icons.email_outlined),
-                      validator: Validators.validateEmail,
+                      prefixIcon: const Icon(Icons.phone_outlined),
+                      validator: Validators.validatePhone,
                       onEditingComplete: _submit,
                     ),
 
                     AppSpacing.gapVerticalXl,
                     AppSpacing.gapVerticalLg,
 
-                    // Phone display
+                    // Email display (verified)
                     Container(
                       padding: AppSpacing.paddingMd,
                       decoration: BoxDecoration(
@@ -143,7 +143,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       child: Row(
                         children: [
                           const Icon(
-                            Icons.phone_outlined,
+                            Icons.email_outlined,
                             color: AppColors.textSecondary,
                           ),
                           AppSpacing.gapHorizontalMd,
@@ -151,13 +151,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Telefon raqami',
+                                'Email',
                                 style: AppTypography.labelSmall.copyWith(
                                   color: AppColors.textSecondary,
                                 ),
                               ),
                               Text(
-                                widget.phone,
+                                widget.email,
                                 style: AppTypography.bodyMedium.copyWith(
                                   fontWeight: FontWeight.w500,
                                 ),

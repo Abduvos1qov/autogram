@@ -104,7 +104,7 @@ class SellerRemoteDataSourceImpl implements SellerRemoteDataSource {
 
       // Update user role to seller
       await _supabase
-          .from(ApiEndpoints.users)
+          .from(ApiEndpoints.profiles)
           .update({
             'role': 'seller',
             'updated_at': now,

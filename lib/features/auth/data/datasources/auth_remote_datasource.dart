@@ -5,17 +5,17 @@ import '../../../../core/constants/api_endpoints.dart';
 import '../../../../core/data/mock_data.dart';
 import '../../../../core/errors/exceptions.dart';
 import '../../../../core/utils/logger.dart';
+import '../../domain/entities/user.dart';
 import '../models/user_model.dart';
 
 /// Remote data source for auth operations using Supabase
 
 abstract class AuthRemoteDataSource {
-  Future<void> sendOtp(String phone);
-  Future<UserModel?> verifyOtp({required String phone, required String code});
-  Future<UserModel> register({
-    required String phone,
+  Future<void> sendOtp({required String email});
+  Future<UserModel?> verifyOtp({required String email, required String code});
+  Future<UserModel> completeProfile({
     required String fullName,
-    String? email,
+    String? phone,
   });
   Future<UserModel?> getCurrentUser();
   Future<UserModel> updateProfile({
@@ -36,21 +36,20 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       : _supabase = supabase;
 
   @override
-  Future<void> sendOtp(String phone) async {
+  Future<void> sendOtp({required String email}) async {
     try {
-      AppLogger.info('Sending OTP to $phone');
+      AppLogger.info('Sending OTP to $email');
 
-      // Check if test mode and test phone
-      if (TestConfig.isTestMode && TestConfig.isTestPhone(phone)) {
-        AppLogger.info('TEST MODE: Bypassing OTP send for test phone');
-        // In test mode, just return success without calling Supabase
-        await Future.delayed(const Duration(milliseconds: 500)); // Simulate network delay
+      // Check if test mode and test email
+      if (TestConfig.isTestMode && TestConfig.isTestEmail(email)) {
+        AppLogger.info('TEST MODE: Bypassing OTP send for test email');
+        await Future.delayed(const Duration(milliseconds: 500));
         AppLogger.info('TEST MODE: OTP "sent" successfully');
         return;
       }
 
       await _supabase.auth.signInWithOtp(
-        phone: phone,
+        email: email,
       );
 
       AppLogger.info('OTP sent successfully');
@@ -65,17 +64,17 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   @override
   Future<UserModel?> verifyOtp({
-    required String phone,
+    required String email,
     required String code,
   }) async {
     try {
-      AppLogger.info('Verifying OTP for $phone');
+      AppLogger.info('Verifying OTP for $email');
 
-      // Check if test mode and test phone
-      if (TestConfig.isTestMode && TestConfig.isTestPhone(phone)) {
-        AppLogger.info('TEST MODE: Verifying OTP for test phone');
+      // Check if test mode and test email
+      if (TestConfig.isTestMode && TestConfig.isTestEmail(email)) {
+        AppLogger.info('TEST MODE: Verifying OTP for test email');
 
-        final expectedOtp = TestConfig.getTestOTP(phone);
+        final expectedOtp = TestConfig.getTestOTP(email);
         if (code != expectedOtp) {
           AppLogger.error('TEST MODE: Invalid OTP code');
           throw const AuthException(
@@ -87,8 +86,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         // Simulate network delay
         await Future.delayed(const Duration(milliseconds: 500));
 
-        // Return mock user based on phone
-        final mockUser = MockData.getUserByPhone(phone);
+        // Return mock user based on email
+        final mockUser = MockData.getUserByEmail(email);
         if (mockUser == null) {
           AppLogger.info('TEST MODE: New user, needs registration');
           return null;
@@ -99,18 +98,18 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       }
 
       final response = await _supabase.auth.verifyOTP(
-        phone: phone,
+        email: email,
         token: code,
-        type: OtpType.sms,
+        type: OtpType.email,
       );
 
       if (response.user == null) {
         throw const AuthException(message: 'Verification failed');
       }
 
-      // Check if user exists in our users table
+      // Check if user exists in our profiles table
       final userData = await _supabase
-          .from(ApiEndpoints.users)
+          .from(ApiEndpoints.profiles)
           .select()
           .eq('id', response.user!.id)
           .maybeSingle();
@@ -118,6 +117,13 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       if (userData == null) {
         // New user, needs registration
         AppLogger.info('New user, needs registration');
+        return null;
+      }
+
+      // Check if profile is complete (has full_name)
+      final fullName = userData['full_name'] as String? ?? '';
+      if (fullName.isEmpty) {
+        AppLogger.info('User profile incomplete, needs registration');
         return null;
       }
 
@@ -139,46 +145,59 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  Future<UserModel> register({
-    required String phone,
+  Future<UserModel> completeProfile({
     required String fullName,
-    String? email,
+    String? phone,
   }) async {
     try {
+      // Test mode: return mock user with updated name
+      if (TestConfig.isTestMode) {
+        AppLogger.info('TEST MODE: Completing profile for $fullName');
+        await Future.delayed(const Duration(milliseconds: 500));
+
+        final now = DateTime.now();
+        return UserModel(
+          id: 'new_user_${now.millisecondsSinceEpoch}',
+          email: null,
+          phone: phone,
+          fullName: fullName,
+          role: UserRole.buyer,
+          isVerified: false,
+          isActive: true,
+          language: 'uz',
+          createdAt: now,
+          updatedAt: now,
+        );
+      }
+
       final currentUser = _supabase.auth.currentUser;
       if (currentUser == null) {
         throw const AuthException(message: 'Not authenticated');
       }
 
-      AppLogger.info('Registering user: $phone');
+      AppLogger.info('Completing profile for ${currentUser.email}');
 
-      final now = DateTime.now().toIso8601String();
-      final userData = {
-        'id': currentUser.id,
-        'phone': phone,
+      final updates = <String, dynamic>{
         'full_name': fullName,
-        'email': email,
-        'role': 'buyer',
-        'is_verified': false,
-        'is_active': true,
-        'language': 'uz',
-        'created_at': now,
-        'updated_at': now,
       };
+      if (phone != null && phone.isNotEmpty) {
+        updates['phone'] = phone;
+      }
 
       final response = await _supabase
-          .from(ApiEndpoints.users)
-          .insert(userData)
+          .from(ApiEndpoints.profiles)
+          .update(updates)
+          .eq('id', currentUser.id)
           .select()
           .single();
 
-      AppLogger.info('User registered successfully');
+      AppLogger.info('Profile completed successfully');
       return UserModel.fromJson(response);
     } on PostgrestException catch (e) {
-      AppLogger.error('Database error during registration', e);
+      AppLogger.error('Database error during profile completion', e);
       throw ServerException(message: e.message);
     } catch (e) {
-      AppLogger.error('Unexpected error during registration', e);
+      AppLogger.error('Unexpected error during profile completion', e);
       throw ServerException(message: e.toString());
     }
   }
@@ -192,7 +211,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       }
 
       final userData = await _supabase
-          .from(ApiEndpoints.users)
+          .from(ApiEndpoints.profiles)
           .select()
           .eq('id', currentUser.id)
           .maybeSingle();
@@ -221,9 +240,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         throw const AuthException(message: 'Not authenticated');
       }
 
-      final updates = <String, dynamic>{
-        'updated_at': DateTime.now().toIso8601String(),
-      };
+      final updates = <String, dynamic>{};
 
       if (fullName != null) updates['full_name'] = fullName;
       if (email != null) updates['email'] = email;
@@ -231,7 +248,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       if (language != null) updates['language'] = language;
 
       final response = await _supabase
-          .from(ApiEndpoints.users)
+          .from(ApiEndpoints.profiles)
           .update(updates)
           .eq('id', currentUser.id)
           .select()
@@ -253,10 +270,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       }
 
       final response = await _supabase
-          .from(ApiEndpoints.users)
+          .from(ApiEndpoints.profiles)
           .update({
             'role': 'seller',
-            'updated_at': DateTime.now().toIso8601String(),
           })
           .eq('id', currentUser.id)
           .select()
@@ -289,7 +305,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
       try {
         final userData = await _supabase
-            .from(ApiEndpoints.users)
+            .from(ApiEndpoints.profiles)
             .select()
             .eq('id', event.session!.user.id)
             .maybeSingle();

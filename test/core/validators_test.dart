@@ -5,16 +5,14 @@ import 'package:autogram/core/utils/validators.dart';
 void main() {
   group('Validators', () {
     group('validatePhone', () {
-      test('should return error when phone is null', () {
+      test('should return null when phone is null (optional)', () {
         final result = Validators.validatePhone(null);
-        expect(result, isNotNull);
-        expect(result, contains('Telefon'));
+        expect(result, isNull);
       });
 
-      test('should return error when phone is empty', () {
+      test('should return null when phone is empty (optional)', () {
         final result = Validators.validatePhone('');
-        expect(result, isNotNull);
-        expect(result, contains('Telefon'));
+        expect(result, isNull);
       });
 
       test('should return error for invalid phone format', () {

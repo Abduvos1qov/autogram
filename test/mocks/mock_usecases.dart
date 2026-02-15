@@ -2,7 +2,7 @@ import 'package:mocktail/mocktail.dart';
 
 import 'package:autogram/features/auth/domain/usecases/send_otp_usecase.dart';
 import 'package:autogram/features/auth/domain/usecases/verify_otp_usecase.dart';
-import 'package:autogram/features/auth/domain/usecases/register_usecase.dart';
+import 'package:autogram/features/auth/domain/usecases/complete_profile_usecase.dart';
 import 'package:autogram/features/auth/domain/usecases/get_current_user_usecase.dart';
 import 'package:autogram/features/auth/domain/usecases/logout_usecase.dart';
 import 'package:autogram/features/home/domain/usecases/get_feed_usecase.dart';
@@ -16,7 +16,7 @@ class MockSendOtpUseCase extends Mock implements SendOtpUseCase {}
 
 class MockVerifyOtpUseCase extends Mock implements VerifyOtpUseCase {}
 
-class MockRegisterUseCase extends Mock implements RegisterUseCase {}
+class MockCompleteProfileUseCase extends Mock implements CompleteProfileUseCase {}
 
 class MockGetCurrentUserUseCase extends Mock implements GetCurrentUserUseCase {}
 

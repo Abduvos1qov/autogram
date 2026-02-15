@@ -14,44 +14,44 @@ class AuthCheckRequested extends AuthEvent {
   const AuthCheckRequested();
 }
 
-/// Send OTP to phone
+/// Send OTP to email
 class AuthOtpRequested extends AuthEvent {
-  final String phone;
+  final String email;
 
-  const AuthOtpRequested(this.phone);
+  const AuthOtpRequested(this.email);
 
   @override
-  List<Object?> get props => [phone];
+  List<Object?> get props => [email];
 }
 
 /// Verify OTP code
 class AuthOtpVerified extends AuthEvent {
-  final String phone;
+  final String email;
   final String code;
 
   const AuthOtpVerified({
-    required this.phone,
+    required this.email,
     required this.code,
   });
 
   @override
-  List<Object?> get props => [phone, code];
+  List<Object?> get props => [email, code];
 }
 
-/// Register new user
-class AuthRegisterRequested extends AuthEvent {
-  final String phone;
+/// Complete profile (register)
+class AuthCompleteProfileRequested extends AuthEvent {
+  final String email;
   final String fullName;
-  final String? email;
+  final String? phone;
 
-  const AuthRegisterRequested({
-    required this.phone,
+  const AuthCompleteProfileRequested({
+    required this.email,
     required this.fullName,
-    this.email,
+    this.phone,
   });
 
   @override
-  List<Object?> get props => [phone, fullName, email];
+  List<Object?> get props => [email, fullName, phone];
 }
 
 /// Logout
@@ -84,10 +84,10 @@ class AuthProfileUpdateRequested extends AuthEvent {
 
 /// Resend OTP
 class AuthOtpResendRequested extends AuthEvent {
-  final String phone;
+  final String email;
 
-  const AuthOtpResendRequested(this.phone);
+  const AuthOtpResendRequested(this.email);
 
   @override
-  List<Object?> get props => [phone];
+  List<Object?> get props => [email];
 }
