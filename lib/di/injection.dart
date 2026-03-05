@@ -62,6 +62,19 @@ import '../features/chat/data/repositories/chat_repository_impl.dart';
 import '../features/chat/domain/repositories/chat_repository.dart';
 import '../features/chat/presentation/bloc/conversations_bloc.dart';
 
+// Seller Members
+import '../features/seller/data/datasources/seller_member_remote_datasource.dart';
+import '../features/seller/data/repositories/seller_member_repository_impl.dart';
+import '../features/seller/domain/repositories/seller_member_repository.dart';
+import '../features/seller/domain/usecases/get_team_members_usecase.dart';
+import '../features/seller/domain/usecases/add_member_usecase.dart';
+import '../features/seller/domain/usecases/update_member_role_usecase.dart';
+import '../features/seller/domain/usecases/remove_member_usecase.dart';
+import '../features/seller/domain/usecases/get_current_membership_usecase.dart';
+
+// Permission Service
+import '../core/services/permission_service.dart';
+
 // Profile
 // Profile - TODO: Implement when needed
 // Notifications - TODO: Implement when needed
@@ -83,6 +96,7 @@ Future<void> initDependencies() async {
   _initListing();
   _initSaved();
   _initChat();
+  _initSellerMembers();
   _initProfile();
   _initNotifications();
 }
@@ -97,6 +111,7 @@ Future<void> _initCore() async {
   sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl());
   sl.registerLazySingleton<ApiClient>(() => ApiClient(supabase: sl(),
       ));
+  sl.registerLazySingleton<PermissionService>(() => PermissionService());
 }
 
 void _initAuth() {
@@ -277,6 +292,28 @@ void _initChat() {
 
   // BLoC
   sl.registerFactory(() => ConversationsBloc(repository: sl()));
+}
+
+void _initSellerMembers() {
+  // Data sources
+  sl.registerLazySingleton<SellerMemberRemoteDataSource>(
+    () => SellerMemberRemoteDataSourceImpl(supabase: sl()),
+  );
+
+  // Repository
+  sl.registerLazySingleton<SellerMemberRepository>(
+    () => SellerMemberRepositoryImpl(
+      remoteDataSource: sl(),
+      networkInfo: sl(),
+    ),
+  );
+
+  // Use cases
+  sl.registerLazySingleton(() => GetTeamMembersUseCase(sl()));
+  sl.registerLazySingleton(() => AddMemberUseCase(sl()));
+  sl.registerLazySingleton(() => UpdateMemberRoleUseCase(sl()));
+  sl.registerLazySingleton(() => RemoveMemberUseCase(sl()));
+  sl.registerLazySingleton(() => GetCurrentMembershipUseCase(sl()));
 }
 
 void _initProfile() {

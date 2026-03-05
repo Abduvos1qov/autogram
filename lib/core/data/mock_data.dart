@@ -4,6 +4,8 @@ import '../../features/chat/domain/entities/message.dart';
 import '../../features/home/domain/entities/feed_item.dart' as home;
 import '../../features/listing/domain/entities/listing.dart';
 import '../../features/reels/domain/entities/reel.dart';
+import '../../features/seller/domain/entities/seller_member.dart';
+import '../services/permission_service.dart';
 
 /// Mock data for testing the app without backend
 class MockData {
@@ -46,6 +48,46 @@ class MockData {
       isActive: true,
       language: 'uz',
       createdAt: DateTime.now().subtract(const Duration(days: 90)),
+      updatedAt: DateTime.now(),
+    ),
+    // Team members (seller organization employees)
+    User(
+      id: 'user4',
+      phone: '+998931112233',
+      fullName: 'Bobur Rahimov',
+      email: 'bobur@example.com',
+      avatarUrl: 'https://ui-avatars.com/api/?name=Bobur+Rahimov&size=200',
+      role: UserRole.seller,
+      isVerified: true,
+      isActive: true,
+      language: 'uz',
+      createdAt: DateTime.now().subtract(const Duration(days: 300)),
+      updatedAt: DateTime.now(),
+    ),
+    User(
+      id: 'user5',
+      phone: '+998944445566',
+      fullName: 'Dilshod Yusupov',
+      email: 'dilshod@example.com',
+      avatarUrl: 'https://ui-avatars.com/api/?name=Dilshod+Yusupov&size=200',
+      role: UserRole.seller,
+      isVerified: true,
+      isActive: true,
+      language: 'uz',
+      createdAt: DateTime.now().subtract(const Duration(days: 200)),
+      updatedAt: DateTime.now(),
+    ),
+    User(
+      id: 'user6',
+      phone: '+998955556677',
+      fullName: 'Nilufar Abdullayeva',
+      email: 'nilufar@example.com',
+      avatarUrl: 'https://ui-avatars.com/api/?name=Nilufar+Abdullayeva&size=200',
+      role: UserRole.seller,
+      isVerified: true,
+      isActive: true,
+      language: 'uz',
+      createdAt: DateTime.now().subtract(const Duration(days: 100)),
       updatedAt: DateTime.now(),
     ),
   ];
@@ -814,6 +856,117 @@ class MockData {
   static User? getUserByEmail(String email) {
     try {
       return mockUsers.firstWhere((user) => user.email == email);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  // Mock seller members (organization team)
+  static final List<SellerMember> mockSellerMembers = [
+    // AutoStar Salon (seller1) — owner
+    SellerMember(
+      id: 'member1',
+      sellerProfileId: 'seller1',
+      userId: 'user2',
+      role: MemberRole.owner,
+      isActive: true,
+      memberName: 'Aziza Karimova',
+      memberEmail: 'aziza@example.com',
+      memberAvatarUrl: 'https://ui-avatars.com/api/?name=Aziza+Karimova&size=200',
+      createdAt: DateTime.now().subtract(const Duration(days: 365)),
+      updatedAt: DateTime.now(),
+    ),
+    // AutoStar Salon (seller1) — admin
+    SellerMember(
+      id: 'member2',
+      sellerProfileId: 'seller1',
+      userId: 'user4',
+      role: MemberRole.admin,
+      isActive: true,
+      memberName: 'Bobur Rahimov',
+      memberEmail: 'bobur@example.com',
+      memberAvatarUrl: 'https://ui-avatars.com/api/?name=Bobur+Rahimov&size=200',
+      invitedBy: 'user2',
+      invitedAt: DateTime.now().subtract(const Duration(days: 300)),
+      joinedAt: DateTime.now().subtract(const Duration(days: 299)),
+      createdAt: DateTime.now().subtract(const Duration(days: 300)),
+      updatedAt: DateTime.now(),
+    ),
+    // AutoStar Salon (seller1) — sotuv menejeri
+    SellerMember(
+      id: 'member3',
+      sellerProfileId: 'seller1',
+      userId: 'user5',
+      role: MemberRole.manager,
+      isActive: true,
+      memberName: 'Dilshod Yusupov',
+      memberEmail: 'dilshod@example.com',
+      memberAvatarUrl: 'https://ui-avatars.com/api/?name=Dilshod+Yusupov&size=200',
+      invitedBy: 'user2',
+      invitedAt: DateTime.now().subtract(const Duration(days: 200)),
+      joinedAt: DateTime.now().subtract(const Duration(days: 199)),
+      createdAt: DateTime.now().subtract(const Duration(days: 200)),
+      updatedAt: DateTime.now(),
+    ),
+    // AvtoPlus Motors (seller2) — owner
+    SellerMember(
+      id: 'member4',
+      sellerProfileId: 'seller2',
+      userId: 'user3',
+      role: MemberRole.owner,
+      isActive: true,
+      memberName: 'Jasur Toshmatov',
+      memberEmail: 'jasur@example.com',
+      memberAvatarUrl: 'https://ui-avatars.com/api/?name=Jasur+Toshmatov&size=200',
+      createdAt: DateTime.now().subtract(const Duration(days: 300)),
+      updatedAt: DateTime.now(),
+    ),
+    // AvtoPlus Motors (seller2) — marketing
+    SellerMember(
+      id: 'member5',
+      sellerProfileId: 'seller2',
+      userId: 'user6',
+      role: MemberRole.marketing,
+      isActive: true,
+      memberName: 'Nilufar Abdullayeva',
+      memberEmail: 'nilufar@example.com',
+      memberAvatarUrl: 'https://ui-avatars.com/api/?name=Nilufar+Abdullayeva&size=200',
+      invitedBy: 'user3',
+      invitedAt: DateTime.now().subtract(const Duration(days: 100)),
+      joinedAt: DateTime.now().subtract(const Duration(days: 99)),
+      createdAt: DateTime.now().subtract(const Duration(days: 100)),
+      updatedAt: DateTime.now(),
+    ),
+  ];
+
+  // Get members by seller profile ID
+  static List<SellerMember> getMembersBySellerProfileId(String sellerProfileId) {
+    return mockSellerMembers
+        .where((m) => m.sellerProfileId == sellerProfileId && m.isActive)
+        .toList();
+  }
+
+  // Get member by user ID within a seller organization
+  static SellerMember? getMemberByUserId(
+      String sellerProfileId, String userId) {
+    try {
+      return mockSellerMembers.firstWhere(
+        (m) =>
+            m.sellerProfileId == sellerProfileId &&
+            m.userId == userId &&
+            m.isActive,
+      );
+    } catch (e) {
+      return null;
+    }
+  }
+
+  // Get member by user ID across all organizations
+  static SellerMember? getCurrentMembershipByUserId(String userId) {
+    try {
+      return mockSellerMembers.firstWhere(
+        (m) => m.userId == userId && m.isActive,
+      );
     } catch (e) {
       return null;
     }
