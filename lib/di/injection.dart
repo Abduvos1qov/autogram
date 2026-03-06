@@ -98,8 +98,9 @@ import '../features/seller/domain/usecases/get_member_activity_logs_usecase.dart
 import '../core/services/permission_service.dart';
 
 // Profile
-// Profile - TODO: Implement when needed
-// Notifications - TODO: Implement when needed
+import '../features/profile/data/repositories/profile_repository_impl.dart';
+import '../features/profile/domain/repositories/profile_repository.dart';
+import '../features/profile/presentation/bloc/profile_bloc.dart';
 
 final sl = GetIt.instance;
 
@@ -402,11 +403,13 @@ void _initTeam() {
 }
 
 void _initProfile() {
-  // Repository - needs implementation
-  // sl.registerLazySingleton<ProfileRepository>(() => ProfileRepositoryImpl(...));
+  // Repository
+  sl.registerLazySingleton<ProfileRepository>(
+    () => ProfileRepositoryImpl(),
+  );
 
-  // BLoC - commented until repository is implemented
-  // sl.registerFactory(() => ProfileBloc(repository: sl()));
+  // BLoC
+  sl.registerFactory(() => ProfileBloc(repository: sl()));
 }
 
 void _initNotifications() {
