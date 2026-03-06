@@ -12,6 +12,7 @@ import 'features/listing/presentation/bloc/listing_bloc.dart';
 import 'features/reels/presentation/bloc/reels_bloc.dart';
 import 'features/saved/presentation/bloc/saved_bloc.dart';
 import 'features/search/presentation/bloc/search_bloc.dart';
+import 'features/seller/presentation/bloc/team/team_bloc.dart';
 import 'navigation/app_router.dart';
 
 /// Main App widget
@@ -49,6 +50,7 @@ class _AppState extends State<App> {
         BlocProvider<ListingBloc>(create: (_) => sl<ListingBloc>()),
         BlocProvider<SavedBloc>(create: (_) => sl<SavedBloc>()),
         BlocProvider<ConversationsBloc>(create: (_) => sl<ConversationsBloc>()),
+        BlocProvider<TeamBloc>(create: (_) => sl<TeamBloc>()),
       ],
       child: _buildMaterialApp(),
     );

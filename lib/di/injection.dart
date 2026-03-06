@@ -72,6 +72,28 @@ import '../features/seller/domain/usecases/update_member_role_usecase.dart';
 import '../features/seller/domain/usecases/remove_member_usecase.dart';
 import '../features/seller/domain/usecases/get_current_membership_usecase.dart';
 
+// Seller Invitations
+import '../features/seller/data/datasources/seller_invitation_remote_datasource.dart';
+import '../features/seller/data/repositories/seller_invitation_repository_impl.dart';
+import '../features/seller/domain/repositories/seller_invitation_repository.dart';
+import '../features/seller/domain/usecases/send_invitation_usecase.dart';
+import '../features/seller/domain/usecases/get_pending_invitations_usecase.dart';
+import '../features/seller/domain/usecases/accept_invitation_usecase.dart';
+import '../features/seller/domain/usecases/reject_invitation_usecase.dart';
+import '../features/seller/domain/usecases/cancel_invitation_usecase.dart';
+import '../features/seller/domain/usecases/get_my_invitations_usecase.dart';
+
+// Team BLoC
+import '../features/seller/presentation/bloc/team/team_bloc.dart';
+
+// Activity Log
+import '../features/seller/data/datasources/activity_log_remote_datasource.dart';
+import '../features/seller/data/repositories/activity_log_repository_impl.dart';
+import '../features/seller/domain/repositories/activity_log_repository.dart';
+import '../features/seller/domain/usecases/log_activity_usecase.dart';
+import '../features/seller/domain/usecases/get_activity_logs_usecase.dart';
+import '../features/seller/domain/usecases/get_member_activity_logs_usecase.dart';
+
 // Permission Service
 import '../core/services/permission_service.dart';
 
@@ -97,6 +119,9 @@ Future<void> initDependencies() async {
   _initSaved();
   _initChat();
   _initSellerMembers();
+  _initSellerInvitations();
+  _initActivityLog();
+  _initTeam();
   _initProfile();
   _initNotifications();
 }
@@ -314,6 +339,66 @@ void _initSellerMembers() {
   sl.registerLazySingleton(() => UpdateMemberRoleUseCase(sl()));
   sl.registerLazySingleton(() => RemoveMemberUseCase(sl()));
   sl.registerLazySingleton(() => GetCurrentMembershipUseCase(sl()));
+}
+
+void _initSellerInvitations() {
+  // Data sources
+  sl.registerLazySingleton<SellerInvitationRemoteDataSource>(
+    () => SellerInvitationRemoteDataSourceImpl(supabase: sl()),
+  );
+
+  // Repository
+  sl.registerLazySingleton<SellerInvitationRepository>(
+    () => SellerInvitationRepositoryImpl(
+      remoteDataSource: sl(),
+      networkInfo: sl(),
+    ),
+  );
+
+  // Use cases
+  sl.registerLazySingleton(() => SendInvitationUseCase(sl()));
+  sl.registerLazySingleton(() => GetPendingInvitationsUseCase(sl()));
+  sl.registerLazySingleton(() => AcceptInvitationUseCase(sl()));
+  sl.registerLazySingleton(() => RejectInvitationUseCase(sl()));
+  sl.registerLazySingleton(() => CancelInvitationUseCase(sl()));
+  sl.registerLazySingleton(() => GetMyInvitationsUseCase(sl()));
+}
+
+void _initActivityLog() {
+  // Data sources
+  sl.registerLazySingleton<ActivityLogRemoteDataSource>(
+    () => ActivityLogRemoteDataSourceImpl(supabase: sl()),
+  );
+
+  // Repository
+  sl.registerLazySingleton<ActivityLogRepository>(
+    () => ActivityLogRepositoryImpl(
+      remoteDataSource: sl(),
+      networkInfo: sl(),
+    ),
+  );
+
+  // Use cases
+  sl.registerLazySingleton(() => LogActivityUseCase(sl()));
+  sl.registerLazySingleton(() => GetActivityLogsUseCase(sl()));
+  sl.registerLazySingleton(() => GetMemberActivityLogsUseCase(sl()));
+}
+
+void _initTeam() {
+  // BLoC
+  sl.registerFactory(() => TeamBloc(
+        getTeamMembersUseCase: sl(),
+        updateMemberRoleUseCase: sl(),
+        removeMemberUseCase: sl(),
+        getCurrentMembershipUseCase: sl(),
+        sendInvitationUseCase: sl(),
+        getPendingInvitationsUseCase: sl(),
+        acceptInvitationUseCase: sl(),
+        rejectInvitationUseCase: sl(),
+        cancelInvitationUseCase: sl(),
+        getMyInvitationsUseCase: sl(),
+        logActivityUseCase: sl(),
+      ));
 }
 
 void _initProfile() {
