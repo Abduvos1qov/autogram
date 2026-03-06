@@ -3,9 +3,11 @@
 // Domain
 export 'domain/entities/user.dart';
 export 'domain/repositories/auth_repository.dart';
-export 'domain/usecases/send_otp_usecase.dart';
-export 'domain/usecases/verify_otp_usecase.dart';
-export 'domain/usecases/complete_profile_usecase.dart';
+export 'domain/usecases/sign_in_usecase.dart';
+export 'domain/usecases/sign_up_usecase.dart';
+export 'domain/usecases/reset_password_usecase.dart';
+export 'domain/usecases/set_username_usecase.dart';
+export 'domain/usecases/check_username_usecase.dart';
 export 'domain/usecases/logout_usecase.dart';
 export 'domain/usecases/get_current_user_usecase.dart';
 
@@ -22,5 +24,7 @@ export 'presentation/bloc/auth_state.dart';
 export 'presentation/screens/splash_screen.dart';
 export 'presentation/screens/onboarding_screen.dart';
 export 'presentation/screens/login_screen.dart';
-export 'presentation/screens/otp_screen.dart';
 export 'presentation/screens/register_screen.dart';
+export 'presentation/screens/verification_screen.dart';
+export 'presentation/screens/username_screen.dart';
+export 'presentation/screens/forgot_password_screen.dart';

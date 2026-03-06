@@ -229,6 +229,74 @@ class Validators {
     return null;
   }
 
+  // Password validation (strong)
+  static String? validatePassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Parolni kiriting';
+    }
+
+    if (value.length < 8) {
+      return 'Parol kamida 8 ta belgidan iborat bo\'lishi kerak';
+    }
+
+    if (!RegExp(r'[A-Z]').hasMatch(value)) {
+      return 'Parolda kamida 1 ta katta harf bo\'lishi kerak';
+    }
+
+    if (!RegExp(r'[a-z]').hasMatch(value)) {
+      return 'Parolda kamida 1 ta kichik harf bo\'lishi kerak';
+    }
+
+    if (!RegExp(r'[0-9]').hasMatch(value)) {
+      return 'Parolda kamida 1 ta raqam bo\'lishi kerak';
+    }
+
+    if (!RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(value)) {
+      return 'Parolda kamida 1 ta maxsus belgi bo\'lishi kerak';
+    }
+
+    return null;
+  }
+
+  // Confirm password validation
+  static String? Function(String?) validateConfirmPassword(
+      String originalPassword) {
+    return (String? value) {
+      if (value == null || value.isEmpty) {
+        return 'Parolni tasdiqlang';
+      }
+
+      if (value != originalPassword) {
+        return 'Parollar mos kelmaydi';
+      }
+
+      return null;
+    };
+  }
+
+  // Username validation (required)
+  static String? validateUsernameRequired(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Username kiriting';
+    }
+
+    final username = value.startsWith('@') ? value.substring(1) : value;
+
+    if (username.length < 3) {
+      return 'Username kamida 3 ta belgidan iborat bo\'lishi kerak';
+    }
+
+    if (username.length > 32) {
+      return 'Username 32 ta belgidan oshmasligi kerak';
+    }
+
+    if (!RegExp(r'^[a-zA-Z0-9_]+$').hasMatch(username)) {
+      return 'Faqat harflar, raqamlar va pastki chiziq';
+    }
+
+    return null;
+  }
+
   // Username (Telegram/Instagram) validation
   static String? validateUsername(String? value) {
     if (value == null || value.isEmpty) {

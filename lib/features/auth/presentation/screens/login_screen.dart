@@ -14,7 +14,7 @@ import '../bloc/auth_bloc.dart';
 import '../bloc/auth_event.dart';
 import '../bloc/auth_state.dart';
 
-/// Login screen - email input
+/// Login screen - email + password sign in
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -26,16 +26,24 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  bool _obscurePassword = true;
 
   @override
   void dispose() {
     _emailController.dispose();
+    _passwordController.dispose();
     super.dispose();
   }
 
-  void _submitEmail() {
+  void _submit() {
     if (_formKey.currentState?.validate() ?? false) {
-      context.read<AuthBloc>().add(AuthOtpRequested(_emailController.text.trim()));
+      context.read<AuthBloc>().add(
+            AuthSignInRequested(
+              email: _emailController.text.trim(),
+              password: _passwordController.text,
+            ),
+          );
     }
   }
 
@@ -43,8 +51,10 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return BlocConsumer<AuthBloc, AuthState>(
       listener: (context, state) {
-        if (state is AuthOtpSent) {
-          context.push('/otp', extra: state.email);
+        if (state is AuthAuthenticated) {
+          context.go('/');
+        } else if (state is AuthNeedsUsername) {
+          context.go('/username');
         } else if (state is AuthError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -59,51 +69,126 @@ class _LoginScreenState extends State<LoginScreen> {
 
         return Scaffold(
           body: SafeArea(
-            child: Padding(
-              padding: AppSpacing.screenPadding,
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
               child: Form(
                 key: _formKey,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    AppSpacing.gapVerticalXl,
+                    const SizedBox(height: 48),
 
-                    // Header
+                    // Logo
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.directions_car_rounded,
+                          color: AppColors.primary,
+                          size: 32,
+                        ),
+                        AppSpacing.gapHorizontalSm,
+                        Text(
+                          'Autogram',
+                          style: AppTypography.headlineMedium.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.primary,
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 32),
+
+                    // Title
                     Text(
-                      'Xush kelibsiz!',
-                      style: AppTypography.displaySmall,
+                      'Hisobingizga\nkiring',
+                      style: AppTypography.displayMedium.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     AppSpacing.gapVerticalSm,
                     Text(
-                      'Davom etish uchun email manzilingizni kiriting',
+                      'Kirish uchun email va parolingizni kiriting',
                       style: AppTypography.bodyMedium.copyWith(
                         color: AppColors.textSecondary,
                       ),
                     ),
 
-                    AppSpacing.gapVerticalXl,
-                    AppSpacing.gapVerticalLg,
+                    const SizedBox(height: 32),
 
-                    // Email input
+                    // Email field
                     AppTextField(
                       controller: _emailController,
                       label: 'Email',
                       hint: 'email@example.com',
                       keyboardType: TextInputType.emailAddress,
-                      textInputAction: TextInputAction.done,
-                      prefixIcon: const Icon(Icons.email_outlined),
+                      textInputAction: TextInputAction.next,
                       validator: Validators.validateEmailRequired,
                       autofocus: true,
-                      onEditingComplete: _submitEmail,
                     ),
 
-                    AppSpacing.gapVerticalXl,
+                    AppSpacing.gapVerticalLg,
 
-                    // Submit button
+                    // Password field
+                    AppTextField(
+                      controller: _passwordController,
+                      label: 'Parol',
+                      hint: 'Parolingizni kiriting',
+                      obscureText: _obscurePassword,
+                      keyboardType: TextInputType.visiblePassword,
+                      textInputAction: TextInputAction.done,
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _obscurePassword
+                              ? Icons.visibility_off_outlined
+                              : Icons.visibility_outlined,
+                          color: AppColors.grey500,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _obscurePassword = !_obscurePassword;
+                          });
+                        },
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Parolni kiriting';
+                        }
+                        return null;
+                      },
+                      onEditingComplete: _submit,
+                    ),
+
+                    AppSpacing.gapVerticalSm,
+
+                    // Forgot Password
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton(
+                        onPressed: () => context.push('/forgot-password'),
+                        style: TextButton.styleFrom(
+                          padding: EdgeInsets.zero,
+                          minimumSize: Size.zero,
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
+                        child: Text(
+                          'Parolni unutdingizmi?',
+                          style: AppTypography.bodySmall.copyWith(
+                            color: AppColors.primary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 24),
+
+                    // Login button
                     PrimaryButton(
-                      text: 'Davom etish',
-                      onPressed: isLoading ? null : _submitEmail,
+                      text: 'Kirish',
+                      onPressed: isLoading ? null : _submit,
                       isLoading: isLoading,
+                      height: 52,
                     ),
 
                     // Test mode helper
@@ -112,11 +197,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       Container(
                         padding: AppSpacing.paddingMd,
                         decoration: BoxDecoration(
-                          color: AppColors.warning.withOpacity(0.1),
+                          color: AppColors.warning.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                            color: AppColors.warning.withOpacity(0.3),
-                            width: 1,
+                            color: AppColors.warning.withValues(alpha: 0.3),
                           ),
                         ),
                         child: Column(
@@ -141,13 +225,13 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                             AppSpacing.gapVerticalSm,
                             Text(
-                              'Sinov uchun email: ${TestConfig.testEmailList.first}',
+                              'Email: ${TestConfig.testEmailList.first}',
                               style: AppTypography.bodySmall.copyWith(
                                 color: AppColors.textSecondary,
                               ),
                             ),
                             Text(
-                              'OTP kodi: 123456',
+                              'Parol: Test1234!',
                               style: AppTypography.bodySmall.copyWith(
                                 color: AppColors.textSecondary,
                               ),
@@ -157,21 +241,53 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ],
 
-                    const Spacer(),
+                    const SizedBox(height: 32),
 
-                    // Terms
-                    Center(
-                      child: Padding(
-                        padding: AppSpacing.paddingMd,
-                        child: Text(
-                          'Davom etish orqali siz Foydalanish shartlari va Maxfiylik siyosatiga rozilik bildirasiz',
-                          style: AppTypography.bodySmall.copyWith(
-                            color: AppColors.textSecondary,
+                    // Divider
+                    Row(
+                      children: [
+                        const Expanded(child: Divider()),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Text(
+                            'Yoki',
+                            style: AppTypography.bodySmall.copyWith(
+                              color: AppColors.textSecondary,
+                            ),
                           ),
-                          textAlign: TextAlign.center,
                         ),
+                        const Expanded(child: Divider()),
+                      ],
+                    ),
+
+                    const SizedBox(height: 32),
+
+                    // Sign up link
+                    Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Hisobingiz yo\'qmi? ',
+                            style: AppTypography.bodyMedium.copyWith(
+                              color: AppColors.textSecondary,
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () => context.push('/register'),
+                            child: Text(
+                              'Ro\'yxatdan o\'tish',
+                              style: AppTypography.bodyMedium.copyWith(
+                                color: AppColors.primary,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
+
+                    const SizedBox(height: 24),
                   ],
                 ),
               ),

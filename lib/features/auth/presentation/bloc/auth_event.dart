@@ -14,44 +14,58 @@ class AuthCheckRequested extends AuthEvent {
   const AuthCheckRequested();
 }
 
-/// Send OTP to email
-class AuthOtpRequested extends AuthEvent {
+/// Sign in with email and password
+class AuthSignInRequested extends AuthEvent {
+  final String email;
+  final String password;
+
+  const AuthSignInRequested({
+    required this.email,
+    required this.password,
+  });
+
+  @override
+  List<Object?> get props => [email, password];
+}
+
+/// Sign up with email and password
+class AuthSignUpRequested extends AuthEvent {
+  final String email;
+  final String password;
+  final String fullName;
+  final String? phone;
+  final DateTime? dateOfBirth;
+
+  const AuthSignUpRequested({
+    required this.email,
+    required this.password,
+    required this.fullName,
+    this.phone,
+    this.dateOfBirth,
+  });
+
+  @override
+  List<Object?> get props => [email, password, fullName, phone, dateOfBirth];
+}
+
+/// Send password reset email
+class AuthResetPasswordRequested extends AuthEvent {
   final String email;
 
-  const AuthOtpRequested(this.email);
+  const AuthResetPasswordRequested(this.email);
 
   @override
   List<Object?> get props => [email];
 }
 
-/// Verify OTP code
-class AuthOtpVerified extends AuthEvent {
-  final String email;
-  final String code;
+/// Submit username
+class AuthUsernameSubmitted extends AuthEvent {
+  final String username;
 
-  const AuthOtpVerified({
-    required this.email,
-    required this.code,
-  });
+  const AuthUsernameSubmitted(this.username);
 
   @override
-  List<Object?> get props => [email, code];
-}
-
-/// Complete profile (register)
-class AuthCompleteProfileRequested extends AuthEvent {
-  final String email;
-  final String fullName;
-  final String? phone;
-
-  const AuthCompleteProfileRequested({
-    required this.email,
-    required this.fullName,
-    this.phone,
-  });
-
-  @override
-  List<Object?> get props => [email, fullName, phone];
+  List<Object?> get props => [username];
 }
 
 /// Logout
@@ -80,14 +94,4 @@ class AuthProfileUpdateRequested extends AuthEvent {
 
   @override
   List<Object?> get props => [fullName, email, avatarUrl, language];
-}
-
-/// Resend OTP
-class AuthOtpResendRequested extends AuthEvent {
-  final String email;
-
-  const AuthOtpResendRequested(this.email);
-
-  @override
-  List<Object?> get props => [email];
 }

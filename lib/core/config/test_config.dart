@@ -3,11 +3,17 @@
 library;
 
 class TestConfig {
-  /// Enable test mode to bypass OTP and use mock data
+  /// Enable test mode to bypass real auth and use mock data
   static const bool isTestMode = true; // Set to false for production
 
-  /// Test emails that bypass OTP verification
-  /// Format: email -> OTP code
+  /// Test email credentials: email -> password
+  static const Map<String, String> testCredentials = {
+    'test@autogram.uz': 'Test1234!',
+    'sardor@example.com': 'Test1234!',
+    'aziza@example.com': 'Test1234!',
+  };
+
+  /// Test emails that bypass OTP verification (legacy)
   static const Map<String, String> testEmails = {
     'test@autogram.uz': '123456',
     'sardor@example.com': '123456',
@@ -25,10 +31,15 @@ class TestConfig {
 
   /// Check if an email is a test email
   static bool isTestEmail(String email) {
-    return testEmails.containsKey(email);
+    return testCredentials.containsKey(email);
   }
 
-  /// Get the OTP code for a test email
+  /// Get the password for a test email
+  static String? getTestPassword(String email) {
+    return testCredentials[email];
+  }
+
+  /// Get the OTP code for a test email (legacy)
   static String? getTestOTP(String email) {
     return testEmails[email];
   }
@@ -39,7 +50,7 @@ class TestConfig {
   }
 
   /// Get all test emails as a list
-  static List<String> get testEmailList => testEmails.keys.toList();
+  static List<String> get testEmailList => testCredentials.keys.toList();
 
   /// Get all test phone numbers as a list
   static List<String> get testPhoneList => testPhones.keys.toList();
