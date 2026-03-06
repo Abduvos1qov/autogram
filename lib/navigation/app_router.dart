@@ -3,11 +3,13 @@ import 'package:go_router/go_router.dart';
 
 import '../features/auth/presentation/bloc/auth_bloc.dart';
 import '../features/auth/presentation/bloc/auth_state.dart';
+import '../features/auth/presentation/screens/forgot_password_screen.dart';
 import '../features/auth/presentation/screens/login_screen.dart';
 import '../features/auth/presentation/screens/onboarding_screen.dart';
-import '../features/auth/presentation/screens/otp_screen.dart';
 import '../features/auth/presentation/screens/register_screen.dart';
 import '../features/auth/presentation/screens/splash_screen.dart';
+import '../features/auth/presentation/screens/username_screen.dart';
+import '../features/auth/presentation/screens/verification_screen.dart';
 import '../features/chat/presentation/screens/chat_screen.dart';
 import '../features/chat/presentation/screens/conversations_screen.dart';
 import '../features/home/presentation/screens/home_screen.dart';
@@ -29,7 +31,6 @@ import 'route_names.dart';
 /// App router configuration using GoRouter
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
-final GlobalKey<NavigatorState> _shellNavigatorKey = GlobalKey<NavigatorState>();
 
 GoRouter createRouter(AuthBloc authBloc) {
   return GoRouter(
@@ -42,21 +43,30 @@ GoRouter createRouter(AuthBloc authBloc) {
       final isAuthRoute = state.matchedLocation == RoutePaths.splash ||
           state.matchedLocation == RoutePaths.onboarding ||
           state.matchedLocation == RoutePaths.login ||
-          state.matchedLocation == RoutePaths.otp ||
-          state.matchedLocation == RoutePaths.register;
+          state.matchedLocation == RoutePaths.register ||
+          state.matchedLocation == RoutePaths.verification ||
+          state.matchedLocation == RoutePaths.username ||
+          state.matchedLocation == RoutePaths.forgotPassword;
 
       // If initial check, stay on splash
       if (authState is AuthInitial) {
         return RoutePaths.splash;
       }
 
-      // During auth flow (loading, OTP sent, needs registration, etc.)
+      // During auth flow (loading, sign up success, password reset, etc.)
       // don't redirect — let BlocConsumer in screens handle navigation
       if (authState is AuthLoading ||
-          authState is AuthOtpSent ||
-          authState is AuthOtpResent ||
-          authState is AuthNeedsRegistration ||
+          authState is AuthSignUpSuccess ||
+          authState is AuthPasswordResetSent ||
           authState is AuthError) {
+        return null;
+      }
+
+      // If needs username, go to username screen
+      if (authState is AuthNeedsUsername) {
+        if (state.matchedLocation != RoutePaths.username) {
+          return RoutePaths.username;
+        }
         return null;
       }
 
@@ -96,20 +106,27 @@ GoRouter createRouter(AuthBloc authBloc) {
         builder: (context, state) => const LoginScreen(),
       ),
       GoRoute(
-        path: RoutePaths.otp,
-        name: RouteNames.otp,
+        path: RoutePaths.register,
+        name: RouteNames.register,
+        builder: (context, state) => const RegisterScreen(),
+      ),
+      GoRoute(
+        path: RoutePaths.verification,
+        name: RouteNames.verification,
         builder: (context, state) {
           final email = state.extra as String? ?? '';
-          return OtpScreen(email: email);
+          return VerificationScreen(email: email);
         },
       ),
       GoRoute(
-        path: RoutePaths.register,
-        name: RouteNames.register,
-        builder: (context, state) {
-          final email = state.extra as String? ?? '';
-          return RegisterScreen(email: email);
-        },
+        path: RoutePaths.username,
+        name: RouteNames.username,
+        builder: (context, state) => const UsernameScreen(),
+      ),
+      GoRoute(
+        path: RoutePaths.forgotPassword,
+        name: RouteNames.forgotPassword,
+        builder: (context, state) => const ForgotPasswordScreen(),
       ),
 
       // Main shell with bottom navigation
@@ -118,7 +135,6 @@ GoRouter createRouter(AuthBloc authBloc) {
           return NavigationShell(navigationShell: navigationShell);
         },
         branches: [
-          // Home branch
           StatefulShellBranch(
             routes: [
               GoRoute(
@@ -128,8 +144,6 @@ GoRouter createRouter(AuthBloc authBloc) {
               ),
             ],
           ),
-
-          // Reels branch
           StatefulShellBranch(
             routes: [
               GoRoute(
@@ -139,8 +153,6 @@ GoRouter createRouter(AuthBloc authBloc) {
               ),
             ],
           ),
-
-          // Search branch
           StatefulShellBranch(
             routes: [
               GoRoute(
@@ -157,8 +169,6 @@ GoRouter createRouter(AuthBloc authBloc) {
               ),
             ],
           ),
-
-          // Chat branch
           StatefulShellBranch(
             routes: [
               GoRoute(
@@ -168,8 +178,6 @@ GoRouter createRouter(AuthBloc authBloc) {
               ),
             ],
           ),
-
-          // Profile branch
           StatefulShellBranch(
             routes: [
               GoRoute(

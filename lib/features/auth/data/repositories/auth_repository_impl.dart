@@ -24,13 +24,25 @@ class AuthRepositoryImpl implements AuthRepository {
         _networkInfo = networkInfo;
 
   @override
-  Future<Either<Failure, void>> sendOtp({required String email}) async {
+  Future<Either<Failure, void>> signUp({
+    required String email,
+    required String password,
+    required String fullName,
+    String? phone,
+    DateTime? dateOfBirth,
+  }) async {
     if (!await _networkInfo.isConnected) {
       return const Left(NetworkFailure());
     }
 
     try {
-      await _remoteDataSource.sendOtp(email: email);
+      await _remoteDataSource.signUp(
+        email: email,
+        password: password,
+        fullName: fullName,
+        phone: phone,
+        dateOfBirth: dateOfBirth,
+      );
       return const Right(null);
     } catch (e) {
       return Left(ErrorHandler.handleException(e));
@@ -38,24 +50,21 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<Failure, User?>> verifyOtp({
+  Future<Either<Failure, User>> signIn({
     required String email,
-    required String code,
+    required String password,
   }) async {
     if (!await _networkInfo.isConnected) {
       return const Left(NetworkFailure());
     }
 
     try {
-      final user = await _remoteDataSource.verifyOtp(
+      final user = await _remoteDataSource.signIn(
         email: email,
-        code: code,
+        password: password,
       );
 
-      if (user != null) {
-        await _localDataSource.cacheUser(user);
-      }
-
+      await _localDataSource.cacheUser(user);
       return Right(user);
     } catch (e) {
       return Left(ErrorHandler.handleException(e));
@@ -63,22 +72,48 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<Failure, User>> completeProfile({
-    required String fullName,
-    String? phone,
+  Future<Either<Failure, void>> resetPassword({required String email}) async {
+    if (!await _networkInfo.isConnected) {
+      return const Left(NetworkFailure());
+    }
+
+    try {
+      await _remoteDataSource.resetPassword(email: email);
+      return const Right(null);
+    } catch (e) {
+      return Left(ErrorHandler.handleException(e));
+    }
+  }
+
+  @override
+  Future<Either<Failure, User>> setUsername({
+    required String username,
   }) async {
     if (!await _networkInfo.isConnected) {
       return const Left(NetworkFailure());
     }
 
     try {
-      final user = await _remoteDataSource.completeProfile(
-        fullName: fullName,
-        phone: phone,
-      );
-
+      final user = await _remoteDataSource.setUsername(username: username);
       await _localDataSource.cacheUser(user);
       return Right(user);
+    } catch (e) {
+      return Left(ErrorHandler.handleException(e));
+    }
+  }
+
+  @override
+  Future<Either<Failure, bool>> checkUsernameAvailability({
+    required String username,
+  }) async {
+    if (!await _networkInfo.isConnected) {
+      return const Left(NetworkFailure());
+    }
+
+    try {
+      final isAvailable =
+          await _remoteDataSource.checkUsernameAvailability(username: username);
+      return Right(isAvailable);
     } catch (e) {
       return Left(ErrorHandler.handleException(e));
     }

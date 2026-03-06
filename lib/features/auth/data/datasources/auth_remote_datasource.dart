@@ -11,12 +11,17 @@ import '../models/user_model.dart';
 /// Remote data source for auth operations using Supabase
 
 abstract class AuthRemoteDataSource {
-  Future<void> sendOtp({required String email});
-  Future<UserModel?> verifyOtp({required String email, required String code});
-  Future<UserModel> completeProfile({
+  Future<void> signUp({
+    required String email,
+    required String password,
     required String fullName,
     String? phone,
+    DateTime? dateOfBirth,
   });
+  Future<UserModel> signIn({required String email, required String password});
+  Future<void> resetPassword({required String email});
+  Future<UserModel> setUsername({required String username});
+  Future<bool> checkUsernameAvailability({required String username});
   Future<UserModel?> getCurrentUser();
   Future<UserModel> updateProfile({
     String? fullName,
@@ -36,78 +41,103 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       : _supabase = supabase;
 
   @override
-  Future<void> sendOtp({required String email}) async {
+  Future<void> signUp({
+    required String email,
+    required String password,
+    required String fullName,
+    String? phone,
+    DateTime? dateOfBirth,
+  }) async {
     try {
-      AppLogger.info('Sending OTP to $email');
+      AppLogger.info('Signing up user: $email');
 
-      // Check if test mode and test email
-      if (TestConfig.isTestMode && TestConfig.isTestEmail(email)) {
-        AppLogger.info('TEST MODE: Bypassing OTP send for test email');
+      // Test mode
+      if (TestConfig.isTestMode) {
+        AppLogger.info('TEST MODE: Simulating sign up for $email');
         await Future.delayed(const Duration(milliseconds: 500));
-        AppLogger.info('TEST MODE: OTP "sent" successfully');
         return;
       }
 
-      await _supabase.auth.signInWithOtp(
+      final response = await _supabase.auth.signUp(
         email: email,
+        password: password,
+        data: {
+          'full_name': fullName,
+          if (phone != null) 'phone': phone,
+          if (dateOfBirth != null)
+            'date_of_birth': dateOfBirth.toIso8601String(),
+        },
       );
 
-      AppLogger.info('OTP sent successfully');
+      if (response.user == null) {
+        throw const ServerException(
+            message: 'Ro\'yxatdan o\'tish amalga oshmadi');
+      }
+
+      // Insert profile data
+      await _supabase.from(ApiEndpoints.profiles).upsert({
+        'id': response.user!.id,
+        'email': email,
+        'full_name': fullName,
+        if (phone != null) 'phone': phone,
+        if (dateOfBirth != null)
+          'date_of_birth': dateOfBirth.toIso8601String(),
+      });
+
+      AppLogger.info('Sign up successful');
     } on AuthException catch (e) {
-      AppLogger.error('Failed to send OTP', e);
+      AppLogger.error('Sign up failed', e);
+      if (e.message.contains('already registered')) {
+        throw const ServerException(
+          message: 'Bu email allaqachon ro\'yxatdan o\'tgan',
+        );
+      }
       throw ServerException(message: e.message);
     } catch (e) {
-      AppLogger.error('Unexpected error sending OTP', e);
+      if (e is ServerException) rethrow;
+      AppLogger.error('Unexpected error during sign up', e);
       throw ServerException(message: e.toString());
     }
   }
 
   @override
-  Future<UserModel?> verifyOtp({
+  Future<UserModel> signIn({
     required String email,
-    required String code,
+    required String password,
   }) async {
     try {
-      AppLogger.info('Verifying OTP for $email');
+      AppLogger.info('Signing in user: $email');
 
-      // Check if test mode and test email
+      // Test mode
       if (TestConfig.isTestMode && TestConfig.isTestEmail(email)) {
-        AppLogger.info('TEST MODE: Verifying OTP for test email');
+        AppLogger.info('TEST MODE: Simulating sign in for $email');
+        await Future.delayed(const Duration(milliseconds: 500));
 
-        final expectedOtp = TestConfig.getTestOTP(email);
-        if (code != expectedOtp) {
-          AppLogger.error('TEST MODE: Invalid OTP code');
-          throw const AuthException(
-            message: 'Noto\'g\'ri yoki muddati o\'tgan kod',
-            code: 'invalid_otp',
+        final testPassword = TestConfig.getTestPassword(email);
+        if (password != testPassword) {
+          throw const ServerException(
+            message: 'Noto\'g\'ri email yoki parol',
           );
         }
 
-        // Simulate network delay
-        await Future.delayed(const Duration(milliseconds: 500));
-
-        // Return mock user based on email
         final mockUser = MockData.getUserByEmail(email);
         if (mockUser == null) {
-          AppLogger.info('TEST MODE: New user, needs registration');
-          return null;
+          throw const ServerException(message: 'Foydalanuvchi topilmadi');
         }
 
-        AppLogger.info('TEST MODE: User verified successfully');
         return UserModel.fromEntity(mockUser);
       }
 
-      final response = await _supabase.auth.verifyOTP(
+      final response = await _supabase.auth.signInWithPassword(
         email: email,
-        token: code,
-        type: OtpType.email,
+        password: password,
       );
 
       if (response.user == null) {
-        throw const AuthException(message: 'Verification failed');
+        throw const ServerException(message: 'Kirish amalga oshmadi');
       }
 
-      // Check if user exists in our profiles table
+      // Fetch profile
       final userData = await _supabase
           .from(ApiEndpoints.profiles)
           .select()
@@ -115,54 +145,65 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           .maybeSingle();
 
       if (userData == null) {
-        // New user, needs registration
-        AppLogger.info('New user, needs registration');
-        return null;
+        throw const ServerException(message: 'Profil topilmadi');
       }
 
-      // Check if profile is complete (has full_name)
-      final fullName = userData['full_name'] as String? ?? '';
-      if (fullName.isEmpty) {
-        AppLogger.info('User profile incomplete, needs registration');
-        return null;
-      }
-
-      AppLogger.info('User verified successfully');
+      AppLogger.info('Sign in successful');
       return UserModel.fromJson(userData);
     } on AuthException catch (e) {
-      AppLogger.error('Failed to verify OTP', e);
-      if (e.message.contains('Invalid') || e.message.contains('expired')) {
-        throw const AuthException(
-          message: 'Noto\'g\'ri yoki muddati o\'tgan kod',
-          code: 'invalid_otp',
-        );
-      }
-      throw ServerException(message: e.message);
+      AppLogger.error('Sign in failed', e);
+      throw const ServerException(
+        message: 'Noto\'g\'ri email yoki parol',
+      );
     } catch (e) {
-      AppLogger.error('Unexpected error verifying OTP', e);
+      if (e is ServerException) rethrow;
+      AppLogger.error('Unexpected error during sign in', e);
       throw ServerException(message: e.toString());
     }
   }
 
   @override
-  Future<UserModel> completeProfile({
-    required String fullName,
-    String? phone,
-  }) async {
+  Future<void> resetPassword({required String email}) async {
     try {
-      // Test mode: return mock user with updated name
+      AppLogger.info('Sending password reset to $email');
+
+      // Test mode
       if (TestConfig.isTestMode) {
-        AppLogger.info('TEST MODE: Completing profile for $fullName');
+        AppLogger.info('TEST MODE: Simulating password reset for $email');
+        await Future.delayed(const Duration(milliseconds: 500));
+        return;
+      }
+
+      await _supabase.auth.resetPasswordForEmail(email);
+
+      AppLogger.info('Password reset email sent');
+    } on AuthException catch (e) {
+      AppLogger.error('Password reset failed', e);
+      throw ServerException(message: e.message);
+    } catch (e) {
+      AppLogger.error('Unexpected error during password reset', e);
+      throw ServerException(message: e.toString());
+    }
+  }
+
+  @override
+  Future<UserModel> setUsername({required String username}) async {
+    try {
+      AppLogger.info('Setting username: $username');
+
+      // Test mode
+      if (TestConfig.isTestMode) {
+        AppLogger.info('TEST MODE: Setting username to $username');
         await Future.delayed(const Duration(milliseconds: 500));
 
         final now = DateTime.now();
         return UserModel(
-          id: 'new_user_${now.millisecondsSinceEpoch}',
-          email: null,
-          phone: phone,
-          fullName: fullName,
+          id: 'test_user_id',
+          email: 'test@autogram.uz',
+          fullName: 'Test User',
+          username: username,
           role: UserRole.buyer,
-          isVerified: false,
+          isVerified: true,
           isActive: true,
           language: 'uz',
           createdAt: now,
@@ -175,29 +216,50 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         throw const AuthException(message: 'Not authenticated');
       }
 
-      AppLogger.info('Completing profile for ${currentUser.email}');
-
-      final updates = <String, dynamic>{
-        'full_name': fullName,
-      };
-      if (phone != null && phone.isNotEmpty) {
-        updates['phone'] = phone;
-      }
-
       final response = await _supabase
           .from(ApiEndpoints.profiles)
-          .update(updates)
+          .update({'username': username})
           .eq('id', currentUser.id)
           .select()
           .single();
 
-      AppLogger.info('Profile completed successfully');
+      AppLogger.info('Username set successfully');
       return UserModel.fromJson(response);
     } on PostgrestException catch (e) {
-      AppLogger.error('Database error during profile completion', e);
+      AppLogger.error('Database error setting username', e);
+      if (e.message.contains('unique') || e.message.contains('duplicate')) {
+        throw const ServerException(
+          message: 'Bu username allaqachon band',
+        );
+      }
       throw ServerException(message: e.message);
     } catch (e) {
-      AppLogger.error('Unexpected error during profile completion', e);
+      if (e is ServerException) rethrow;
+      AppLogger.error('Unexpected error setting username', e);
+      throw ServerException(message: e.toString());
+    }
+  }
+
+  @override
+  Future<bool> checkUsernameAvailability({required String username}) async {
+    try {
+      AppLogger.info('Checking username availability: $username');
+
+      // Test mode
+      if (TestConfig.isTestMode) {
+        await Future.delayed(const Duration(milliseconds: 300));
+        return MockData.isUsernameAvailable(username);
+      }
+
+      final result = await _supabase
+          .from(ApiEndpoints.profiles)
+          .select('id')
+          .eq('username', username)
+          .maybeSingle();
+
+      return result == null;
+    } catch (e) {
+      AppLogger.error('Error checking username availability', e);
       throw ServerException(message: e.toString());
     }
   }

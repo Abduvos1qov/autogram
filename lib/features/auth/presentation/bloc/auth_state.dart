@@ -32,24 +32,24 @@ class AuthUnauthenticated extends AuthState {
   const AuthUnauthenticated();
 }
 
-/// OTP sent state
-class AuthOtpSent extends AuthState {
+/// Sign up successful, needs email verification
+class AuthSignUpSuccess extends AuthState {
   final String email;
 
-  const AuthOtpSent(this.email);
+  const AuthSignUpSuccess(this.email);
 
   @override
   List<Object?> get props => [email];
 }
 
-/// OTP verified, but user needs to complete profile
-class AuthNeedsRegistration extends AuthState {
-  final String email;
+/// Authenticated but needs to set username
+class AuthNeedsUsername extends AuthState {
+  final User user;
 
-  const AuthNeedsRegistration(this.email);
+  const AuthNeedsUsername(this.user);
 
   @override
-  List<Object?> get props => [email];
+  List<Object?> get props => [user];
 }
 
 /// Authenticated state
@@ -60,6 +60,16 @@ class AuthAuthenticated extends AuthState {
 
   @override
   List<Object?> get props => [user];
+}
+
+/// Password reset email sent
+class AuthPasswordResetSent extends AuthState {
+  final String email;
+
+  const AuthPasswordResetSent(this.email);
+
+  @override
+  List<Object?> get props => [email];
 }
 
 /// Error state
@@ -74,14 +84,4 @@ class AuthError extends AuthState {
 
   @override
   List<Object?> get props => [failure, previousState];
-}
-
-/// OTP resent state
-class AuthOtpResent extends AuthState {
-  final String email;
-
-  const AuthOtpResent(this.email);
-
-  @override
-  List<Object?> get props => [email];
 }
