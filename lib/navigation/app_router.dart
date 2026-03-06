@@ -18,6 +18,11 @@ import '../features/reels/presentation/screens/reels_screen.dart';
 import '../features/saved/presentation/screens/saved_screen.dart';
 import '../features/search/presentation/screens/filter_screen.dart';
 import '../features/search/presentation/screens/search_screen.dart';
+import '../features/seller/presentation/screens/team_members_screen.dart';
+import '../features/seller/presentation/screens/add_member_screen.dart';
+import '../features/seller/presentation/screens/member_detail_screen.dart';
+import '../features/seller/presentation/screens/activity_log_screen.dart';
+import '../features/seller/domain/entities/activity_log.dart';
 import 'navigation_shell.dart';
 import 'route_names.dart';
 
@@ -207,6 +212,50 @@ GoRouter createRouter(AuthBloc authBloc) {
         name: RouteNames.notifications,
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const NotificationsScreen(),
+      ),
+
+      // Team management routes
+      GoRoute(
+        path: '/team',
+        name: RouteNames.teamMembers,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) {
+          final sellerProfileId = state.extra as String;
+          return TeamMembersScreen(sellerProfileId: sellerProfileId);
+        },
+      ),
+      GoRoute(
+        path: '/team/add',
+        name: RouteNames.addMember,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) {
+          final sellerProfileId = state.extra as String;
+          return AddMemberScreen(sellerProfileId: sellerProfileId);
+        },
+      ),
+      GoRoute(
+        path: '/team/member/:id',
+        name: RouteNames.memberDetail,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) {
+          final memberId = state.pathParameters['id']!;
+          return MemberDetailScreen(memberId: memberId);
+        },
+      ),
+      GoRoute(
+        path: '/team/activity',
+        name: RouteNames.activityLog,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>;
+          final sellerProfileId = extra['sellerProfileId'] as String;
+          final activities =
+              extra['activities'] as List<ActivityLog>? ?? const [];
+          return ActivityLogScreen(
+            sellerProfileId: sellerProfileId,
+            activities: activities,
+          );
+        },
       ),
     ],
   );

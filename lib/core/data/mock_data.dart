@@ -4,6 +4,8 @@ import '../../features/chat/domain/entities/message.dart';
 import '../../features/home/domain/entities/feed_item.dart' as home;
 import '../../features/listing/domain/entities/listing.dart';
 import '../../features/reels/domain/entities/reel.dart';
+import '../../features/seller/domain/entities/activity_log.dart';
+import '../../features/seller/domain/entities/seller_invitation.dart';
 import '../../features/seller/domain/entities/seller_member.dart';
 import '../services/permission_service.dart';
 
@@ -972,6 +974,99 @@ class MockData {
     }
   }
 
+  // Mock seller invitations
+  static final List<SellerInvitation> mockSellerInvitations = [
+    // Pending invitation for seller1 (AutoStar Salon)
+    SellerInvitation(
+      id: 'inv1',
+      sellerProfileId: 'seller1',
+      email: 'kamola@example.com',
+      role: MemberRole.manager,
+      invitedBy: 'user2',
+      status: InvitationStatus.pending,
+      token: 'token-inv1-uuid',
+      expiresAt: DateTime.now().add(const Duration(days: 5)),
+      inviterName: 'Aziza Karimova',
+      sellerName: 'AutoStar Salon',
+      createdAt: DateTime.now().subtract(const Duration(days: 2)),
+      updatedAt: DateTime.now().subtract(const Duration(days: 2)),
+    ),
+    // Pending invitation about to expire for seller1
+    SellerInvitation(
+      id: 'inv2',
+      sellerProfileId: 'seller1',
+      email: 'sardor@example.com',
+      role: MemberRole.marketing,
+      invitedBy: 'user4',
+      status: InvitationStatus.pending,
+      token: 'token-inv2-uuid',
+      expiresAt: DateTime.now().add(const Duration(days: 1)),
+      inviterName: 'Bobur Rahimov',
+      sellerName: 'AutoStar Salon',
+      createdAt: DateTime.now().subtract(const Duration(days: 6)),
+      updatedAt: DateTime.now().subtract(const Duration(days: 6)),
+    ),
+    // Accepted invitation for seller2 (AvtoPlus Motors)
+    SellerInvitation(
+      id: 'inv3',
+      sellerProfileId: 'seller2',
+      email: 'nilufar@example.com',
+      role: MemberRole.marketing,
+      invitedBy: 'user3',
+      status: InvitationStatus.accepted,
+      token: 'token-inv3-uuid',
+      expiresAt: DateTime.now().subtract(const Duration(days: 93)),
+      inviterName: 'Jasur Toshmatov',
+      sellerName: 'AvtoPlus Motors',
+      createdAt: DateTime.now().subtract(const Duration(days: 100)),
+      updatedAt: DateTime.now().subtract(const Duration(days: 99)),
+    ),
+    // Expired invitation for seller1
+    SellerInvitation(
+      id: 'inv4',
+      sellerProfileId: 'seller1',
+      email: 'expired@example.com',
+      role: MemberRole.viewer,
+      invitedBy: 'user2',
+      status: InvitationStatus.expired,
+      token: 'token-inv4-uuid',
+      expiresAt: DateTime.now().subtract(const Duration(days: 3)),
+      inviterName: 'Aziza Karimova',
+      sellerName: 'AutoStar Salon',
+      createdAt: DateTime.now().subtract(const Duration(days: 10)),
+      updatedAt: DateTime.now().subtract(const Duration(days: 3)),
+    ),
+  ];
+
+  // Get invitations by seller profile ID
+  static List<SellerInvitation> getInvitationsBySellerProfileId(
+      String sellerProfileId) {
+    return mockSellerInvitations
+        .where((i) => i.sellerProfileId == sellerProfileId)
+        .toList();
+  }
+
+  // Get pending invitations by seller profile ID
+  static List<SellerInvitation> getPendingInvitationsBySellerProfileId(
+      String sellerProfileId) {
+    return mockSellerInvitations
+        .where((i) =>
+            i.sellerProfileId == sellerProfileId &&
+            i.status == InvitationStatus.pending &&
+            !i.isExpired)
+        .toList();
+  }
+
+  // Get invitations by email
+  static List<SellerInvitation> getInvitationsByEmail(String email) {
+    return mockSellerInvitations
+        .where((i) =>
+            i.email == email &&
+            i.status == InvitationStatus.pending &&
+            !i.isExpired)
+        .toList();
+  }
+
   // Search listings
   static List<Listing> searchListings({
     String? query,
@@ -1025,5 +1120,127 @@ class MockData {
     }
 
     return results.toList();
+  }
+
+  // Mock activity logs
+  static final List<ActivityLog> mockActivityLogs = [
+    ActivityLog(
+      id: 'act1',
+      sellerProfileId: 'seller1',
+      userId: 'user2',
+      actionType: ActivityType.listingCreated,
+      description: 'Chevrolet Gentra 2022 e\'loni yaratildi',
+      createdAt: DateTime.now().subtract(const Duration(hours: 2)),
+      actorName: 'Aziza Karimova',
+    ),
+    ActivityLog(
+      id: 'act2',
+      sellerProfileId: 'seller1',
+      userId: 'user4',
+      actionType: ActivityType.listingUpdated,
+      description: 'Chevrolet Malibu 2 2023 e\'loni tahrirlandi',
+      metadata: {'listing_id': 'listing2', 'field': 'price'},
+      createdAt: DateTime.now().subtract(const Duration(hours: 5)),
+      actorName: 'Bobur Rahimov',
+    ),
+    ActivityLog(
+      id: 'act3',
+      sellerProfileId: 'seller1',
+      userId: 'user2',
+      actionType: ActivityType.memberInvited,
+      description: 'kamola@example.com ga taklifnoma yuborildi (Menejer)',
+      metadata: {'email': 'kamola@example.com', 'role': 'manager'},
+      createdAt: DateTime.now().subtract(const Duration(days: 1)),
+      actorName: 'Aziza Karimova',
+    ),
+    ActivityLog(
+      id: 'act4',
+      sellerProfileId: 'seller1',
+      userId: 'user5',
+      actionType: ActivityType.listingCreated,
+      description: 'Chevrolet Lacetti 2020 e\'loni yaratildi',
+      createdAt: DateTime.now().subtract(const Duration(days: 1, hours: 6)),
+      actorName: 'Dilshod Yusupov',
+    ),
+    ActivityLog(
+      id: 'act5',
+      sellerProfileId: 'seller1',
+      userId: 'user2',
+      actionType: ActivityType.memberRoleChanged,
+      description: 'Dilshod Yusupov roli Menejer ga o\'zgartirildi',
+      metadata: {'member_id': 'member3', 'new_role': 'manager'},
+      createdAt: DateTime.now().subtract(const Duration(days: 2)),
+      actorName: 'Aziza Karimova',
+    ),
+    ActivityLog(
+      id: 'act6',
+      sellerProfileId: 'seller1',
+      userId: 'user4',
+      actionType: ActivityType.listingDeleted,
+      description: 'Chevrolet Spark 2019 e\'loni o\'chirildi',
+      createdAt: DateTime.now().subtract(const Duration(days: 3)),
+      actorName: 'Bobur Rahimov',
+    ),
+    ActivityLog(
+      id: 'act7',
+      sellerProfileId: 'seller1',
+      userId: 'user2',
+      actionType: ActivityType.profileUpdated,
+      description: 'Biznes profili yangilandi',
+      metadata: {'fields': ['description', 'working_hours']},
+      createdAt: DateTime.now().subtract(const Duration(days: 4)),
+      actorName: 'Aziza Karimova',
+    ),
+    ActivityLog(
+      id: 'act8',
+      sellerProfileId: 'seller1',
+      userId: 'user2',
+      actionType: ActivityType.invitationCancelled,
+      description: 'expired@example.com ga taklifnoma bekor qilindi',
+      createdAt: DateTime.now().subtract(const Duration(days: 5)),
+      actorName: 'Aziza Karimova',
+    ),
+    ActivityLog(
+      id: 'act9',
+      sellerProfileId: 'seller1',
+      userId: 'user5',
+      actionType: ActivityType.listingCreated,
+      description: 'Chevrolet Nexia 3 2021 e\'loni yaratildi',
+      createdAt: DateTime.now().subtract(const Duration(days: 6)),
+      actorName: 'Dilshod Yusupov',
+    ),
+    ActivityLog(
+      id: 'act10',
+      sellerProfileId: 'seller1',
+      userId: 'user4',
+      actionType: ActivityType.memberInvited,
+      description: 'sardor@example.com ga taklifnoma yuborildi (Marketing)',
+      metadata: {'email': 'sardor@example.com', 'role': 'marketing'},
+      createdAt: DateTime.now().subtract(const Duration(days: 7)),
+      actorName: 'Bobur Rahimov',
+    ),
+  ];
+
+  // Get activity logs by seller profile ID
+  static List<ActivityLog> getActivityLogsBySellerProfileId(
+      String sellerProfileId,
+      {String? filterCategory}) {
+    var results = mockActivityLogs
+        .where((a) => a.sellerProfileId == sellerProfileId);
+
+    if (filterCategory != null) {
+      results = results.where((a) => a.actionType.category == filterCategory);
+    }
+
+    return results.toList();
+  }
+
+  // Get activity logs by member user ID
+  static List<ActivityLog> getActivityLogsByUserId(
+      String sellerProfileId, String userId) {
+    return mockActivityLogs
+        .where((a) =>
+            a.sellerProfileId == sellerProfileId && a.userId == userId)
+        .toList();
   }
 }

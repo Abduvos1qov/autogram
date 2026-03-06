@@ -20,6 +20,8 @@ class ApiEndpoints {
   static const String subscriptionPlans = 'subscription_plans';
   static const String payments = 'payments';
   static const String boosts = 'boosts';
+  static const String sellerInvitations = 'seller_invitations';
+  static const String memberActivityLog = 'member_activity_log';
 
   // Supabase Edge Functions
   static const String sendOtp = 'send-otp';

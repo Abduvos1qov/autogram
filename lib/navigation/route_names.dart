@@ -30,6 +30,12 @@ abstract class RouteNames {
   // Seller routes
   static const upgrade = 'upgrade';
   static const subscription = 'subscription';
+
+  // Team routes
+  static const teamMembers = 'teamMembers';
+  static const addMember = 'addMember';
+  static const memberDetail = 'memberDetail';
+  static const activityLog = 'activityLog';
 }
 
 abstract class RoutePaths {
@@ -62,4 +68,10 @@ abstract class RoutePaths {
   // Seller paths
   static const upgrade = '/upgrade';
   static const subscription = '/subscription';
+
+  // Team paths
+  static const teamMembers = '/team';
+  static const addMember = '/team/add';
+  static const memberDetail = '/team/member/:id';
+  static const activityLog = '/team/activity';
 }
