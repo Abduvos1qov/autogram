@@ -7,7 +7,9 @@ class User extends Equatable {
   final String? phone;
   final String? email;
   final String fullName;
+  final String? username;
   final String? avatarUrl;
+  final DateTime? dateOfBirth;
   final UserRole role;
   final bool isVerified;
   final bool isActive;
@@ -20,7 +22,9 @@ class User extends Equatable {
     this.phone,
     this.email,
     required this.fullName,
+    this.username,
     this.avatarUrl,
+    this.dateOfBirth,
     required this.role,
     required this.isVerified,
     required this.isActive,
@@ -31,13 +35,16 @@ class User extends Equatable {
 
   bool get isSeller => role == UserRole.seller;
   bool get isBuyer => role == UserRole.buyer;
+  bool get hasUsername => username != null && username!.isNotEmpty;
 
   User copyWith({
     String? id,
     String? phone,
     String? email,
     String? fullName,
+    String? username,
     String? avatarUrl,
+    DateTime? dateOfBirth,
     UserRole? role,
     bool? isVerified,
     bool? isActive,
@@ -50,7 +57,9 @@ class User extends Equatable {
       phone: phone ?? this.phone,
       email: email ?? this.email,
       fullName: fullName ?? this.fullName,
+      username: username ?? this.username,
       avatarUrl: avatarUrl ?? this.avatarUrl,
+      dateOfBirth: dateOfBirth ?? this.dateOfBirth,
       role: role ?? this.role,
       isVerified: isVerified ?? this.isVerified,
       isActive: isActive ?? this.isActive,
@@ -66,7 +75,9 @@ class User extends Equatable {
         phone,
         email,
         fullName,
+        username,
         avatarUrl,
+        dateOfBirth,
         role,
         isVerified,
         isActive,

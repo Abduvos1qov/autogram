@@ -18,6 +18,8 @@ class MockData {
       phone: '+998901234567',
       fullName: 'Sardor Aliyev',
       email: 'sardor@example.com',
+      username: 'sardor_aliyev',
+      dateOfBirth: DateTime(1995, 3, 15),
       avatarUrl: 'https://ui-avatars.com/api/?name=Sardor+Aliyev&size=200',
       role: UserRole.buyer,
       isVerified: false,
@@ -31,6 +33,8 @@ class MockData {
       phone: '+998909876543',
       fullName: 'Aziza Karimova',
       email: 'aziza@example.com',
+      username: 'aziza_k',
+      dateOfBirth: DateTime(1992, 7, 22),
       avatarUrl: 'https://ui-avatars.com/api/?name=Aziza+Karimova&size=200',
       role: UserRole.seller,
       isVerified: true,
@@ -44,6 +48,8 @@ class MockData {
       phone: '+998971234567',
       fullName: 'Jasur Toshmatov',
       email: 'jasur@example.com',
+      username: 'jasur_t',
+      dateOfBirth: DateTime(1990, 11, 5),
       avatarUrl: 'https://ui-avatars.com/api/?name=Jasur+Toshmatov&size=200',
       role: UserRole.seller,
       isVerified: true,
@@ -58,6 +64,8 @@ class MockData {
       phone: '+998931112233',
       fullName: 'Bobur Rahimov',
       email: 'bobur@example.com',
+      username: 'bobur_r',
+      dateOfBirth: DateTime(1988, 1, 10),
       avatarUrl: 'https://ui-avatars.com/api/?name=Bobur+Rahimov&size=200',
       role: UserRole.seller,
       isVerified: true,
@@ -71,6 +79,8 @@ class MockData {
       phone: '+998944445566',
       fullName: 'Dilshod Yusupov',
       email: 'dilshod@example.com',
+      username: 'dilshod_y',
+      dateOfBirth: DateTime(1993, 5, 20),
       avatarUrl: 'https://ui-avatars.com/api/?name=Dilshod+Yusupov&size=200',
       role: UserRole.seller,
       isVerified: true,
@@ -84,6 +94,8 @@ class MockData {
       phone: '+998955556677',
       fullName: 'Nilufar Abdullayeva',
       email: 'nilufar@example.com',
+      username: 'nilufar_a',
+      dateOfBirth: DateTime(1996, 9, 8),
       avatarUrl: 'https://ui-avatars.com/api/?name=Nilufar+Abdullayeva&size=200',
       role: UserRole.seller,
       isVerified: true,
@@ -861,6 +873,13 @@ class MockData {
     } catch (e) {
       return null;
     }
+  }
+
+  // Check if a username is available
+  static bool isUsernameAvailable(String username) {
+    return !mockUsers.any(
+      (user) => user.username?.toLowerCase() == username.toLowerCase(),
+    );
   }
 
   // Mock seller members (organization team)

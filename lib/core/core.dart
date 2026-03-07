@@ -49,5 +49,8 @@ export 'theme/app_spacing.dart';
 // Widgets
 export 'widgets/widgets.dart';
 
+// Mixins
+export 'mixins/repository_mixin.dart';
+
 // UseCases
 export 'usecases/usecase.dart';

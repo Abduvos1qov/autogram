@@ -6,19 +6,30 @@ import '../entities/user.dart';
 /// Auth repository interface - defines contract for auth operations
 
 abstract class AuthRepository {
-  /// Send OTP to email
-  Future<Either<Failure, void>> sendOtp({required String email});
-
-  /// Verify OTP code
-  Future<Either<Failure, User?>> verifyOtp({
+  /// Sign up with email and password
+  Future<Either<Failure, void>> signUp({
     required String email,
-    required String code,
-  });
-
-  /// Complete profile after OTP verification
-  Future<Either<Failure, User>> completeProfile({
+    required String password,
     required String fullName,
     String? phone,
+    DateTime? dateOfBirth,
+  });
+
+  /// Sign in with email and password
+  Future<Either<Failure, User>> signIn({
+    required String email,
+    required String password,
+  });
+
+  /// Send password reset email
+  Future<Either<Failure, void>> resetPassword({required String email});
+
+  /// Set username for current user
+  Future<Either<Failure, User>> setUsername({required String username});
+
+  /// Check if username is available
+  Future<Either<Failure, bool>> checkUsernameAvailability({
+    required String username,
   });
 
   /// Get current authenticated user

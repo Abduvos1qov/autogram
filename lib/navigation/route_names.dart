@@ -5,8 +5,10 @@ abstract class RouteNames {
   static const splash = 'splash';
   static const onboarding = 'onboarding';
   static const login = 'login';
-  static const otp = 'otp';
   static const register = 'register';
+  static const verification = 'verification';
+  static const username = 'username';
+  static const forgotPassword = 'forgotPassword';
 
   // Main routes
   static const home = 'home';
@@ -43,8 +45,10 @@ abstract class RoutePaths {
   static const splash = '/splash';
   static const onboarding = '/onboarding';
   static const login = '/login';
-  static const otp = '/otp';
   static const register = '/register';
+  static const verification = '/verification';
+  static const username = '/username';
+  static const forgotPassword = '/forgot-password';
 
   // Main paths (tabs)
   static const home = '/';

@@ -13,9 +13,11 @@ import '../features/auth/data/repositories/auth_repository_impl.dart';
 import '../features/auth/domain/repositories/auth_repository.dart';
 import '../features/auth/domain/usecases/get_current_user_usecase.dart';
 import '../features/auth/domain/usecases/logout_usecase.dart';
-import '../features/auth/domain/usecases/complete_profile_usecase.dart';
-import '../features/auth/domain/usecases/send_otp_usecase.dart';
-import '../features/auth/domain/usecases/verify_otp_usecase.dart';
+import '../features/auth/domain/usecases/sign_in_usecase.dart';
+import '../features/auth/domain/usecases/sign_up_usecase.dart';
+import '../features/auth/domain/usecases/reset_password_usecase.dart';
+import '../features/auth/domain/usecases/set_username_usecase.dart';
+import '../features/auth/domain/usecases/check_username_usecase.dart';
 import '../features/auth/presentation/bloc/auth_bloc.dart';
 
 // Home
@@ -98,8 +100,9 @@ import '../features/seller/domain/usecases/get_member_activity_logs_usecase.dart
 import '../core/services/permission_service.dart';
 
 // Profile
-// Profile - TODO: Implement when needed
-// Notifications - TODO: Implement when needed
+import '../features/profile/data/repositories/profile_repository_impl.dart';
+import '../features/profile/domain/repositories/profile_repository.dart';
+import '../features/profile/presentation/bloc/profile_bloc.dart';
 
 final sl = GetIt.instance;
 
@@ -161,17 +164,21 @@ void _initAuth() {
   );
 
   // Use cases
-  sl.registerLazySingleton(() => SendOtpUseCase(sl()));
-  sl.registerLazySingleton(() => VerifyOtpUseCase(sl()));
-  sl.registerLazySingleton(() => CompleteProfileUseCase(sl()));
+  sl.registerLazySingleton(() => SignInUseCase(sl()));
+  sl.registerLazySingleton(() => SignUpUseCase(sl()));
+  sl.registerLazySingleton(() => ResetPasswordUseCase(sl()));
+  sl.registerLazySingleton(() => SetUsernameUseCase(sl()));
+  sl.registerLazySingleton(() => CheckUsernameUseCase(sl()));
   sl.registerLazySingleton(() => LogoutUseCase(sl()));
   sl.registerLazySingleton(() => GetCurrentUserUseCase(sl()));
 
   // BLoC
   sl.registerFactory(() => AuthBloc(
-        sendOtpUseCase: sl(),
-        verifyOtpUseCase: sl(),
-        completeProfileUseCase: sl(),
+        signInUseCase: sl(),
+        signUpUseCase: sl(),
+        resetPasswordUseCase: sl(),
+        setUsernameUseCase: sl(),
+        checkUsernameUseCase: sl(),
         logoutUseCase: sl(),
         getCurrentUserUseCase: sl(),
       ));
@@ -402,11 +409,13 @@ void _initTeam() {
 }
 
 void _initProfile() {
-  // Repository - needs implementation
-  // sl.registerLazySingleton<ProfileRepository>(() => ProfileRepositoryImpl(...));
+  // Repository
+  sl.registerLazySingleton<ProfileRepository>(
+    () => ProfileRepositoryImpl(),
+  );
 
-  // BLoC - commented until repository is implemented
-  // sl.registerFactory(() => ProfileBloc(repository: sl()));
+  // BLoC
+  sl.registerFactory(() => ProfileBloc(repository: sl()));
 }
 
 void _initNotifications() {
