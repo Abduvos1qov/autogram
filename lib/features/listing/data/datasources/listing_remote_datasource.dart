@@ -1,8 +1,9 @@
-import 'package:supabase_flutter/supabase_flutter.dart' hide AuthException;
+import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
 
 import '../../../../core/config/test_config.dart';
 import '../../../../core/constants/api_endpoints.dart';
 import '../../../../core/data/mock_data.dart';
+import '../../../../core/errors/error_handler.dart';
 import '../../../../core/errors/exceptions.dart';
 import '../../../../core/network/api_response.dart';
 import '../models/listing_model.dart';
@@ -37,7 +38,7 @@ abstract class ListingRemoteDataSource {
 }
 
 class ListingRemoteDataSourceImpl implements ListingRemoteDataSource {
-  final SupabaseClient supabaseClient;
+  final supabase.SupabaseClient supabaseClient;
 
   ListingRemoteDataSourceImpl({required this.supabaseClient});
 
@@ -49,7 +50,7 @@ class ListingRemoteDataSourceImpl implements ListingRemoteDataSource {
         await Future.delayed(const Duration(milliseconds: 500)); // Simulate network delay
         final listing = MockData.getListingById(id);
         if (listing == null) {
-          throw const ServerException(message: 'Listing not found');
+          throw const NotFoundException(message: 'E\'lon topilmadi');
         }
         return ListingModel.fromEntity(listing);
       }
@@ -65,9 +66,10 @@ class ListingRemoteDataSourceImpl implements ListingRemoteDataSource {
           .single();
 
       return ListingModel.fromJson(response);
-    } on PostgrestException catch (e) {
-      throw ServerException(message: e.message);
+    } on supabase.PostgrestException catch (e) {
+      ErrorHandler.throwFromPostgrest(e);
     } catch (e) {
+      if (e is NotFoundException) rethrow;
       throw ServerException(message: e.toString());
     }
   }
@@ -102,7 +104,7 @@ class ListingRemoteDataSourceImpl implements ListingRemoteDataSource {
           .select('id')
           .eq('seller_id', sellerId)
           .eq('status', 'active')
-          .count(CountOption.exact);
+          .count(supabase.CountOption.exact);
 
       final total = countResponse.count;
       return PaginatedResponse(
@@ -112,8 +114,8 @@ class ListingRemoteDataSourceImpl implements ListingRemoteDataSource {
         total: total,
         hasMore: (page * pageSize) < total,
       );
-    } on PostgrestException catch (e) {
-      throw ServerException(message: e.message);
+    } on supabase.PostgrestException catch (e) {
+      ErrorHandler.throwFromPostgrest(e);
     } catch (e) {
       throw ServerException(message: e.toString());
     }
@@ -140,8 +142,8 @@ class ListingRemoteDataSourceImpl implements ListingRemoteDataSource {
       return (response as List)
           .map((json) => ListingModel.fromJson(json))
           .toList();
-    } on PostgrestException catch (e) {
-      throw ServerException(message: e.message);
+    } on supabase.PostgrestException catch (e) {
+      ErrorHandler.throwFromPostgrest(e);
     } catch (e) {
       throw ServerException(message: e.toString());
     }
@@ -151,7 +153,7 @@ class ListingRemoteDataSourceImpl implements ListingRemoteDataSource {
   Future<void> likeListing(String listingId) async {
     try {
       final userId = supabaseClient.auth.currentUser?.id;
-      if (userId == null) throw const AuthException(message: 'Not authenticated');
+      if (userId == null) throw const AuthException(message: 'Tizimga kirilmagan');
 
       await supabaseClient.from(ApiEndpoints.likes).insert({
         'user_id': userId,
@@ -162,9 +164,10 @@ class ListingRemoteDataSourceImpl implements ListingRemoteDataSource {
       await supabaseClient.rpc('increment_likes', params: {
         'listing_id': listingId,
       });
-    } on PostgrestException catch (e) {
-      throw ServerException(message: e.message);
+    } on supabase.PostgrestException catch (e) {
+      ErrorHandler.throwFromPostgrest(e);
     } catch (e) {
+      if (e is AuthException) rethrow;
       throw ServerException(message: e.toString());
     }
   }
@@ -173,7 +176,7 @@ class ListingRemoteDataSourceImpl implements ListingRemoteDataSource {
   Future<void> unlikeListing(String listingId) async {
     try {
       final userId = supabaseClient.auth.currentUser?.id;
-      if (userId == null) throw const AuthException(message: 'Not authenticated');
+      if (userId == null) throw const AuthException(message: 'Tizimga kirilmagan');
 
       await supabaseClient
           .from(ApiEndpoints.likes)
@@ -185,9 +188,10 @@ class ListingRemoteDataSourceImpl implements ListingRemoteDataSource {
       await supabaseClient.rpc('decrement_likes', params: {
         'listing_id': listingId,
       });
-    } on PostgrestException catch (e) {
-      throw ServerException(message: e.message);
+    } on supabase.PostgrestException catch (e) {
+      ErrorHandler.throwFromPostgrest(e);
     } catch (e) {
+      if (e is AuthException) rethrow;
       throw ServerException(message: e.toString());
     }
   }
@@ -196,15 +200,16 @@ class ListingRemoteDataSourceImpl implements ListingRemoteDataSource {
   Future<void> saveListing(String listingId) async {
     try {
       final userId = supabaseClient.auth.currentUser?.id;
-      if (userId == null) throw const AuthException(message: 'Not authenticated');
+      if (userId == null) throw const AuthException(message: 'Tizimga kirilmagan');
 
       await supabaseClient.from(ApiEndpoints.saves).insert({
         'user_id': userId,
         'listing_id': listingId,
       });
-    } on PostgrestException catch (e) {
-      throw ServerException(message: e.message);
+    } on supabase.PostgrestException catch (e) {
+      ErrorHandler.throwFromPostgrest(e);
     } catch (e) {
+      if (e is AuthException) rethrow;
       throw ServerException(message: e.toString());
     }
   }
@@ -213,16 +218,17 @@ class ListingRemoteDataSourceImpl implements ListingRemoteDataSource {
   Future<void> unsaveListing(String listingId) async {
     try {
       final userId = supabaseClient.auth.currentUser?.id;
-      if (userId == null) throw const AuthException(message: 'Not authenticated');
+      if (userId == null) throw const AuthException(message: 'Tizimga kirilmagan');
 
       await supabaseClient
           .from(ApiEndpoints.saves)
           .delete()
           .eq('user_id', userId)
           .eq('listing_id', listingId);
-    } on PostgrestException catch (e) {
-      throw ServerException(message: e.message);
+    } on supabase.PostgrestException catch (e) {
+      ErrorHandler.throwFromPostgrest(e);
     } catch (e) {
+      if (e is AuthException) rethrow;
       throw ServerException(message: e.toString());
     }
   }
@@ -233,8 +239,8 @@ class ListingRemoteDataSourceImpl implements ListingRemoteDataSource {
       await supabaseClient.rpc('increment_shares', params: {
         'listing_id': listingId,
       });
-    } on PostgrestException catch (e) {
-      throw ServerException(message: e.message);
+    } on supabase.PostgrestException catch (e) {
+      ErrorHandler.throwFromPostgrest(e);
     } catch (e) {
       throw ServerException(message: e.toString());
     }
@@ -255,8 +261,8 @@ class ListingRemoteDataSourceImpl implements ListingRemoteDataSource {
         'reason': reason,
         'description': description,
       });
-    } on PostgrestException catch (e) {
-      throw ServerException(message: e.message);
+    } on supabase.PostgrestException catch (e) {
+      ErrorHandler.throwFromPostgrest(e);
     } catch (e) {
       throw ServerException(message: e.toString());
     }
@@ -280,8 +286,8 @@ class ListingRemoteDataSourceImpl implements ListingRemoteDataSource {
       await supabaseClient.rpc('increment_views', params: {
         'listing_id': listingId,
       });
-    } on PostgrestException catch (e) {
-      throw ServerException(message: e.message);
+    } on supabase.PostgrestException catch (e) {
+      ErrorHandler.throwFromPostgrest(e);
     } catch (e) {
       throw ServerException(message: e.toString());
     }
@@ -297,8 +303,8 @@ class ListingRemoteDataSourceImpl implements ListingRemoteDataSource {
           .single();
 
       return SellerModel.fromJson(response);
-    } on PostgrestException catch (e) {
-      throw ServerException(message: e.message);
+    } on supabase.PostgrestException catch (e) {
+      ErrorHandler.throwFromPostgrest(e);
     } catch (e) {
       throw ServerException(message: e.toString());
     }
@@ -308,15 +314,16 @@ class ListingRemoteDataSourceImpl implements ListingRemoteDataSource {
   Future<void> followSeller(String sellerId) async {
     try {
       final userId = supabaseClient.auth.currentUser?.id;
-      if (userId == null) throw const AuthException(message: 'Not authenticated');
+      if (userId == null) throw const AuthException(message: 'Tizimga kirilmagan');
 
       await supabaseClient.from('follows').insert({
         'user_id': userId,
         'seller_id': sellerId,
       });
-    } on PostgrestException catch (e) {
-      throw ServerException(message: e.message);
+    } on supabase.PostgrestException catch (e) {
+      ErrorHandler.throwFromPostgrest(e);
     } catch (e) {
+      if (e is AuthException) rethrow;
       throw ServerException(message: e.toString());
     }
   }
@@ -325,16 +332,17 @@ class ListingRemoteDataSourceImpl implements ListingRemoteDataSource {
   Future<void> unfollowSeller(String sellerId) async {
     try {
       final userId = supabaseClient.auth.currentUser?.id;
-      if (userId == null) throw const AuthException(message: 'Not authenticated');
+      if (userId == null) throw const AuthException(message: 'Tizimga kirilmagan');
 
       await supabaseClient
           .from('follows')
           .delete()
           .eq('user_id', userId)
           .eq('seller_id', sellerId);
-    } on PostgrestException catch (e) {
-      throw ServerException(message: e.message);
+    } on supabase.PostgrestException catch (e) {
+      ErrorHandler.throwFromPostgrest(e);
     } catch (e) {
+      if (e is AuthException) rethrow;
       throw ServerException(message: e.toString());
     }
   }

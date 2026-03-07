@@ -145,7 +145,7 @@ Future<void> _initCore() async {
 void _initAuth() {
   // Data sources
   sl.registerLazySingleton<AuthRemoteDataSource>(
-    () => AuthRemoteDataSourceImpl(supabase: sl()),
+    () => AuthRemoteDataSourceImpl(supabaseClient: sl()),
   );
   sl.registerLazySingleton<AuthLocalDataSource>(
     () => AuthLocalDataSourceImpl(
@@ -187,7 +187,7 @@ void _initAuth() {
 void _initHome() {
   // Data sources
   sl.registerLazySingleton<HomeRemoteDataSource>(
-    () => HomeRemoteDataSourceImpl(supabase: sl()),
+    () => HomeRemoteDataSourceImpl(supabaseClient: sl()),
   );
 
   // Repository
@@ -211,7 +211,7 @@ void _initHome() {
 void _initReels() {
   // Data sources
   sl.registerLazySingleton<ReelsRemoteDataSource>(
-    () => ReelsRemoteDataSourceImpl( supabase: sl()),
+    () => ReelsRemoteDataSourceImpl(supabaseClient: sl()),
   );
 
   // Repository
@@ -329,7 +329,7 @@ void _initChat() {
 void _initSellerMembers() {
   // Data sources
   sl.registerLazySingleton<SellerMemberRemoteDataSource>(
-    () => SellerMemberRemoteDataSourceImpl(supabase: sl()),
+    () => SellerMemberRemoteDataSourceImpl(supabaseClient: sl()),
   );
 
   // Repository
@@ -351,7 +351,7 @@ void _initSellerMembers() {
 void _initSellerInvitations() {
   // Data sources
   sl.registerLazySingleton<SellerInvitationRemoteDataSource>(
-    () => SellerInvitationRemoteDataSourceImpl(supabase: sl()),
+    () => SellerInvitationRemoteDataSourceImpl(supabaseClient: sl()),
   );
 
   // Repository
@@ -374,7 +374,7 @@ void _initSellerInvitations() {
 void _initActivityLog() {
   // Data sources
   sl.registerLazySingleton<ActivityLogRemoteDataSource>(
-    () => ActivityLogRemoteDataSourceImpl(supabase: sl()),
+    () => ActivityLogRemoteDataSourceImpl(supabaseClient: sl()),
   );
 
   // Repository

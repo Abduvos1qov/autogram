@@ -1,8 +1,9 @@
 import 'dart:io';
 
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
 
 import '../../../../core/constants/api_endpoints.dart';
+import '../../../../core/errors/error_handler.dart';
 import '../../../../core/errors/exceptions.dart' as app_exceptions;
 import '../../../../core/utils/logger.dart';
 import '../../domain/entities/seller_profile.dart';
@@ -31,10 +32,10 @@ abstract class SellerRemoteDataSource {
 }
 
 class SellerRemoteDataSourceImpl implements SellerRemoteDataSource {
-  final SupabaseClient _supabase;
+  final supabase.SupabaseClient _supabase;
 
-  SellerRemoteDataSourceImpl({required SupabaseClient supabase})
-      : _supabase = supabase;
+  SellerRemoteDataSourceImpl({required supabase.SupabaseClient supabaseClient})
+      : _supabase = supabaseClient;
 
   @override
   Future<SellerProfileModel?> getSellerProfile() async {
@@ -53,7 +54,11 @@ class SellerRemoteDataSourceImpl implements SellerRemoteDataSource {
       if (response == null) return null;
 
       return SellerProfileModel.fromJson(response);
+    } on supabase.PostgrestException catch (e) {
+      AppLogger.error('Database error getting seller profile', e);
+      ErrorHandler.throwFromPostgrest(e);
     } catch (e) {
+      if (e is app_exceptions.AuthException) rethrow;
       AppLogger.error('Error getting seller profile', e);
       throw app_exceptions.ServerException(message: e.toString());
     }
@@ -113,7 +118,11 @@ class SellerRemoteDataSourceImpl implements SellerRemoteDataSource {
 
       AppLogger.info('Seller profile created successfully');
       return SellerProfileModel.fromJson(response);
+    } on supabase.PostgrestException catch (e) {
+      AppLogger.error('Database error creating seller profile', e);
+      ErrorHandler.throwFromPostgrest(e);
     } catch (e) {
+      if (e is app_exceptions.AuthException) rethrow;
       AppLogger.error('Error creating seller profile', e);
       throw app_exceptions.ServerException(message: e.toString());
     }
@@ -137,7 +146,11 @@ class SellerRemoteDataSourceImpl implements SellerRemoteDataSource {
           .single();
 
       return SellerProfileModel.fromJson(response);
+    } on supabase.PostgrestException catch (e) {
+      AppLogger.error('Database error updating seller profile', e);
+      ErrorHandler.throwFromPostgrest(e);
     } catch (e) {
+      if (e is app_exceptions.AuthException) rethrow;
       AppLogger.error('Error updating seller profile', e);
       throw app_exceptions.ServerException(message: e.toString());
     }
@@ -234,7 +247,11 @@ class SellerRemoteDataSourceImpl implements SellerRemoteDataSource {
           .single();
 
       return SellerProfileModel.fromJson(response);
+    } on supabase.PostgrestException catch (e) {
+      AppLogger.error('Database error subscribing to plan', e);
+      ErrorHandler.throwFromPostgrest(e);
     } catch (e) {
+      if (e is app_exceptions.AuthException) rethrow;
       AppLogger.error('Error subscribing to plan', e);
       throw app_exceptions.ServerException(message: e.toString());
     }
@@ -260,7 +277,11 @@ class SellerRemoteDataSourceImpl implements SellerRemoteDataSource {
           .single();
 
       return SellerProfileModel.fromJson(response);
+    } on supabase.PostgrestException catch (e) {
+      AppLogger.error('Database error cancelling subscription', e);
+      ErrorHandler.throwFromPostgrest(e);
     } catch (e) {
+      if (e is app_exceptions.AuthException) rethrow;
       AppLogger.error('Error cancelling subscription', e);
       throw app_exceptions.ServerException(message: e.toString());
     }

@@ -1,8 +1,9 @@
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
 
 import '../../../../core/config/test_config.dart';
 import '../../../../core/constants/api_endpoints.dart';
 import '../../../../core/data/mock_data.dart';
+import '../../../../core/errors/error_handler.dart';
 import '../../../../core/errors/exceptions.dart';
 import '../../../../core/network/api_response.dart';
 import '../../domain/entities/filter.dart';
@@ -29,7 +30,7 @@ abstract class SearchRemoteDataSource {
 }
 
 class SearchRemoteDataSourceImpl implements SearchRemoteDataSource {
-  final SupabaseClient supabaseClient;
+  final supabase.SupabaseClient supabaseClient;
 
   SearchRemoteDataSourceImpl({required this.supabaseClient});
 
@@ -149,10 +150,9 @@ class SearchRemoteDataSourceImpl implements SearchRemoteDataSource {
           .from(ApiEndpoints.listings)
           .select('id')
           .eq('status', 'active')
-          .count(CountOption.exact);
+          .count(supabase.CountOption.exact);
 
       final totalCount = countResponse.count;
-      final totalPages = (totalCount / pageSize).ceil();
 
       return PaginatedResponse(
         data: results,
@@ -160,8 +160,8 @@ class SearchRemoteDataSourceImpl implements SearchRemoteDataSource {
         pageSize: pageSize,
       total: totalCount, hasMore: true,
       );
-    } on PostgrestException catch (e) {
-      throw ServerException(message: e.message);
+    } on supabase.PostgrestException catch (e) {
+      ErrorHandler.throwFromPostgrest(e);
     } catch (e) {
       throw ServerException(message: e.toString());
     }
@@ -188,8 +188,8 @@ class SearchRemoteDataSourceImpl implements SearchRemoteDataSource {
       return (response as List)
           .map((json) => BrandModelData.fromJson(json))
           .toList();
-    } on PostgrestException catch (e) {
-      throw ServerException(message: e.message);
+    } on supabase.PostgrestException catch (e) {
+      ErrorHandler.throwFromPostgrest(e);
     } catch (e) {
       throw ServerException(message: e.toString());
     }
@@ -207,8 +207,8 @@ class SearchRemoteDataSourceImpl implements SearchRemoteDataSource {
       return (response as List)
           .map((json) => CarModelData.fromJson(json))
           .toList();
-    } on PostgrestException catch (e) {
-      throw ServerException(message: e.message);
+    } on supabase.PostgrestException catch (e) {
+      ErrorHandler.throwFromPostgrest(e);
     } catch (e) {
       throw ServerException(message: e.toString());
     }
@@ -227,8 +227,8 @@ class SearchRemoteDataSourceImpl implements SearchRemoteDataSource {
           .map((json) => json['title'] as String)
           .toSet()
           .toList();
-    } on PostgrestException catch (e) {
-      throw ServerException(message: e.message);
+    } on supabase.PostgrestException catch (e) {
+      ErrorHandler.throwFromPostgrest(e);
     } catch (e) {
       throw ServerException(message: e.toString());
     }

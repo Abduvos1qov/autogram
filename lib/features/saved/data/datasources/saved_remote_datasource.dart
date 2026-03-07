@@ -1,6 +1,7 @@
-import 'package:supabase_flutter/supabase_flutter.dart' hide AuthException;
+import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
 
 import '../../../../core/constants/api_endpoints.dart';
+import '../../../../core/errors/error_handler.dart';
 import '../../../../core/errors/exceptions.dart';
 import '../models/saved_item_model.dart';
 
@@ -13,7 +14,7 @@ abstract class SavedRemoteDataSource {
 }
 
 class SavedRemoteDataSourceImpl implements SavedRemoteDataSource {
-  final SupabaseClient supabaseClient;
+  final supabase.SupabaseClient supabaseClient;
 
   SavedRemoteDataSourceImpl({required this.supabaseClient});
 
@@ -21,7 +22,7 @@ class SavedRemoteDataSourceImpl implements SavedRemoteDataSource {
   Future<List<SavedItemModel>> getSavedItems() async {
     try {
       final userId = supabaseClient.auth.currentUser?.id;
-      if (userId == null) throw const AuthException(message: 'Not authenticated');
+      if (userId == null) throw const AuthException(message: 'Tizimga kirilmagan');
 
       final response = await supabaseClient
           .from(ApiEndpoints.saves)
@@ -39,9 +40,10 @@ class SavedRemoteDataSourceImpl implements SavedRemoteDataSource {
       return (response as List)
           .map((json) => SavedItemModel.fromJson(json))
           .toList();
-    } on PostgrestException catch (e) {
-      throw ServerException(message: e.message);
+    } on supabase.PostgrestException catch (e) {
+      ErrorHandler.throwFromPostgrest(e);
     } catch (e) {
+      if (e is AuthException) rethrow;
       throw ServerException(message: e.toString());
     }
   }
@@ -50,16 +52,17 @@ class SavedRemoteDataSourceImpl implements SavedRemoteDataSource {
   Future<void> removeFromSaved(String listingId) async {
     try {
       final userId = supabaseClient.auth.currentUser?.id;
-      if (userId == null) throw const AuthException(message: 'Not authenticated');
+      if (userId == null) throw const AuthException(message: 'Tizimga kirilmagan');
 
       await supabaseClient
           .from(ApiEndpoints.saves)
           .delete()
           .eq('user_id', userId)
           .eq('listing_id', listingId);
-    } on PostgrestException catch (e) {
-      throw ServerException(message: e.message);
+    } on supabase.PostgrestException catch (e) {
+      ErrorHandler.throwFromPostgrest(e);
     } catch (e) {
+      if (e is AuthException) rethrow;
       throw ServerException(message: e.toString());
     }
   }
@@ -68,15 +71,16 @@ class SavedRemoteDataSourceImpl implements SavedRemoteDataSource {
   Future<void> clearAllSaved() async {
     try {
       final userId = supabaseClient.auth.currentUser?.id;
-      if (userId == null) throw const AuthException(message: 'Not authenticated');
+      if (userId == null) throw const AuthException(message: 'Tizimga kirilmagan');
 
       await supabaseClient
           .from(ApiEndpoints.saves)
           .delete()
           .eq('user_id', userId);
-    } on PostgrestException catch (e) {
-      throw ServerException(message: e.message);
+    } on supabase.PostgrestException catch (e) {
+      ErrorHandler.throwFromPostgrest(e);
     } catch (e) {
+      if (e is AuthException) rethrow;
       throw ServerException(message: e.toString());
     }
   }

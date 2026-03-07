@@ -1,8 +1,9 @@
-import 'package:supabase_flutter/supabase_flutter.dart' hide AuthException;
+import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
 
 import '../../../../core/config/test_config.dart';
 import '../../../../core/constants/api_endpoints.dart';
 import '../../../../core/data/mock_data.dart';
+import '../../../../core/errors/error_handler.dart';
 import '../../../../core/errors/exceptions.dart';
 import '../../../../core/utils/logger.dart';
 import '../../domain/entities/user.dart';
@@ -35,10 +36,10 @@ abstract class AuthRemoteDataSource {
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
-  final SupabaseClient _supabase;
+  final supabase.SupabaseClient _supabase;
 
-  AuthRemoteDataSourceImpl({required SupabaseClient supabase})
-      : _supabase = supabase;
+  AuthRemoteDataSourceImpl({required supabase.SupabaseClient supabaseClient})
+      : _supabase = supabaseClient;
 
   @override
   Future<void> signUp({
@@ -85,16 +86,19 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       });
 
       AppLogger.info('Sign up successful');
-    } on AuthException catch (e) {
+    } on supabase.AuthException catch (e) {
       AppLogger.error('Sign up failed', e);
       if (e.message.contains('already registered')) {
-        throw const ServerException(
+        throw const AuthException(
           message: 'Bu email allaqachon ro\'yxatdan o\'tgan',
         );
       }
-      throw ServerException(message: e.message);
+      ErrorHandler.throwFromSupabaseAuth(e);
+    } on supabase.PostgrestException catch (e) {
+      AppLogger.error('Database error during sign up', e);
+      ErrorHandler.throwFromPostgrest(e);
     } catch (e) {
-      if (e is ServerException) rethrow;
+      if (e is ServerException || e is AuthException) rethrow;
       AppLogger.error('Unexpected error during sign up', e);
       throw ServerException(message: e.toString());
     }
@@ -115,14 +119,14 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
         final testPassword = TestConfig.getTestPassword(email);
         if (password != testPassword) {
-          throw const ServerException(
+          throw const AuthException(
             message: 'Noto\'g\'ri email yoki parol',
           );
         }
 
         final mockUser = MockData.getUserByEmail(email);
         if (mockUser == null) {
-          throw const ServerException(message: 'Foydalanuvchi topilmadi');
+          throw const NotFoundException(message: 'Foydalanuvchi topilmadi');
         }
 
         return UserModel.fromEntity(mockUser);
@@ -134,7 +138,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       );
 
       if (response.user == null) {
-        throw const ServerException(message: 'Kirish amalga oshmadi');
+        throw const AuthException(message: 'Kirish amalga oshmadi');
       }
 
       // Fetch profile
@@ -145,18 +149,21 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           .maybeSingle();
 
       if (userData == null) {
-        throw const ServerException(message: 'Profil topilmadi');
+        throw const NotFoundException(message: 'Profil topilmadi');
       }
 
       AppLogger.info('Sign in successful');
       return UserModel.fromJson(userData);
-    } on AuthException catch (e) {
+    } on supabase.AuthException catch (e) {
       AppLogger.error('Sign in failed', e);
-      throw const ServerException(
+      throw const AuthException(
         message: 'Noto\'g\'ri email yoki parol',
       );
+    } on supabase.PostgrestException catch (e) {
+      AppLogger.error('Database error during sign in', e);
+      ErrorHandler.throwFromPostgrest(e);
     } catch (e) {
-      if (e is ServerException) rethrow;
+      if (e is AuthException || e is NotFoundException) rethrow;
       AppLogger.error('Unexpected error during sign in', e);
       throw ServerException(message: e.toString());
     }
@@ -177,9 +184,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       await _supabase.auth.resetPasswordForEmail(email);
 
       AppLogger.info('Password reset email sent');
-    } on AuthException catch (e) {
+    } on supabase.AuthException catch (e) {
       AppLogger.error('Password reset failed', e);
-      throw ServerException(message: e.message);
+      ErrorHandler.throwFromSupabaseAuth(e);
     } catch (e) {
       AppLogger.error('Unexpected error during password reset', e);
       throw ServerException(message: e.toString());
@@ -213,7 +220,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
       final currentUser = _supabase.auth.currentUser;
       if (currentUser == null) {
-        throw const AuthException(message: 'Not authenticated');
+        throw const AuthException(message: 'Tizimga kirilmagan');
       }
 
       final response = await _supabase
@@ -225,16 +232,16 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
       AppLogger.info('Username set successfully');
       return UserModel.fromJson(response);
-    } on PostgrestException catch (e) {
+    } on supabase.PostgrestException catch (e) {
       AppLogger.error('Database error setting username', e);
-      if (e.message.contains('unique') || e.message.contains('duplicate')) {
-        throw const ServerException(
+      if (e.code == '23505') {
+        throw const ValidationException(
           message: 'Bu username allaqachon band',
         );
       }
-      throw ServerException(message: e.message);
+      ErrorHandler.throwFromPostgrest(e);
     } catch (e) {
-      if (e is ServerException) rethrow;
+      if (e is AuthException || e is ValidationException) rethrow;
       AppLogger.error('Unexpected error setting username', e);
       throw ServerException(message: e.toString());
     }
@@ -258,6 +265,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           .maybeSingle();
 
       return result == null;
+    } on supabase.PostgrestException catch (e) {
+      AppLogger.error('Database error checking username', e);
+      ErrorHandler.throwFromPostgrest(e);
     } catch (e) {
       AppLogger.error('Error checking username availability', e);
       throw ServerException(message: e.toString());
@@ -299,7 +309,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     try {
       final currentUser = _supabase.auth.currentUser;
       if (currentUser == null) {
-        throw const AuthException(message: 'Not authenticated');
+        throw const AuthException(message: 'Tizimga kirilmagan');
       }
 
       final updates = <String, dynamic>{};
@@ -317,7 +327,11 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           .single();
 
       return UserModel.fromJson(response);
+    } on supabase.PostgrestException catch (e) {
+      AppLogger.error('Database error updating profile', e);
+      ErrorHandler.throwFromPostgrest(e);
     } catch (e) {
+      if (e is AuthException) rethrow;
       AppLogger.error('Error updating profile', e);
       throw ServerException(message: e.toString());
     }
@@ -328,7 +342,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     try {
       final currentUser = _supabase.auth.currentUser;
       if (currentUser == null) {
-        throw const AuthException(message: 'Not authenticated');
+        throw const AuthException(message: 'Tizimga kirilmagan');
       }
 
       final response = await _supabase
@@ -341,7 +355,11 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           .single();
 
       return UserModel.fromJson(response);
+    } on supabase.PostgrestException catch (e) {
+      AppLogger.error('Database error upgrading to seller', e);
+      ErrorHandler.throwFromPostgrest(e);
     } catch (e) {
+      if (e is AuthException) rethrow;
       AppLogger.error('Error upgrading to seller', e);
       throw ServerException(message: e.toString());
     }
@@ -352,6 +370,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     try {
       await _supabase.auth.signOut();
       AppLogger.info('User logged out');
+    } on supabase.AuthException catch (e) {
+      AppLogger.error('Error during logout', e);
+      ErrorHandler.throwFromSupabaseAuth(e);
     } catch (e) {
       AppLogger.error('Error during logout', e);
       throw ServerException(message: e.toString());

@@ -1,6 +1,7 @@
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
 
 import '../../../../core/constants/api_endpoints.dart';
+import '../../../../core/errors/error_handler.dart';
 import '../../../../core/errors/exceptions.dart' as app_exceptions;
 import '../../domain/entities/activity_log.dart';
 import '../models/activity_log_model.dart';
@@ -37,10 +38,10 @@ abstract class ActivityLogRemoteDataSource {
 /// Implementation using Supabase
 
 class ActivityLogRemoteDataSourceImpl implements ActivityLogRemoteDataSource {
-  final SupabaseClient _supabase;
+  final supabase.SupabaseClient _supabase;
 
-  ActivityLogRemoteDataSourceImpl({required SupabaseClient supabase})
-      : _supabase = supabase;
+  ActivityLogRemoteDataSourceImpl({required supabase.SupabaseClient supabaseClient})
+      : _supabase = supabaseClient;
 
   static const _selectWithJoins =
       '*, actor:user_id(full_name, avatar_url)';
@@ -70,8 +71,9 @@ class ActivityLogRemoteDataSourceImpl implements ActivityLogRemoteDataSource {
     } on app_exceptions.AuthException {
       rethrow;
     } catch (e) {
+      if (e is supabase.PostgrestException) ErrorHandler.throwFromPostgrest(e);
       throw app_exceptions.ServerException(
-        message: 'Faoliyatni qayd qilishda xatolik: $e',
+        message: 'Faoliyatni qayd qilishda xatolik',
       );
     }
   }
@@ -116,8 +118,9 @@ class ActivityLogRemoteDataSourceImpl implements ActivityLogRemoteDataSource {
           .map((json) => ActivityLogModel.fromJson(json))
           .toList();
     } catch (e) {
+      if (e is supabase.PostgrestException) ErrorHandler.throwFromPostgrest(e);
       throw app_exceptions.ServerException(
-        message: 'Faoliyat tarixini yuklashda xatolik: $e',
+        message: 'Faoliyat tarixini yuklashda xatolik',
       );
     }
   }

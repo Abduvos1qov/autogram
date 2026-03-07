@@ -1,7 +1,8 @@
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
 import 'package:uuid/uuid.dart';
 
 import '../../../../core/constants/api_endpoints.dart';
+import '../../../../core/errors/error_handler.dart';
 import '../../../../core/errors/exceptions.dart' as app_exceptions;
 import '../../../../core/services/permission_service.dart';
 import '../models/seller_invitation_model.dart';
@@ -37,10 +38,10 @@ abstract class SellerInvitationRemoteDataSource {
 
 class SellerInvitationRemoteDataSourceImpl
     implements SellerInvitationRemoteDataSource {
-  final SupabaseClient _supabase;
+  final supabase.SupabaseClient _supabase;
 
-  SellerInvitationRemoteDataSourceImpl({required SupabaseClient supabase})
-      : _supabase = supabase;
+  SellerInvitationRemoteDataSourceImpl({required supabase.SupabaseClient supabaseClient})
+      : _supabase = supabaseClient;
 
   static const _selectWithJoins =
       '*, inviter:invited_by(full_name, avatar_url), seller_profile:seller_profile_id(business_name)';
@@ -116,8 +117,9 @@ class SellerInvitationRemoteDataSourceImpl
     } on app_exceptions.ValidationException {
       rethrow;
     } catch (e) {
+      if (e is supabase.PostgrestException) ErrorHandler.throwFromPostgrest(e);
       throw app_exceptions.ServerException(
-        message: 'Taklifnoma yuborishda xatolik: $e',
+        message: 'Taklifnoma yuborishda xatolik',
       );
     }
   }
@@ -138,8 +140,9 @@ class SellerInvitationRemoteDataSourceImpl
           .where((inv) => !inv.isExpired) // Filter expired client-side
           .toList();
     } catch (e) {
+      if (e is supabase.PostgrestException) ErrorHandler.throwFromPostgrest(e);
       throw app_exceptions.ServerException(
-        message: 'Taklifnomalarni yuklashda xatolik: $e',
+        message: 'Taklifnomalarni yuklashda xatolik',
       );
     }
   }
@@ -209,8 +212,9 @@ class SellerInvitationRemoteDataSourceImpl
     } on app_exceptions.ValidationException {
       rethrow;
     } catch (e) {
+      if (e is supabase.PostgrestException) ErrorHandler.throwFromPostgrest(e);
       throw app_exceptions.ServerException(
-        message: 'Taklifnomani qabul qilishda xatolik: $e',
+        message: 'Taklifnomani qabul qilishda xatolik',
       );
     }
   }
@@ -230,8 +234,9 @@ class SellerInvitationRemoteDataSourceImpl
 
       return SellerInvitationModel.fromJson(response);
     } catch (e) {
+      if (e is supabase.PostgrestException) ErrorHandler.throwFromPostgrest(e);
       throw app_exceptions.ServerException(
-        message: 'Taklifnomani rad etishda xatolik: $e',
+        message: 'Taklifnomani rad etishda xatolik',
       );
     }
   }
@@ -247,8 +252,9 @@ class SellerInvitationRemoteDataSourceImpl
           })
           .eq('id', invitationId);
     } catch (e) {
+      if (e is supabase.PostgrestException) ErrorHandler.throwFromPostgrest(e);
       throw app_exceptions.ServerException(
-        message: 'Taklifnomani bekor qilishda xatolik: $e',
+        message: 'Taklifnomani bekor qilishda xatolik',
       );
     }
   }
@@ -275,8 +281,9 @@ class SellerInvitationRemoteDataSourceImpl
           .where((inv) => !inv.isExpired)
           .toList();
     } catch (e) {
+      if (e is supabase.PostgrestException) ErrorHandler.throwFromPostgrest(e);
       throw app_exceptions.ServerException(
-        message: 'Taklifnomalarni yuklashda xatolik: $e',
+        message: 'Taklifnomalarni yuklashda xatolik',
       );
     }
   }
