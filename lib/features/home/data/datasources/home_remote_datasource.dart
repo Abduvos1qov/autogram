@@ -1,8 +1,9 @@
-import 'package:supabase_flutter/supabase_flutter.dart' hide AuthException;
+import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
 
 import '../../../../core/config/test_config.dart';
 import '../../../../core/constants/api_endpoints.dart';
 import '../../../../core/data/mock_data.dart';
+import '../../../../core/errors/error_handler.dart';
 import '../../../../core/errors/exceptions.dart';
 import '../../../../core/network/api_response.dart';
 import '../../../../core/utils/logger.dart';
@@ -24,10 +25,10 @@ abstract class HomeRemoteDataSource {
 }
 
 class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
-  final SupabaseClient _supabase;
+  final supabase.SupabaseClient _supabase;
 
-  HomeRemoteDataSourceImpl({required SupabaseClient supabase})
-      : _supabase = supabase;
+  HomeRemoteDataSourceImpl({required supabase.SupabaseClient supabaseClient})
+      : _supabase = supabaseClient;
 
   @override
   Future<PaginatedResponse<FeedItemModel>> getFeed({
@@ -114,9 +115,9 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
         page: page,
         pageSize: pageSize,
       );
-    } on PostgrestException catch (e) {
+    } on supabase.PostgrestException catch (e) {
       AppLogger.error('Database error fetching feed', e);
-      throw ServerException(message: e.message);
+      ErrorHandler.throwFromPostgrest(e);
     } catch (e) {
       AppLogger.error('Error fetching feed', e);
       throw ServerException(message: e.toString());
@@ -127,7 +128,7 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
   Future<void> likeListing(String listingId) async {
     try {
       final userId = _supabase.auth.currentUser?.id;
-      if (userId == null) throw const AuthException(message: 'Not authenticated');
+      if (userId == null) throw const AuthException(message: 'Tizimga kirilmagan');
 
       await _supabase.from(ApiEndpoints.likes).insert({
         'user_id': userId,
@@ -140,7 +141,11 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
       });
 
       AppLogger.info('Liked listing: $listingId');
+    } on supabase.PostgrestException catch (e) {
+      AppLogger.error('Error liking listing', e);
+      ErrorHandler.throwFromPostgrest(e);
     } catch (e) {
+      if (e is AuthException) rethrow;
       AppLogger.error('Error liking listing', e);
       throw ServerException(message: e.toString());
     }
@@ -150,7 +155,7 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
   Future<void> unlikeListing(String listingId) async {
     try {
       final userId = _supabase.auth.currentUser?.id;
-      if (userId == null) throw const AuthException(message: 'Not authenticated');
+      if (userId == null) throw const AuthException(message: 'Tizimga kirilmagan');
 
       await _supabase
           .from(ApiEndpoints.likes)
@@ -164,7 +169,11 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
       });
 
       AppLogger.info('Unliked listing: $listingId');
+    } on supabase.PostgrestException catch (e) {
+      AppLogger.error('Error unliking listing', e);
+      ErrorHandler.throwFromPostgrest(e);
     } catch (e) {
+      if (e is AuthException) rethrow;
       AppLogger.error('Error unliking listing', e);
       throw ServerException(message: e.toString());
     }
@@ -174,7 +183,7 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
   Future<void> saveListing(String listingId) async {
     try {
       final userId = _supabase.auth.currentUser?.id;
-      if (userId == null) throw const AuthException(message: 'Not authenticated');
+      if (userId == null) throw const AuthException(message: 'Tizimga kirilmagan');
 
       await _supabase.from(ApiEndpoints.saves).insert({
         'user_id': userId,
@@ -187,7 +196,11 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
       });
 
       AppLogger.info('Saved listing: $listingId');
+    } on supabase.PostgrestException catch (e) {
+      AppLogger.error('Error saving listing', e);
+      ErrorHandler.throwFromPostgrest(e);
     } catch (e) {
+      if (e is AuthException) rethrow;
       AppLogger.error('Error saving listing', e);
       throw ServerException(message: e.toString());
     }
@@ -197,7 +210,7 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
   Future<void> unsaveListing(String listingId) async {
     try {
       final userId = _supabase.auth.currentUser?.id;
-      if (userId == null) throw const AuthException(message: 'Not authenticated');
+      if (userId == null) throw const AuthException(message: 'Tizimga kirilmagan');
 
       await _supabase
           .from(ApiEndpoints.saves)
@@ -211,7 +224,11 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
       });
 
       AppLogger.info('Unsaved listing: $listingId');
+    } on supabase.PostgrestException catch (e) {
+      AppLogger.error('Error unsaving listing', e);
+      ErrorHandler.throwFromPostgrest(e);
     } catch (e) {
+      if (e is AuthException) rethrow;
       AppLogger.error('Error unsaving listing', e);
       throw ServerException(message: e.toString());
     }

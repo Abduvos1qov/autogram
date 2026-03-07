@@ -1,8 +1,9 @@
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
 
 import '../../../../core/config/test_config.dart';
 import '../../../../core/constants/api_endpoints.dart';
 import '../../../../core/data/mock_data.dart';
+import '../../../../core/errors/error_handler.dart';
 import '../../../../core/errors/exceptions.dart';
 import '../../domain/entities/message.dart';
 import '../models/conversation_model.dart';
@@ -30,7 +31,7 @@ abstract class ChatRemoteDataSource {
 }
 
 class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
-  final SupabaseClient supabaseClient;
+  final supabase.SupabaseClient supabaseClient;
 
   ChatRemoteDataSourceImpl({required this.supabaseClient});
 
@@ -61,8 +62,8 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
       return (response as List)
           .map((json) => ConversationModel.fromJson(json, _currentUserId))
           .toList();
-    } on PostgrestException catch (e) {
-      throw ServerException(message: e.message);
+    } on supabase.PostgrestException catch (e) {
+      ErrorHandler.throwFromPostgrest(e);
     } catch (e) {
       throw ServerException(message: e.toString());
     }
@@ -108,8 +109,8 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
           .single();
 
       return ConversationModel.fromJson(newConversation, _currentUserId);
-    } on PostgrestException catch (e) {
-      throw ServerException(message: e.message);
+    } on supabase.PostgrestException catch (e) {
+      ErrorHandler.throwFromPostgrest(e);
     } catch (e) {
       throw ServerException(message: e.toString());
     }
@@ -134,8 +135,8 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
       return (response as List)
           .map((json) => MessageModel.fromJson(json))
           .toList();
-    } on PostgrestException catch (e) {
-      throw ServerException(message: e.message);
+    } on supabase.PostgrestException catch (e) {
+      ErrorHandler.throwFromPostgrest(e);
     } catch (e) {
       throw ServerException(message: e.toString());
     }
@@ -167,8 +168,8 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
       }).eq('id', conversationId);
 
       return MessageModel.fromJson(response);
-    } on PostgrestException catch (e) {
-      throw ServerException(message: e.message);
+    } on supabase.PostgrestException catch (e) {
+      ErrorHandler.throwFromPostgrest(e);
     } catch (e) {
       throw ServerException(message: e.toString());
     }
@@ -185,8 +186,8 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
           })
           .eq('conversation_id', conversationId)
           .neq('sender_id', _currentUserId);
-    } on PostgrestException catch (e) {
-      throw ServerException(message: e.message);
+    } on supabase.PostgrestException catch (e) {
+      ErrorHandler.throwFromPostgrest(e);
     } catch (e) {
       throw ServerException(message: e.toString());
     }
@@ -223,11 +224,11 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
           .select('id')
           .eq('is_read', false)
           .neq('sender_id', _currentUserId)
-          .count(CountOption.exact);
+          .count(supabase.CountOption.exact);
 
       return response.count;
-    } on PostgrestException catch (e) {
-      throw ServerException(message: e.message);
+    } on supabase.PostgrestException catch (e) {
+      ErrorHandler.throwFromPostgrest(e);
     } catch (e) {
       throw ServerException(message: e.toString());
     }

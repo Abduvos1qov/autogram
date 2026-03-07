@@ -1,6 +1,7 @@
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
 
 import '../../../../core/constants/api_endpoints.dart';
+import '../../../../core/errors/error_handler.dart';
 import '../../../../core/errors/exceptions.dart' as app_exceptions;
 import '../../../../core/services/permission_service.dart';
 import '../models/seller_member_model.dart';
@@ -40,10 +41,10 @@ abstract class SellerMemberRemoteDataSource {
 /// Implementation using Supabase
 
 class SellerMemberRemoteDataSourceImpl implements SellerMemberRemoteDataSource {
-  final SupabaseClient _supabase;
+  final supabase.SupabaseClient _supabase;
 
-  SellerMemberRemoteDataSourceImpl({required SupabaseClient supabase})
-      : _supabase = supabase;
+  SellerMemberRemoteDataSourceImpl({required supabase.SupabaseClient supabaseClient})
+      : _supabase = supabaseClient;
 
   @override
   Future<List<SellerMemberModel>> getTeamMembers(
@@ -60,8 +61,9 @@ class SellerMemberRemoteDataSourceImpl implements SellerMemberRemoteDataSource {
           .map((json) => SellerMemberModel.fromJson(json))
           .toList();
     } catch (e) {
+      if (e is supabase.PostgrestException) ErrorHandler.throwFromPostgrest(e);
       throw app_exceptions.ServerException(
-        message: 'Jamoa a\'zolarini yuklashda xatolik: $e',
+        message: 'Jamoa a\'zolarini yuklashda xatolik',
       );
     }
   }
@@ -83,8 +85,9 @@ class SellerMemberRemoteDataSourceImpl implements SellerMemberRemoteDataSource {
       if (response == null) return null;
       return SellerMemberModel.fromJson(response);
     } catch (e) {
+      if (e is supabase.PostgrestException) ErrorHandler.throwFromPostgrest(e);
       throw app_exceptions.ServerException(
-        message: 'A\'zoni topishda xatolik: $e',
+        message: 'A\'zoni topishda xatolik',
       );
     }
   }
@@ -161,8 +164,9 @@ class SellerMemberRemoteDataSourceImpl implements SellerMemberRemoteDataSource {
     } on app_exceptions.ValidationException {
       rethrow;
     } catch (e) {
+      if (e is supabase.PostgrestException) ErrorHandler.throwFromPostgrest(e);
       throw app_exceptions.ServerException(
-        message: 'Jamoa a\'zosini qo\'shishda xatolik: $e',
+        message: 'Jamoa a\'zosini qo\'shishda xatolik',
       );
     }
   }
@@ -185,8 +189,9 @@ class SellerMemberRemoteDataSourceImpl implements SellerMemberRemoteDataSource {
 
       return SellerMemberModel.fromJson(response);
     } catch (e) {
+      if (e is supabase.PostgrestException) ErrorHandler.throwFromPostgrest(e);
       throw app_exceptions.ServerException(
-        message: 'A\'zo rolini yangilashda xatolik: $e',
+        message: 'A\'zo rolini yangilashda xatolik',
       );
     }
   }
@@ -203,8 +208,9 @@ class SellerMemberRemoteDataSourceImpl implements SellerMemberRemoteDataSource {
           })
           .eq('id', memberId);
     } catch (e) {
+      if (e is supabase.PostgrestException) ErrorHandler.throwFromPostgrest(e);
       throw app_exceptions.ServerException(
-        message: 'A\'zoni o\'chirishda xatolik: $e',
+        message: 'A\'zoni o\'chirishda xatolik',
       );
     }
   }
@@ -225,8 +231,9 @@ class SellerMemberRemoteDataSourceImpl implements SellerMemberRemoteDataSource {
       if (response == null) return null;
       return SellerMemberModel.fromJson(response);
     } catch (e) {
+      if (e is supabase.PostgrestException) ErrorHandler.throwFromPostgrest(e);
       throw app_exceptions.ServerException(
-        message: 'A\'zolikni tekshirishda xatolik: $e',
+        message: 'A\'zolikni tekshirishda xatolik',
       );
     }
   }

@@ -1,8 +1,9 @@
-import 'package:supabase_flutter/supabase_flutter.dart' hide AuthException;
+import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
 
 import '../../../../core/config/test_config.dart';
 import '../../../../core/constants/api_endpoints.dart';
 import '../../../../core/data/mock_data.dart';
+import '../../../../core/errors/error_handler.dart';
 import '../../../../core/errors/exceptions.dart';
 import '../../../../core/network/api_response.dart';
 import '../../../../core/utils/logger.dart';
@@ -25,10 +26,10 @@ abstract class ReelsRemoteDataSource {
 }
 
 class ReelsRemoteDataSourceImpl implements ReelsRemoteDataSource {
-  final SupabaseClient _supabase;
+  final supabase.SupabaseClient _supabase;
 
-  ReelsRemoteDataSourceImpl({required SupabaseClient supabase})
-      : _supabase = supabase;
+  ReelsRemoteDataSourceImpl({required supabase.SupabaseClient supabaseClient})
+      : _supabase = supabaseClient;
 
   @override
   Future<PaginatedResponse<ReelModel>> getReels({
@@ -127,9 +128,9 @@ class ReelsRemoteDataSourceImpl implements ReelsRemoteDataSource {
         page: page,
         pageSize: pageSize,
       );
-    } on PostgrestException catch (e) {
+    } on supabase.PostgrestException catch (e) {
       AppLogger.error('Database error fetching reels', e);
-      throw ServerException(message: e.message);
+      ErrorHandler.throwFromPostgrest(e);
     } catch (e) {
       AppLogger.error('Error fetching reels', e);
       throw ServerException(message: e.toString());
@@ -141,7 +142,7 @@ class ReelsRemoteDataSourceImpl implements ReelsRemoteDataSource {
     try {
       final userId = _supabase.auth.currentUser?.id;
       if (userId == null) {
-        throw const AuthException(message: 'Not authenticated');
+        throw const AuthException(message: 'Tizimga kirilmagan');
       }
 
       await _supabase.from(ApiEndpoints.likes).insert({
@@ -154,7 +155,11 @@ class ReelsRemoteDataSourceImpl implements ReelsRemoteDataSource {
       });
 
       AppLogger.info('Liked reel: $reelId');
+    } on supabase.PostgrestException catch (e) {
+      AppLogger.error('Error liking reel', e);
+      ErrorHandler.throwFromPostgrest(e);
     } catch (e) {
+      if (e is AuthException) rethrow;
       AppLogger.error('Error liking reel', e);
       throw ServerException(message: e.toString());
     }
@@ -165,7 +170,7 @@ class ReelsRemoteDataSourceImpl implements ReelsRemoteDataSource {
     try {
       final userId = _supabase.auth.currentUser?.id;
       if (userId == null) {
-        throw const AuthException(message: 'Not authenticated');
+        throw const AuthException(message: 'Tizimga kirilmagan');
       }
 
       await _supabase
@@ -179,7 +184,11 @@ class ReelsRemoteDataSourceImpl implements ReelsRemoteDataSource {
       });
 
       AppLogger.info('Unliked reel: $reelId');
+    } on supabase.PostgrestException catch (e) {
+      AppLogger.error('Error unliking reel', e);
+      ErrorHandler.throwFromPostgrest(e);
     } catch (e) {
+      if (e is AuthException) rethrow;
       AppLogger.error('Error unliking reel', e);
       throw ServerException(message: e.toString());
     }
@@ -190,7 +199,7 @@ class ReelsRemoteDataSourceImpl implements ReelsRemoteDataSource {
     try {
       final userId = _supabase.auth.currentUser?.id;
       if (userId == null) {
-        throw const AuthException(message: 'Not authenticated');
+        throw const AuthException(message: 'Tizimga kirilmagan');
       }
 
       await _supabase.from(ApiEndpoints.saves).insert({
@@ -203,7 +212,11 @@ class ReelsRemoteDataSourceImpl implements ReelsRemoteDataSource {
       });
 
       AppLogger.info('Saved reel: $reelId');
+    } on supabase.PostgrestException catch (e) {
+      AppLogger.error('Error saving reel', e);
+      ErrorHandler.throwFromPostgrest(e);
     } catch (e) {
+      if (e is AuthException) rethrow;
       AppLogger.error('Error saving reel', e);
       throw ServerException(message: e.toString());
     }
@@ -214,7 +227,7 @@ class ReelsRemoteDataSourceImpl implements ReelsRemoteDataSource {
     try {
       final userId = _supabase.auth.currentUser?.id;
       if (userId == null) {
-        throw const AuthException(message: 'Not authenticated');
+        throw const AuthException(message: 'Tizimga kirilmagan');
       }
 
       await _supabase
@@ -228,7 +241,11 @@ class ReelsRemoteDataSourceImpl implements ReelsRemoteDataSource {
       });
 
       AppLogger.info('Unsaved reel: $reelId');
+    } on supabase.PostgrestException catch (e) {
+      AppLogger.error('Error unsaving reel', e);
+      ErrorHandler.throwFromPostgrest(e);
     } catch (e) {
+      if (e is AuthException) rethrow;
       AppLogger.error('Error unsaving reel', e);
       throw ServerException(message: e.toString());
     }
