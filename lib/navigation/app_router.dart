@@ -58,6 +58,9 @@ GoRouter createRouter(AuthBloc authBloc) {
       if (authState is AuthLoading ||
           authState is AuthSignUpSuccess ||
           authState is AuthPasswordResetSent ||
+          authState is AuthForgotPasswordOtpSent ||
+          authState is AuthForgotPasswordOtpVerified ||
+          authState is AuthPasswordResetSuccess ||
           authState is AuthError) {
         return null;
       }

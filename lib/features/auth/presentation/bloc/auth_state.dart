@@ -72,6 +72,31 @@ class AuthPasswordResetSent extends AuthState {
   List<Object?> get props => [email];
 }
 
+/// OTP sent for forgot password
+class AuthForgotPasswordOtpSent extends AuthState {
+  final String email;
+
+  const AuthForgotPasswordOtpSent(this.email);
+
+  @override
+  List<Object?> get props => [email];
+}
+
+/// Forgot password OTP verified, ready for new password
+class AuthForgotPasswordOtpVerified extends AuthState {
+  final String email;
+
+  const AuthForgotPasswordOtpVerified(this.email);
+
+  @override
+  List<Object?> get props => [email];
+}
+
+/// Password reset successful
+class AuthPasswordResetSuccess extends AuthState {
+  const AuthPasswordResetSuccess();
+}
+
 /// Error state
 class AuthError extends AuthState {
   final Failure failure;

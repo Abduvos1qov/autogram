@@ -21,6 +21,17 @@ abstract class AuthRemoteDataSource {
   });
   Future<UserModel> signIn({required String email, required String password});
   Future<void> resetPassword({required String email});
+  Future<UserModel> verifyOtp({required String email, required String otp});
+  Future<void> resendSignUpOtp({required String email});
+  Future<void> sendForgotPasswordOtp({required String email});
+  Future<void> verifyForgotPasswordOtp({
+    required String email,
+    required String otp,
+  });
+  Future<void> resetPasswordWithNew({
+    required String email,
+    required String newPassword,
+  });
   Future<UserModel> setUsername({required String username});
   Future<bool> checkUsernameAvailability({required String username});
   Future<UserModel?> getCurrentUser();
@@ -184,6 +195,201 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       await _supabase.auth.resetPasswordForEmail(email);
 
       AppLogger.info('Password reset email sent');
+    } on supabase.AuthException catch (e) {
+      AppLogger.error('Password reset failed', e);
+      ErrorHandler.throwFromSupabaseAuth(e);
+    } catch (e) {
+      AppLogger.error('Unexpected error during password reset', e);
+      throw ServerException(message: e.toString());
+    }
+  }
+
+  @override
+  Future<UserModel> verifyOtp({
+    required String email,
+    required String otp,
+  }) async {
+    try {
+      AppLogger.info('Verifying OTP for $email');
+
+      // Test mode
+      if (TestConfig.isTestMode) {
+        AppLogger.info('TEST MODE: Verifying OTP for $email');
+        await Future.delayed(const Duration(milliseconds: 500));
+
+        final testOtp = TestConfig.getTestOTP(email) ?? '123456';
+        if (otp != testOtp) {
+          throw const AuthException(
+            message: 'Noto\'g\'ri tasdiqlash kodi',
+          );
+        }
+
+        final now = DateTime.now();
+        return UserModel(
+          id: 'test_user_id',
+          email: email,
+          fullName: 'Test User',
+          username: null,
+          role: UserRole.buyer,
+          isVerified: true,
+          isActive: true,
+          language: 'uz',
+          createdAt: now,
+          updatedAt: now,
+        );
+      }
+
+      final response = await _supabase.auth.verifyOTP(
+        email: email,
+        token: otp,
+        type: supabase.OtpType.signup,
+      );
+
+      if (response.user == null) {
+        throw const AuthException(
+          message: 'Tasdiqlash amalga oshmadi',
+        );
+      }
+
+      // Fetch profile
+      final userData = await _supabase
+          .from(ApiEndpoints.profiles)
+          .select()
+          .eq('id', response.user!.id)
+          .maybeSingle();
+
+      if (userData == null) {
+        throw const NotFoundException(message: 'Profil topilmadi');
+      }
+
+      AppLogger.info('OTP verified successfully');
+      return UserModel.fromJson(userData);
+    } on supabase.AuthException catch (e) {
+      AppLogger.error('OTP verification failed', e);
+      throw const AuthException(
+        message: 'Noto\'g\'ri tasdiqlash kodi',
+      );
+    } catch (e) {
+      if (e is AuthException || e is NotFoundException) rethrow;
+      AppLogger.error('Unexpected error during OTP verification', e);
+      throw ServerException(message: e.toString());
+    }
+  }
+
+  @override
+  Future<void> resendSignUpOtp({required String email}) async {
+    try {
+      AppLogger.info('Resending sign-up OTP to $email');
+
+      if (TestConfig.isTestMode) {
+        AppLogger.info('TEST MODE: Resending OTP for $email');
+        await Future.delayed(const Duration(milliseconds: 500));
+        return;
+      }
+
+      await _supabase.auth.resend(
+        type: supabase.OtpType.signup,
+        email: email,
+      );
+
+      AppLogger.info('Sign-up OTP resent');
+    } on supabase.AuthException catch (e) {
+      AppLogger.error('Resend OTP failed', e);
+      ErrorHandler.throwFromSupabaseAuth(e);
+    } catch (e) {
+      AppLogger.error('Unexpected error resending OTP', e);
+      throw ServerException(message: e.toString());
+    }
+  }
+
+  @override
+  Future<void> sendForgotPasswordOtp({required String email}) async {
+    try {
+      AppLogger.info('Sending forgot password OTP to $email');
+
+      if (TestConfig.isTestMode) {
+        AppLogger.info('TEST MODE: Sending forgot password OTP for $email');
+        await Future.delayed(const Duration(milliseconds: 500));
+        return;
+      }
+
+      await _supabase.auth.resetPasswordForEmail(email);
+
+      AppLogger.info('Forgot password OTP sent');
+    } on supabase.AuthException catch (e) {
+      AppLogger.error('Send forgot password OTP failed', e);
+      ErrorHandler.throwFromSupabaseAuth(e);
+    } catch (e) {
+      AppLogger.error('Unexpected error sending forgot password OTP', e);
+      throw ServerException(message: e.toString());
+    }
+  }
+
+  @override
+  Future<void> verifyForgotPasswordOtp({
+    required String email,
+    required String otp,
+  }) async {
+    try {
+      AppLogger.info('Verifying forgot password OTP for $email');
+
+      if (TestConfig.isTestMode) {
+        AppLogger.info('TEST MODE: Verifying forgot password OTP for $email');
+        await Future.delayed(const Duration(milliseconds: 500));
+
+        final testOtp = TestConfig.getTestOTP(email) ?? '123456';
+        if (otp != testOtp) {
+          throw const AuthException(
+            message: 'Noto\'g\'ri tasdiqlash kodi',
+          );
+        }
+        return;
+      }
+
+      final response = await _supabase.auth.verifyOTP(
+        email: email,
+        token: otp,
+        type: supabase.OtpType.recovery,
+      );
+
+      if (response.user == null) {
+        throw const AuthException(
+          message: 'Tasdiqlash amalga oshmadi',
+        );
+      }
+
+      AppLogger.info('Forgot password OTP verified');
+    } on supabase.AuthException catch (e) {
+      AppLogger.error('Forgot password OTP verification failed', e);
+      throw const AuthException(
+        message: 'Noto\'g\'ri tasdiqlash kodi',
+      );
+    } catch (e) {
+      if (e is AuthException) rethrow;
+      AppLogger.error('Unexpected error verifying forgot password OTP', e);
+      throw ServerException(message: e.toString());
+    }
+  }
+
+  @override
+  Future<void> resetPasswordWithNew({
+    required String email,
+    required String newPassword,
+  }) async {
+    try {
+      AppLogger.info('Resetting password for $email');
+
+      if (TestConfig.isTestMode) {
+        AppLogger.info('TEST MODE: Resetting password for $email');
+        await Future.delayed(const Duration(milliseconds: 500));
+        return;
+      }
+
+      await _supabase.auth.updateUser(
+        supabase.UserAttributes(password: newPassword),
+      );
+
+      AppLogger.info('Password reset successful');
     } on supabase.AuthException catch (e) {
       AppLogger.error('Password reset failed', e);
       ErrorHandler.throwFromSupabaseAuth(e);

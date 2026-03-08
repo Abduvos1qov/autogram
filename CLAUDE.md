@@ -69,7 +69,42 @@ lib/
 
 ## Test Mode
 
-Test mode is enabled by default (`TestConfig.isTestMode = true` in `lib/core/config/test_config.dart`). Uses mock data sources with 500ms simulated delay. Test credentials: any phone like `+998901234567` with OTP `1234`. Mock data lives in `lib/core/data/mock_data.dart`.
+Test mode is enabled by default (`TestConfig.isTestMode = true` in `lib/core/config/test_config.dart`). Uses mock data sources with 500ms simulated delay. Test credentials: any email with OTP `123456`, or sign in with `test@autogram.uz` / `Test1234!`. Mock data lives in `lib/core/data/mock_data.dart`.
+
+## Auth Flows
+
+- **Sign-up:** Register → Email OTP verification (6-digit code) → Username selection → Home
+- **Forgot password:** Email input → OTP verification → New password → Login
+- Test mode OTP code: `123456` for all emails
+
+## Supabase Dashboard Setup (TODO)
+
+Production uchun Supabase dashboardda quyidagilarni sozlash kerak:
+
+1. **Authentication > Providers > Email:**
+   - "Confirm email" — enabled
+   - "Secure email change" — enabled
+   - "OTP Expiry" — 600 sekund (10 daqiqa)
+
+2. **Authentication > Email Templates — Confirm signup:**
+   - `{{ .ConfirmationURL }}` o'rniga `{{ .Token }}` ishlatish
+   - Shablon:
+   ```html
+   <h2>Tasdiqlash kodi</h2>
+   <p>Autogram ilovasida ro'yxatdan o'tish uchun tasdiqlash kodingiz:</p>
+   <h1 style="font-size: 32px; letter-spacing: 8px; text-align: center;">{{ .Token }}</h1>
+   <p>Kod 10 daqiqa ichida amal qiladi.</p>
+   ```
+
+3. **Authentication > Email Templates — Reset password:**
+   - `{{ .ConfirmationURL }}` o'rniga `{{ .Token }}` ishlatish
+   - Shablon:
+   ```html
+   <h2>Parolni tiklash</h2>
+   <p>Parolni tiklash uchun tasdiqlash kodingiz:</p>
+   <h1 style="font-size: 32px; letter-spacing: 8px; text-align: center;">{{ .Token }}</h1>
+   <p>Kod 10 daqiqa ichida amal qiladi.</p>
+   ```
 
 ## Conventions
 

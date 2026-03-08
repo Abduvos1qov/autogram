@@ -6,9 +6,13 @@ import '../../domain/usecases/check_username_usecase.dart';
 import '../../domain/usecases/get_current_user_usecase.dart';
 import '../../domain/usecases/logout_usecase.dart';
 import '../../domain/usecases/reset_password_usecase.dart';
+import '../../domain/usecases/reset_password_with_new_usecase.dart';
 import '../../domain/usecases/set_username_usecase.dart';
 import '../../domain/usecases/sign_in_usecase.dart';
 import '../../domain/usecases/sign_up_usecase.dart';
+import '../../domain/usecases/verify_forgot_password_otp_usecase.dart';
+import '../../domain/usecases/verify_otp_usecase.dart';
+import '../../domain/repositories/auth_repository.dart';
 import 'auth_event.dart';
 import 'auth_state.dart';
 
@@ -22,6 +26,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final CheckUsernameUseCase _checkUsernameUseCase;
   final GetCurrentUserUseCase _getCurrentUserUseCase;
   final LogoutUseCase _logoutUseCase;
+  final VerifyOtpUseCase _verifyOtpUseCase;
+  final VerifyForgotPasswordOtpUseCase _verifyForgotPasswordOtpUseCase;
+  final ResetPasswordWithNewUseCase _resetPasswordWithNewUseCase;
+  final AuthRepository _authRepository;
 
   AuthBloc({
     required SignInUseCase signInUseCase,
@@ -31,6 +39,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     required CheckUsernameUseCase checkUsernameUseCase,
     required GetCurrentUserUseCase getCurrentUserUseCase,
     required LogoutUseCase logoutUseCase,
+    required VerifyOtpUseCase verifyOtpUseCase,
+    required VerifyForgotPasswordOtpUseCase verifyForgotPasswordOtpUseCase,
+    required ResetPasswordWithNewUseCase resetPasswordWithNewUseCase,
+    required AuthRepository authRepository,
   })  : _signInUseCase = signInUseCase,
         _signUpUseCase = signUpUseCase,
         _resetPasswordUseCase = resetPasswordUseCase,
@@ -38,6 +50,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         _checkUsernameUseCase = checkUsernameUseCase,
         _getCurrentUserUseCase = getCurrentUserUseCase,
         _logoutUseCase = logoutUseCase,
+        _verifyOtpUseCase = verifyOtpUseCase,
+        _verifyForgotPasswordOtpUseCase = verifyForgotPasswordOtpUseCase,
+        _resetPasswordWithNewUseCase = resetPasswordWithNewUseCase,
+        _authRepository = authRepository,
         super(const AuthInitial()) {
     on<AuthCheckRequested>(_onCheckRequested);
     on<AuthSignInRequested>(_onSignInRequested);
@@ -45,6 +61,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthResetPasswordRequested>(_onResetPasswordRequested);
     on<AuthUsernameSubmitted>(_onUsernameSubmitted);
     on<AuthLogoutRequested>(_onLogoutRequested);
+    on<AuthVerifyOtpRequested>(_onVerifyOtpRequested);
+    on<AuthResendOtpRequested>(_onResendOtpRequested);
+    on<AuthForgotPasswordOtpRequested>(_onForgotPasswordOtpRequested);
+    on<AuthVerifyForgotPasswordOtpRequested>(
+        _onVerifyForgotPasswordOtpRequested);
+    on<AuthResetPasswordWithNewPassword>(_onResetPasswordWithNewPassword);
   }
 
   Future<void> _onCheckRequested(
@@ -127,8 +149,123 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(AuthError(failure: failure, previousState: state));
       },
       (_) {
-        AppLogger.info('Sign up successful, verification needed');
+        AppLogger.info('Sign up successful, OTP verification needed');
         emit(AuthSignUpSuccess(event.email));
+      },
+    );
+  }
+
+  Future<void> _onVerifyOtpRequested(
+    AuthVerifyOtpRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    AppLogger.info('Verifying OTP for: ${event.email}');
+    emit(const AuthLoading(message: 'Tekshirilmoqda...'));
+
+    final result = await _verifyOtpUseCase(
+      VerifyOtpParams(email: event.email, otp: event.otp),
+    );
+
+    result.fold(
+      (failure) {
+        AppLogger.error('OTP verification failed: ${failure.message}');
+        emit(AuthError(failure: failure, previousState: state));
+      },
+      (user) {
+        AppLogger.info('OTP verified, proceeding to username');
+        emit(AuthNeedsUsername(user));
+      },
+    );
+  }
+
+  Future<void> _onResendOtpRequested(
+    AuthResendOtpRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    AppLogger.info('Resending OTP to: ${event.email}');
+
+    final result = await _authRepository.resendSignUpOtp(email: event.email);
+
+    result.fold(
+      (failure) {
+        AppLogger.error('Resend OTP failed: ${failure.message}');
+        emit(AuthError(failure: failure, previousState: state));
+      },
+      (_) {
+        AppLogger.info('OTP resent successfully');
+        emit(AuthSignUpSuccess(event.email));
+      },
+    );
+  }
+
+  Future<void> _onForgotPasswordOtpRequested(
+    AuthForgotPasswordOtpRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    AppLogger.info('Sending forgot password OTP to: ${event.email}');
+    emit(const AuthLoading(message: 'Yuborilmoqda...'));
+
+    final result =
+        await _authRepository.sendForgotPasswordOtp(email: event.email);
+
+    result.fold(
+      (failure) {
+        AppLogger.error('Send forgot password OTP failed: ${failure.message}');
+        emit(AuthError(failure: failure, previousState: state));
+      },
+      (_) {
+        AppLogger.info('Forgot password OTP sent');
+        emit(AuthForgotPasswordOtpSent(event.email));
+      },
+    );
+  }
+
+  Future<void> _onVerifyForgotPasswordOtpRequested(
+    AuthVerifyForgotPasswordOtpRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    AppLogger.info('Verifying forgot password OTP for: ${event.email}');
+    emit(const AuthLoading(message: 'Tekshirilmoqda...'));
+
+    final result = await _verifyForgotPasswordOtpUseCase(
+      VerifyForgotPasswordOtpParams(email: event.email, otp: event.otp),
+    );
+
+    result.fold(
+      (failure) {
+        AppLogger.error(
+            'Forgot password OTP verification failed: ${failure.message}');
+        emit(AuthError(failure: failure, previousState: state));
+      },
+      (_) {
+        AppLogger.info('Forgot password OTP verified');
+        emit(AuthForgotPasswordOtpVerified(event.email));
+      },
+    );
+  }
+
+  Future<void> _onResetPasswordWithNewPassword(
+    AuthResetPasswordWithNewPassword event,
+    Emitter<AuthState> emit,
+  ) async {
+    AppLogger.info('Setting new password for: ${event.email}');
+    emit(const AuthLoading(message: 'Saqlanmoqda...'));
+
+    final result = await _resetPasswordWithNewUseCase(
+      ResetPasswordWithNewParams(
+        email: event.email,
+        newPassword: event.newPassword,
+      ),
+    );
+
+    result.fold(
+      (failure) {
+        AppLogger.error('Password reset failed: ${failure.message}');
+        emit(AuthError(failure: failure, previousState: state));
+      },
+      (_) {
+        AppLogger.info('Password reset successful');
+        emit(const AuthPasswordResetSuccess());
       },
     );
   }

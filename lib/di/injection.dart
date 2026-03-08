@@ -18,6 +18,9 @@ import '../features/auth/domain/usecases/sign_up_usecase.dart';
 import '../features/auth/domain/usecases/reset_password_usecase.dart';
 import '../features/auth/domain/usecases/set_username_usecase.dart';
 import '../features/auth/domain/usecases/check_username_usecase.dart';
+import '../features/auth/domain/usecases/verify_otp_usecase.dart';
+import '../features/auth/domain/usecases/verify_forgot_password_otp_usecase.dart';
+import '../features/auth/domain/usecases/reset_password_with_new_usecase.dart';
 import '../features/auth/presentation/bloc/auth_bloc.dart';
 
 // Home
@@ -171,6 +174,9 @@ void _initAuth() {
   sl.registerLazySingleton(() => CheckUsernameUseCase(sl()));
   sl.registerLazySingleton(() => LogoutUseCase(sl()));
   sl.registerLazySingleton(() => GetCurrentUserUseCase(sl()));
+  sl.registerLazySingleton(() => VerifyOtpUseCase(sl()));
+  sl.registerLazySingleton(() => VerifyForgotPasswordOtpUseCase(sl()));
+  sl.registerLazySingleton(() => ResetPasswordWithNewUseCase(sl()));
 
   // BLoC
   sl.registerFactory(() => AuthBloc(
@@ -181,6 +187,10 @@ void _initAuth() {
         checkUsernameUseCase: sl(),
         logoutUseCase: sl(),
         getCurrentUserUseCase: sl(),
+        verifyOtpUseCase: sl(),
+        verifyForgotPasswordOtpUseCase: sl(),
+        resetPasswordWithNewUseCase: sl(),
+        authRepository: sl(),
       ));
 }
 
