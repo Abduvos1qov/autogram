@@ -63,6 +63,58 @@ class AuthRepositoryImpl with RepositoryMixin implements AuthRepository {
       });
 
   @override
+  Future<Either<Failure, User>> verifyOtp({
+    required String email,
+    required String otp,
+  }) =>
+      safeRemoteCall(_networkInfo, () async {
+        final user = await _remoteDataSource.verifyOtp(
+          email: email,
+          otp: otp,
+        );
+        await _localDataSource.cacheUser(user);
+        return user;
+      });
+
+  @override
+  Future<Either<Failure, void>> resendSignUpOtp({required String email}) =>
+      safeRemoteCall(_networkInfo, () async {
+        await _remoteDataSource.resendSignUpOtp(email: email);
+      });
+
+  @override
+  Future<Either<Failure, void>> sendForgotPasswordOtp({
+    required String email,
+  }) =>
+      safeRemoteCall(_networkInfo, () async {
+        await _remoteDataSource.sendForgotPasswordOtp(email: email);
+      });
+
+  @override
+  Future<Either<Failure, void>> verifyForgotPasswordOtp({
+    required String email,
+    required String otp,
+  }) =>
+      safeRemoteCall(_networkInfo, () async {
+        await _remoteDataSource.verifyForgotPasswordOtp(
+          email: email,
+          otp: otp,
+        );
+      });
+
+  @override
+  Future<Either<Failure, void>> resetPasswordWithNew({
+    required String email,
+    required String newPassword,
+  }) =>
+      safeRemoteCall(_networkInfo, () async {
+        await _remoteDataSource.resetPasswordWithNew(
+          email: email,
+          newPassword: newPassword,
+        );
+      });
+
+  @override
   Future<Either<Failure, User>> setUsername({required String username}) =>
       safeRemoteCall(_networkInfo, () async {
         final user = await _remoteDataSource.setUsername(username: username);

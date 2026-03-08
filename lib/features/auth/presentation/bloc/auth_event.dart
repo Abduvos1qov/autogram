@@ -68,6 +68,65 @@ class AuthUsernameSubmitted extends AuthEvent {
   List<Object?> get props => [username];
 }
 
+/// Verify OTP code after sign-up
+class AuthVerifyOtpRequested extends AuthEvent {
+  final String email;
+  final String otp;
+
+  const AuthVerifyOtpRequested({required this.email, required this.otp});
+
+  @override
+  List<Object?> get props => [email, otp];
+}
+
+/// Resend OTP code
+class AuthResendOtpRequested extends AuthEvent {
+  final String email;
+
+  const AuthResendOtpRequested(this.email);
+
+  @override
+  List<Object?> get props => [email];
+}
+
+/// Send OTP for forgot password
+class AuthForgotPasswordOtpRequested extends AuthEvent {
+  final String email;
+
+  const AuthForgotPasswordOtpRequested(this.email);
+
+  @override
+  List<Object?> get props => [email];
+}
+
+/// Verify OTP for forgot password
+class AuthVerifyForgotPasswordOtpRequested extends AuthEvent {
+  final String email;
+  final String otp;
+
+  const AuthVerifyForgotPasswordOtpRequested({
+    required this.email,
+    required this.otp,
+  });
+
+  @override
+  List<Object?> get props => [email, otp];
+}
+
+/// Set new password after forgot password OTP verification
+class AuthResetPasswordWithNewPassword extends AuthEvent {
+  final String email;
+  final String newPassword;
+
+  const AuthResetPasswordWithNewPassword({
+    required this.email,
+    required this.newPassword,
+  });
+
+  @override
+  List<Object?> get props => [email, newPassword];
+}
+
 /// Logout
 class AuthLogoutRequested extends AuthEvent {
   const AuthLogoutRequested();

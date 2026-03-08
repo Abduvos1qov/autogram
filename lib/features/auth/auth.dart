@@ -10,6 +10,9 @@ export 'domain/usecases/set_username_usecase.dart';
 export 'domain/usecases/check_username_usecase.dart';
 export 'domain/usecases/logout_usecase.dart';
 export 'domain/usecases/get_current_user_usecase.dart';
+export 'domain/usecases/verify_otp_usecase.dart';
+export 'domain/usecases/verify_forgot_password_otp_usecase.dart';
+export 'domain/usecases/reset_password_with_new_usecase.dart';
 
 // Data
 export 'data/models/user_model.dart';

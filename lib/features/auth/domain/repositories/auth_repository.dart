@@ -24,6 +24,32 @@ abstract class AuthRepository {
   /// Send password reset email
   Future<Either<Failure, void>> resetPassword({required String email});
 
+  /// Verify OTP code after sign-up
+  Future<Either<Failure, User>> verifyOtp({
+    required String email,
+    required String otp,
+  });
+
+  /// Resend sign-up OTP
+  Future<Either<Failure, void>> resendSignUpOtp({required String email});
+
+  /// Send OTP for forgot password
+  Future<Either<Failure, void>> sendForgotPasswordOtp({
+    required String email,
+  });
+
+  /// Verify forgot password OTP
+  Future<Either<Failure, void>> verifyForgotPasswordOtp({
+    required String email,
+    required String otp,
+  });
+
+  /// Reset password with new password after OTP verification
+  Future<Either<Failure, void>> resetPasswordWithNew({
+    required String email,
+    required String newPassword,
+  });
+
   /// Set username for current user
   Future<Either<Failure, User>> setUsername({required String username});
 

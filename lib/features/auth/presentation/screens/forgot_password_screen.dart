@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
@@ -13,7 +16,7 @@ import '../bloc/auth_bloc.dart';
 import '../bloc/auth_event.dart';
 import '../bloc/auth_state.dart';
 
-/// Forgot password screen - send reset email
+/// Forgot password screen - 3-step OTP flow
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -23,21 +26,116 @@ class ForgotPasswordScreen extends StatefulWidget {
 }
 
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
-  final _formKey = GlobalKey<FormState>();
+  final _emailFormKey = GlobalKey<FormState>();
+  final _passwordFormKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
-  bool _resetSent = false;
-  String? _sentEmail;
+  final _newPasswordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
+  bool _obscureNewPassword = true;
+  bool _obscureConfirmPassword = true;
+
+  // OTP fields
+  final List<TextEditingController> _otpControllers =
+      List.generate(6, (_) => TextEditingController());
+  final List<FocusNode> _otpFocusNodes = List.generate(6, (_) => FocusNode());
+
+  // Step tracking: 0 = email, 1 = OTP, 2 = new password, 3 = success
+  int _currentStep = 0;
+  String? _email;
+
+  // Resend timer
+  Timer? _timer;
+  int _remainingSeconds = 60;
+  bool _canResend = false;
 
   @override
   void dispose() {
     _emailController.dispose();
+    _newPasswordController.dispose();
+    _confirmPasswordController.dispose();
+    _timer?.cancel();
+    for (final c in _otpControllers) {
+      c.dispose();
+    }
+    for (final n in _otpFocusNodes) {
+      n.dispose();
+    }
     super.dispose();
   }
 
-  void _submit() {
-    if (_formKey.currentState?.validate() ?? false) {
+  void _startTimer() {
+    _remainingSeconds = 60;
+    _canResend = false;
+    _timer?.cancel();
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      setState(() {
+        if (_remainingSeconds > 0) {
+          _remainingSeconds--;
+        } else {
+          _canResend = true;
+          timer.cancel();
+        }
+      });
+    });
+  }
+
+  void _submitEmail() {
+    if (_emailFormKey.currentState?.validate() ?? false) {
+      _email = _emailController.text.trim();
       context.read<AuthBloc>().add(
-            AuthResetPasswordRequested(_emailController.text.trim()),
+            AuthForgotPasswordOtpRequested(_email!),
+          );
+    }
+  }
+
+  String get _otpCode {
+    return _otpControllers.map((c) => c.text).join();
+  }
+
+  void _submitOtp() {
+    final otp = _otpCode;
+    if (otp.length == 6 && _email != null) {
+      context.read<AuthBloc>().add(
+            AuthVerifyForgotPasswordOtpRequested(
+              email: _email!,
+              otp: otp,
+            ),
+          );
+    }
+  }
+
+  void _onOtpChanged(int index, String value) {
+    if (value.length == 1 && index < 5) {
+      _otpFocusNodes[index + 1].requestFocus();
+    }
+    if (value.isEmpty && index > 0) {
+      _otpFocusNodes[index - 1].requestFocus();
+    }
+    if (_otpCode.length == 6) {
+      _submitOtp();
+    }
+  }
+
+  void _resendOtp() {
+    if (_canResend && _email != null) {
+      context.read<AuthBloc>().add(AuthForgotPasswordOtpRequested(_email!));
+      _startTimer();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Tasdiqlash kodi qayta yuborildi'),
+          backgroundColor: AppColors.success,
+        ),
+      );
+    }
+  }
+
+  void _submitNewPassword() {
+    if (_passwordFormKey.currentState?.validate() ?? false) {
+      context.read<AuthBloc>().add(
+            AuthResetPasswordWithNewPassword(
+              email: _email!,
+              newPassword: _newPasswordController.text,
+            ),
           );
     }
   }
@@ -46,12 +144,30 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   Widget build(BuildContext context) {
     return BlocConsumer<AuthBloc, AuthState>(
       listener: (context, state) {
-        if (state is AuthPasswordResetSent) {
+        if (state is AuthForgotPasswordOtpSent) {
           setState(() {
-            _resetSent = true;
-            _sentEmail = state.email;
+            _currentStep = 1;
+          });
+          _startTimer();
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            _otpFocusNodes[0].requestFocus();
+          });
+        } else if (state is AuthForgotPasswordOtpVerified) {
+          setState(() {
+            _currentStep = 2;
+          });
+        } else if (state is AuthPasswordResetSuccess) {
+          setState(() {
+            _currentStep = 3;
           });
         } else if (state is AuthError) {
+          if (_currentStep == 1) {
+            // Clear OTP on error
+            for (final c in _otpControllers) {
+              c.clear();
+            }
+            _otpFocusNodes[0].requestFocus();
+          }
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(ErrorHandler.getUserMessage(state.failure)),
@@ -75,9 +191,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           body: SafeArea(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: _resetSent
-                  ? _buildSuccessContent()
-                  : _buildFormContent(isLoading),
+              child: _buildCurrentStep(isLoading),
             ),
           ),
         );
@@ -85,15 +199,29 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     );
   }
 
-  Widget _buildFormContent(bool isLoading) {
+  Widget _buildCurrentStep(bool isLoading) {
+    switch (_currentStep) {
+      case 0:
+        return _buildEmailStep(isLoading);
+      case 1:
+        return _buildOtpStep(isLoading);
+      case 2:
+        return _buildNewPasswordStep(isLoading);
+      case 3:
+        return _buildSuccessStep();
+      default:
+        return _buildEmailStep(isLoading);
+    }
+  }
+
+  Widget _buildEmailStep(bool isLoading) {
     return Form(
-      key: _formKey,
+      key: _emailFormKey,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 16),
 
-          // Title
           Text(
             'Parolni tiklash',
             style: AppTypography.displayMedium.copyWith(
@@ -104,7 +232,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           AppSpacing.gapVerticalSm,
 
           Text(
-            'Email manzilingizni kiriting, biz sizga parolni tiklash havolasini yuboramiz',
+            'Email manzilingizni kiriting, biz sizga tasdiqlash kodini yuboramiz',
             style: AppTypography.bodyMedium.copyWith(
               color: AppColors.textSecondary,
             ),
@@ -112,7 +240,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
           const SizedBox(height: 40),
 
-          // Email input
           AppTextField(
             controller: _emailController,
             label: 'Email',
@@ -121,22 +248,20 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             textInputAction: TextInputAction.done,
             validator: Validators.validateEmailRequired,
             autofocus: true,
-            onEditingComplete: _submit,
+            onEditingComplete: _submitEmail,
           ),
 
           const SizedBox(height: 32),
 
-          // Submit button
           PrimaryButton(
-            text: 'Havolani yuborish',
-            onPressed: isLoading ? null : _submit,
+            text: 'Kodni yuborish',
+            onPressed: isLoading ? null : _submitEmail,
             isLoading: isLoading,
             height: 52,
           ),
 
           const SizedBox(height: 24),
 
-          // Back to login
           Center(
             child: TextButton(
               onPressed: () => context.pop(),
@@ -154,12 +279,235 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     );
   }
 
-  Widget _buildSuccessContent() {
+  Widget _buildOtpStep(bool isLoading) {
     return Column(
       children: [
         const Spacer(flex: 1),
 
-        // Success icon
+        Container(
+          width: 80,
+          height: 80,
+          decoration: BoxDecoration(
+            color: AppColors.primary.withValues(alpha: 0.1),
+            shape: BoxShape.circle,
+          ),
+          child: Icon(
+            Icons.email_outlined,
+            size: 40,
+            color: AppColors.primary,
+          ),
+        ),
+
+        const SizedBox(height: 32),
+
+        Text(
+          'Tasdiqlash kodi',
+          style: AppTypography.displaySmall.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+          textAlign: TextAlign.center,
+        ),
+
+        AppSpacing.gapVerticalMd,
+
+        RichText(
+          textAlign: TextAlign.center,
+          text: TextSpan(
+            style: AppTypography.bodyMedium.copyWith(
+              color: AppColors.textSecondary,
+            ),
+            children: [
+              const TextSpan(text: 'Tasdiqlash kodini '),
+              TextSpan(
+                text: _email ?? '',
+                style: const TextStyle(
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+              const TextSpan(text: ' manziliga yubordik'),
+            ],
+          ),
+        ),
+
+        const SizedBox(height: 40),
+
+        // OTP input fields
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: List.generate(6, (index) {
+            return Container(
+              width: 48,
+              height: 56,
+              margin: EdgeInsets.only(
+                right: index < 5 ? 8 : 0,
+              ),
+              child: TextField(
+                controller: _otpControllers[index],
+                focusNode: _otpFocusNodes[index],
+                keyboardType: TextInputType.number,
+                textAlign: TextAlign.center,
+                maxLength: 1,
+                enabled: !isLoading,
+                style: AppTypography.headlineSmall.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+                decoration: InputDecoration(
+                  counterText: '',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(
+                      color: AppColors.grey300,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: AppColors.primary,
+                      width: 2,
+                    ),
+                  ),
+                  contentPadding: EdgeInsets.zero,
+                ),
+                inputFormatters: [
+                  FilteringTextInputFormatter.digitsOnly,
+                ],
+                onChanged: (value) => _onOtpChanged(index, value),
+              ),
+            );
+          }),
+        ),
+
+        const SizedBox(height: 32),
+
+        PrimaryButton(
+          text: 'Tasdiqlash',
+          onPressed: isLoading || _otpCode.length < 6 ? null : _submitOtp,
+          isLoading: isLoading,
+          height: 52,
+        ),
+
+        AppSpacing.gapVerticalLg,
+
+        _canResend
+            ? TextButton(
+                onPressed: _resendOtp,
+                child: Text(
+                  'Kodni qayta yuborish',
+                  style: AppTypography.bodyMedium.copyWith(
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              )
+            : Text(
+                'Qayta yuborish: ${_remainingSeconds}s',
+                style: AppTypography.bodyMedium.copyWith(
+                  color: AppColors.textSecondary,
+                ),
+              ),
+
+        const Spacer(flex: 2),
+      ],
+    );
+  }
+
+  Widget _buildNewPasswordStep(bool isLoading) {
+    return Form(
+      key: _passwordFormKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 16),
+
+          Text(
+            'Yangi parol',
+            style: AppTypography.displayMedium.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+
+          AppSpacing.gapVerticalSm,
+
+          Text(
+            'Yangi parolingizni kiriting',
+            style: AppTypography.bodyMedium.copyWith(
+              color: AppColors.textSecondary,
+            ),
+          ),
+
+          const SizedBox(height: 40),
+
+          AppTextField(
+            controller: _newPasswordController,
+            label: 'Yangi parol',
+            hint: 'Kuchli parol kiriting',
+            obscureText: _obscureNewPassword,
+            keyboardType: TextInputType.visiblePassword,
+            textInputAction: TextInputAction.next,
+            suffixIcon: IconButton(
+              icon: Icon(
+                _obscureNewPassword
+                    ? Icons.visibility_off_outlined
+                    : Icons.visibility_outlined,
+                color: AppColors.grey500,
+              ),
+              onPressed: () {
+                setState(() {
+                  _obscureNewPassword = !_obscureNewPassword;
+                });
+              },
+            ),
+            validator: Validators.validatePassword,
+            autofocus: true,
+          ),
+
+          AppSpacing.gapVerticalLg,
+
+          AppTextField(
+            controller: _confirmPasswordController,
+            label: 'Parolni tasdiqlash',
+            hint: 'Parolni qayta kiriting',
+            obscureText: _obscureConfirmPassword,
+            keyboardType: TextInputType.visiblePassword,
+            textInputAction: TextInputAction.done,
+            suffixIcon: IconButton(
+              icon: Icon(
+                _obscureConfirmPassword
+                    ? Icons.visibility_off_outlined
+                    : Icons.visibility_outlined,
+                color: AppColors.grey500,
+              ),
+              onPressed: () {
+                setState(() {
+                  _obscureConfirmPassword = !_obscureConfirmPassword;
+                });
+              },
+            ),
+            validator: Validators.validateConfirmPassword(
+              _newPasswordController.text,
+            ),
+            onEditingComplete: _submitNewPassword,
+          ),
+
+          const SizedBox(height: 32),
+
+          PrimaryButton(
+            text: 'Parolni saqlash',
+            onPressed: isLoading ? null : _submitNewPassword,
+            isLoading: isLoading,
+            height: 52,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSuccessStep() {
+    return Column(
+      children: [
+        const Spacer(flex: 1),
+
         Container(
           width: 80,
           height: 80,
@@ -176,9 +524,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
         const SizedBox(height: 32),
 
-        // Title
         Text(
-          'Email yuborildi!',
+          'Parol yangilandi!',
           style: AppTypography.displaySmall.copyWith(
             fontWeight: FontWeight.bold,
           ),
@@ -187,32 +534,18 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
         AppSpacing.gapVerticalMd,
 
-        // Subtitle
-        RichText(
-          textAlign: TextAlign.center,
-          text: TextSpan(
-            style: AppTypography.bodyMedium.copyWith(
-              color: AppColors.textSecondary,
-            ),
-            children: [
-              const TextSpan(text: 'Parolni tiklash havolasi '),
-              TextSpan(
-                text: _sentEmail ?? '',
-                style: const TextStyle(
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textPrimary,
-                ),
-              ),
-              const TextSpan(text: ' manziliga yuborildi'),
-            ],
+        Text(
+          'Parolingiz muvaffaqiyatli yangilandi. Endi yangi parol bilan kirishingiz mumkin.',
+          style: AppTypography.bodyMedium.copyWith(
+            color: AppColors.textSecondary,
           ),
+          textAlign: TextAlign.center,
         ),
 
         const SizedBox(height: 40),
 
-        // Back to login
         PrimaryButton(
-          text: 'Kirishga qaytish',
+          text: 'Kirishga o\'tish',
           onPressed: () => context.go('/login'),
           height: 52,
         ),
