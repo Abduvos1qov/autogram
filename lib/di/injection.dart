@@ -67,6 +67,13 @@ import '../features/chat/data/repositories/chat_repository_impl.dart';
 import '../features/chat/domain/repositories/chat_repository.dart';
 import '../features/chat/presentation/bloc/conversations_bloc.dart';
 
+// Seller
+import '../features/seller/data/datasources/seller_remote_datasource.dart';
+import '../features/seller/data/repositories/seller_repository_impl.dart';
+import '../features/seller/domain/repositories/seller_repository.dart';
+import '../features/seller/domain/usecases/upgrade_to_seller_usecase.dart';
+import '../features/seller/presentation/bloc/seller_bloc.dart';
+
 // Seller Members
 import '../features/seller/data/datasources/seller_member_remote_datasource.dart';
 import '../features/seller/data/repositories/seller_member_repository_impl.dart';
@@ -124,6 +131,7 @@ Future<void> initDependencies() async {
   _initListing();
   _initSaved();
   _initChat();
+  _initSeller();
   _initSellerMembers();
   _initSellerInvitations();
   _initActivityLog();
@@ -334,6 +342,30 @@ void _initChat() {
 
   // BLoC
   sl.registerFactory(() => ConversationsBloc(repository: sl()));
+}
+
+void _initSeller() {
+  // Data sources
+  sl.registerLazySingleton<SellerRemoteDataSource>(
+    () => SellerRemoteDataSourceImpl(supabaseClient: sl()),
+  );
+
+  // Repository
+  sl.registerLazySingleton<SellerRepository>(
+    () => SellerRepositoryImpl(
+      remoteDataSource: sl(),
+      networkInfo: sl(),
+    ),
+  );
+
+  // Use cases
+  sl.registerLazySingleton(() => UpgradeToSellerUseCase(sl()));
+
+  // BLoC
+  sl.registerFactory(() => SellerBloc(
+        repository: sl(),
+        upgradeToSellerUseCase: sl(),
+      ));
 }
 
 void _initSellerMembers() {

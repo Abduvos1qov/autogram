@@ -11,6 +11,7 @@ import '../../../../core/widgets/inputs/app_text_field.dart';
 import '../bloc/seller_bloc.dart';
 import '../bloc/seller_event.dart';
 import '../bloc/seller_state.dart';
+import '../widgets/step_progress_bar.dart';
 
 /// Business info screen - Step 2: Enter business details
 
@@ -66,6 +67,8 @@ class _BusinessInfoScreenState extends State<BusinessInfoScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<SellerBloc, SellerState>(
+      listenWhen: (previous, current) =>
+          previous.currentStep != current.currentStep,
       listener: (context, state) {
         if (state.currentStep == 2) {
           context.push('/upgrade/plan-selection');
@@ -92,7 +95,7 @@ class _BusinessInfoScreenState extends State<BusinessInfoScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           // Progress indicator
-                          _buildProgressIndicator(1),
+                          const StepProgressBar(currentStep: 1),
                           AppSpacing.gapVerticalXl,
 
                           // Header
@@ -210,25 +213,4 @@ class _BusinessInfoScreenState extends State<BusinessInfoScreen> {
     );
   }
 
-  Widget _buildProgressIndicator(int step) {
-    return Row(
-      children: List.generate(3, (index) {
-        final isCompleted = index < step;
-        final isCurrent = index == step;
-
-        return Expanded(
-          child: Container(
-            margin: EdgeInsets.only(right: index < 2 ? 8 : 0),
-            height: 4,
-            decoration: BoxDecoration(
-              color: isCompleted || isCurrent
-                  ? AppColors.primary
-                  : AppColors.grey200,
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
-        );
-      }),
-    );
-  }
 }

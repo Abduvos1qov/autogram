@@ -20,6 +20,10 @@ import '../features/reels/presentation/screens/reels_screen.dart';
 import '../features/saved/presentation/screens/saved_screen.dart';
 import '../features/search/presentation/screens/filter_screen.dart';
 import '../features/search/presentation/screens/search_screen.dart';
+import '../features/seller/presentation/screens/upgrade_screen.dart';
+import '../features/seller/presentation/screens/business_info_screen.dart';
+import '../features/seller/presentation/screens/plan_selection_screen.dart';
+import '../features/seller/presentation/screens/upgrade_success_screen.dart';
 import '../features/seller/presentation/screens/team_members_screen.dart';
 import '../features/seller/presentation/screens/add_member_screen.dart';
 import '../features/seller/presentation/screens/member_detail_screen.dart';
@@ -223,6 +227,32 @@ GoRouter createRouter(AuthBloc authBloc) {
         name: RouteNames.notifications,
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const NotificationsScreen(),
+      ),
+
+      // Seller upgrade routes
+      GoRoute(
+        path: RoutePaths.upgrade,
+        name: RouteNames.upgrade,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const UpgradeScreen(),
+      ),
+      GoRoute(
+        path: RoutePaths.upgradeBusinessInfo,
+        name: RouteNames.upgradeBusinessInfo,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const BusinessInfoScreen(),
+      ),
+      GoRoute(
+        path: RoutePaths.upgradePlanSelection,
+        name: RouteNames.upgradePlanSelection,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const PlanSelectionScreen(),
+      ),
+      GoRoute(
+        path: RoutePaths.upgradeSuccess,
+        name: RouteNames.upgradeSuccess,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const UpgradeSuccessScreen(),
       ),
 
       // Team management routes

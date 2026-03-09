@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
 
+import '../../../../core/config/test_config.dart';
 import '../../../../core/constants/api_endpoints.dart';
 import '../../../../core/errors/error_handler.dart';
 import '../../../../core/errors/exceptions.dart' as app_exceptions;
@@ -39,6 +40,12 @@ class SellerRemoteDataSourceImpl implements SellerRemoteDataSource {
 
   @override
   Future<SellerProfileModel?> getSellerProfile() async {
+    if (TestConfig.isTestMode) {
+      AppLogger.info('TEST MODE: Getting seller profile');
+      await Future.delayed(const Duration(milliseconds: 500));
+      return null; // User is not a seller yet
+    }
+
     try {
       final currentUser = _supabase.auth.currentUser;
       if (currentUser == null) {
@@ -73,6 +80,27 @@ class SellerRemoteDataSourceImpl implements SellerRemoteDataSource {
     String? city,
     List<String>? contactPhones,
   }) async {
+    if (TestConfig.isTestMode) {
+      AppLogger.info('TEST MODE: Creating seller profile for $businessName');
+      await Future.delayed(const Duration(milliseconds: 500));
+      final now = DateTime.now();
+      return SellerProfileModel(
+        id: 'test_seller_${now.millisecondsSinceEpoch}',
+        userId: 'test_user',
+        businessName: businessName,
+        businessType: businessType,
+        description: description,
+        address: address,
+        city: city,
+        contactPhones: contactPhones ?? [],
+        isVerified: false,
+        subscriptionPlan: SubscriptionPlan.free,
+        stats: const SellerStats(),
+        createdAt: now,
+        updatedAt: now,
+      );
+    }
+
     try {
       final currentUser = _supabase.auth.currentUser;
       if (currentUser == null) {
@@ -130,6 +158,23 @@ class SellerRemoteDataSourceImpl implements SellerRemoteDataSource {
 
   @override
   Future<SellerProfileModel> updateSellerProfile(Map<String, dynamic> updates) async {
+    if (TestConfig.isTestMode) {
+      AppLogger.info('TEST MODE: Updating seller profile');
+      await Future.delayed(const Duration(milliseconds: 500));
+      final now = DateTime.now();
+      return SellerProfileModel(
+        id: 'test_seller',
+        userId: 'test_user',
+        businessName: updates['business_name'] as String? ?? 'Test Business',
+        businessType: BusinessType.individual,
+        isVerified: false,
+        subscriptionPlan: SubscriptionPlan.free,
+        stats: const SellerStats(),
+        createdAt: now,
+        updatedAt: now,
+      );
+    }
+
     try {
       final currentUser = _supabase.auth.currentUser;
       if (currentUser == null) {
@@ -158,6 +203,12 @@ class SellerRemoteDataSourceImpl implements SellerRemoteDataSource {
 
   @override
   Future<List<SubscriptionPlanDetails>> getSubscriptionPlans() async {
+    if (TestConfig.isTestMode) {
+      AppLogger.info('TEST MODE: Getting subscription plans');
+      await Future.delayed(const Duration(milliseconds: 500));
+      return _getDefaultPlans();
+    }
+
     try {
       final response = await _supabase
           .from(ApiEndpoints.subscriptionPlans)
@@ -181,51 +232,72 @@ class SellerRemoteDataSourceImpl implements SellerRemoteDataSource {
       }).toList();
     } catch (e) {
       AppLogger.error('Error getting subscription plans', e);
-      // Return default plans
-      return [
-        SubscriptionPlanDetails(
-          plan: SubscriptionPlan.free,
-          name: 'Bepul',
-          description: 'Boshlash uchun ideal',
-          monthlyPrice: 0,
-          yearlyPrice: 0,
-          maxListings: 3,
-          features: SubscriptionPlan.free.features,
-        ),
-        SubscriptionPlanDetails(
-          plan: SubscriptionPlan.basic,
-          name: 'Boshlang\'ich',
-          description: 'Kichik biznes uchun',
-          monthlyPrice: 99000,
-          yearlyPrice: 999000,
-          maxListings: 10,
-          features: SubscriptionPlan.basic.features,
-        ),
-        SubscriptionPlanDetails(
-          plan: SubscriptionPlan.professional,
-          name: 'Professional',
-          description: 'Ko\'proq e\'lonlar va imkoniyatlar',
-          monthlyPrice: 299000,
-          yearlyPrice: 2999000,
-          maxListings: 50,
-          features: SubscriptionPlan.professional.features,
-          isPopular: true,
-        ),
-        SubscriptionPlanDetails(
-          plan: SubscriptionPlan.premium,
-          name: 'Premium',
-          description: 'Maksimal imkoniyatlar',
-          monthlyPrice: 599000,
-          yearlyPrice: 5999000,
-          maxListings: 999,
-          features: SubscriptionPlan.premium.features,
-        ),
-      ];
+      return _getDefaultPlans();
     }
+  }
+
+  List<SubscriptionPlanDetails> _getDefaultPlans() {
+    return [
+      SubscriptionPlanDetails(
+        plan: SubscriptionPlan.free,
+        name: 'Bepul',
+        description: 'Boshlash uchun ideal',
+        monthlyPrice: 0,
+        yearlyPrice: 0,
+        maxListings: 3,
+        features: SubscriptionPlan.free.features,
+      ),
+      SubscriptionPlanDetails(
+        plan: SubscriptionPlan.basic,
+        name: 'Boshlang\'ich',
+        description: 'Kichik biznes uchun',
+        monthlyPrice: 99000,
+        yearlyPrice: 999000,
+        maxListings: 10,
+        features: SubscriptionPlan.basic.features,
+      ),
+      SubscriptionPlanDetails(
+        plan: SubscriptionPlan.professional,
+        name: 'Professional',
+        description: 'Ko\'proq e\'lonlar va imkoniyatlar',
+        monthlyPrice: 299000,
+        yearlyPrice: 2999000,
+        maxListings: 50,
+        features: SubscriptionPlan.professional.features,
+        isPopular: true,
+      ),
+      SubscriptionPlanDetails(
+        plan: SubscriptionPlan.premium,
+        name: 'Premium',
+        description: 'Maksimal imkoniyatlar',
+        monthlyPrice: 599000,
+        yearlyPrice: 5999000,
+        maxListings: 999,
+        features: SubscriptionPlan.premium.features,
+      ),
+    ];
   }
 
   @override
   Future<SellerProfileModel> subscribeToPlan(SubscriptionPlan plan) async {
+    if (TestConfig.isTestMode) {
+      AppLogger.info('TEST MODE: Subscribing to ${plan.name}');
+      await Future.delayed(const Duration(milliseconds: 500));
+      final now = DateTime.now();
+      return SellerProfileModel(
+        id: 'test_seller',
+        userId: 'test_user',
+        businessName: 'Test Business',
+        businessType: BusinessType.individual,
+        isVerified: false,
+        subscriptionPlan: plan,
+        subscriptionExpiresAt: now.add(const Duration(days: 30)),
+        stats: const SellerStats(),
+        createdAt: now,
+        updatedAt: now,
+      );
+    }
+
     try {
       final currentUser = _supabase.auth.currentUser;
       if (currentUser == null) {
@@ -259,6 +331,23 @@ class SellerRemoteDataSourceImpl implements SellerRemoteDataSource {
 
   @override
   Future<SellerProfileModel> cancelSubscription() async {
+    if (TestConfig.isTestMode) {
+      AppLogger.info('TEST MODE: Cancelling subscription');
+      await Future.delayed(const Duration(milliseconds: 500));
+      final now = DateTime.now();
+      return SellerProfileModel(
+        id: 'test_seller',
+        userId: 'test_user',
+        businessName: 'Test Business',
+        businessType: BusinessType.individual,
+        isVerified: false,
+        subscriptionPlan: SubscriptionPlan.free,
+        stats: const SellerStats(),
+        createdAt: now,
+        updatedAt: now,
+      );
+    }
+
     try {
       final currentUser = _supabase.auth.currentUser;
       if (currentUser == null) {
@@ -289,6 +378,12 @@ class SellerRemoteDataSourceImpl implements SellerRemoteDataSource {
 
   @override
   Future<String> uploadLogo(String filePath) async {
+    if (TestConfig.isTestMode) {
+      AppLogger.info('TEST MODE: Uploading logo');
+      await Future.delayed(const Duration(milliseconds: 500));
+      return 'https://ui-avatars.com/api/?name=Test&size=200&background=0088cc&color=fff';
+    }
+
     try {
       final currentUser = _supabase.auth.currentUser;
       if (currentUser == null) {
@@ -315,6 +410,12 @@ class SellerRemoteDataSourceImpl implements SellerRemoteDataSource {
 
   @override
   Future<String> uploadCover(String filePath) async {
+    if (TestConfig.isTestMode) {
+      AppLogger.info('TEST MODE: Uploading cover');
+      await Future.delayed(const Duration(milliseconds: 500));
+      return 'https://picsum.photos/800/400?random=99';
+    }
+
     try {
       final currentUser = _supabase.auth.currentUser;
       if (currentUser == null) {
@@ -341,6 +442,12 @@ class SellerRemoteDataSourceImpl implements SellerRemoteDataSource {
 
   @override
   Future<bool> canBecomeASeller() async {
+    if (TestConfig.isTestMode) {
+      AppLogger.info('TEST MODE: Checking if can become a seller');
+      await Future.delayed(const Duration(milliseconds: 300));
+      return true;
+    }
+
     try {
       final currentUser = _supabase.auth.currentUser;
       if (currentUser == null) {

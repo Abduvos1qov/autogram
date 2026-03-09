@@ -13,6 +13,7 @@ import '../bloc/seller_bloc.dart';
 import '../bloc/seller_event.dart';
 import '../bloc/seller_state.dart';
 import '../widgets/plan_card.dart';
+import '../widgets/step_progress_bar.dart';
 
 /// Plan selection screen - Step 3: Choose subscription plan
 
@@ -43,15 +44,11 @@ class _PlanSelectionScreenState extends State<PlanSelectionScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<SellerBloc, SellerState>(
+      listenWhen: (previous, current) =>
+          previous.status != current.status,
       listener: (context, state) {
         if (state.isUpgraded) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Tabriklaymiz! Siz endi sotuvchisiz!'),
-              backgroundColor: AppColors.success,
-            ),
-          );
-          context.go('/home');
+          context.go('/upgrade/success');
         } else if (state.hasError && state.failure != null) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -80,7 +77,7 @@ class _PlanSelectionScreenState extends State<PlanSelectionScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         // Progress indicator
-                        _buildProgressIndicator(2),
+                        const StepProgressBar(currentStep: 2),
                         AppSpacing.gapVerticalXl,
 
                         // Header
@@ -193,25 +190,4 @@ class _PlanSelectionScreenState extends State<PlanSelectionScreen> {
     );
   }
 
-  Widget _buildProgressIndicator(int step) {
-    return Row(
-      children: List.generate(3, (index) {
-        final isCompleted = index < step;
-        final isCurrent = index == step;
-
-        return Expanded(
-          child: Container(
-            margin: EdgeInsets.only(right: index < 2 ? 8 : 0),
-            height: 4,
-            decoration: BoxDecoration(
-              color: isCompleted || isCurrent
-                  ? AppColors.primary
-                  : AppColors.grey200,
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
-        );
-      }),
-    );
-  }
 }

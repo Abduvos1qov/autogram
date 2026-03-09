@@ -31,6 +31,9 @@ abstract class RouteNames {
 
   // Seller routes
   static const upgrade = 'upgrade';
+  static const upgradeBusinessInfo = 'upgradeBusinessInfo';
+  static const upgradePlanSelection = 'upgradePlanSelection';
+  static const upgradeSuccess = 'upgradeSuccess';
   static const subscription = 'subscription';
 
   // Team routes
@@ -71,6 +74,9 @@ abstract class RoutePaths {
 
   // Seller paths
   static const upgrade = '/upgrade';
+  static const upgradeBusinessInfo = '/upgrade/business-info';
+  static const upgradePlanSelection = '/upgrade/plan-selection';
+  static const upgradeSuccess = '/upgrade/success';
   static const subscription = '/subscription';
 
   // Team paths

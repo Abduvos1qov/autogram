@@ -13,6 +13,7 @@ import 'features/reels/presentation/bloc/reels_bloc.dart';
 import 'features/saved/presentation/bloc/saved_bloc.dart';
 import 'features/search/presentation/bloc/search_bloc.dart';
 import 'features/profile/presentation/bloc/profile_bloc.dart';
+import 'features/seller/presentation/bloc/seller_bloc.dart';
 import 'features/seller/presentation/bloc/team/team_bloc.dart';
 import 'navigation/app_router.dart';
 
@@ -52,6 +53,7 @@ class _AppState extends State<App> {
         BlocProvider<SavedBloc>(create: (_) => sl<SavedBloc>()),
         BlocProvider<ConversationsBloc>(create: (_) => sl<ConversationsBloc>()),
         BlocProvider<ProfileBloc>(create: (_) => sl<ProfileBloc>()),
+        BlocProvider<SellerBloc>(create: (_) => sl<SellerBloc>()),
         BlocProvider<TeamBloc>(create: (_) => sl<TeamBloc>()),
       ],
       child: _buildMaterialApp(),

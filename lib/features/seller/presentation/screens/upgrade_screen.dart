@@ -9,6 +9,7 @@ import '../../domain/entities/seller_profile.dart';
 import '../bloc/seller_bloc.dart';
 import '../bloc/seller_event.dart';
 import '../bloc/seller_state.dart';
+import '../widgets/step_progress_bar.dart';
 import '../widgets/type_card.dart';
 
 /// Upgrade to seller screen - Step 1: Business type selection
@@ -19,6 +20,8 @@ class UpgradeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<SellerBloc, SellerState>(
+      listenWhen: (previous, current) =>
+          previous.currentStep != current.currentStep,
       listener: (context, state) {
         if (state.currentStep == 1 && state.selectedBusinessType != null) {
           context.push('/upgrade/business-info');
@@ -43,7 +46,7 @@ class UpgradeScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Progress indicator
-                  _buildProgressIndicator(0),
+                  const StepProgressBar(currentStep: 0),
                   AppSpacing.gapVerticalXl,
 
                   // Header
@@ -88,25 +91,4 @@ class UpgradeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildProgressIndicator(int step) {
-    return Row(
-      children: List.generate(3, (index) {
-        final isCompleted = index < step;
-        final isCurrent = index == step;
-
-        return Expanded(
-          child: Container(
-            margin: EdgeInsets.only(right: index < 2 ? 8 : 0),
-            height: 4,
-            decoration: BoxDecoration(
-              color: isCompleted || isCurrent
-                  ? AppColors.primary
-                  : AppColors.grey200,
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
-        );
-      }),
-    );
-  }
 }
