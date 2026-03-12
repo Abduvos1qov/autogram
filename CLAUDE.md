@@ -106,6 +106,57 @@ Production uchun Supabase dashboardda quyidagilarni sozlash kerak:
    <p>Kod 10 daqiqa ichida amal qiladi.</p>
    ```
 
+## Monetizatsiya — 4 Bosqichli Tarif Tizimi
+
+Komissiya modeli yo'q. Daromad faqat obuna + seat + boost/reklamadan keladi.
+
+### Tarif Rejalari
+
+| | **Free** | **Pro** | **Premium** | **Enterprise** |
+|--|---------|---------|------------|---------------|
+| **Oylik narx** | 0 | 999,000 UZS (~$76) | 1,999,000 UZS (~$152) | Kelishiladi (4,999,000 - 14,999,000 UZS) |
+| **Yillik narx** | 0 | 9,990,000 UZS (~$760) | 19,990,000 UZS (~$1,520) | Shartnoma asosida |
+| **E'lonlar limiti** | 3 | 100 | Cheksiz | Cheksiz |
+| **Bepul seatlar** | 1 (faqat owner) | 3 | 10 | Cheksiz |
+| **Qo'shimcha seat narxi** | — | 149,000 UZS/seat/oy | 249,000 UZS/seat/oy | Kelishiladi |
+| **Verified badge** | — | ✓ | ✓ | ✓ |
+| **Analitika** | Asosiy | Kengaytirilgan | Premium | Premium+ |
+| **Shaxsiy menejer** | — | — | ✓ | ✓ |
+| **API kirish** | — | — | — | ✓ |
+| **Multi-filial** | — | — | — | ✓ |
+
+### Maqsadli auditoriya
+
+- **Free** — Shaxsiy sotuvchi (1 ta mashinasini sotmoqchi)
+- **Pro** — Kichik-o'rta diler (3-5 xodim)
+- **Premium** — Yirik avtosalon (10-20 xodim)
+- **Enterprise** — Tarmoq avtosalonlar (30+ xodim, bir nechta filial)
+
+### Team Rollari (5 ta)
+
+| Role | Ruxsatlar |
+|------|----------|
+| **Owner** | To'liq nazorat |
+| **Admin** | Xodimlar va e'lonlarni boshqarish |
+| **Manager** | E'lon yaratish, xaridorlar bilan chat |
+| **Marketing** | E'lonlarni boost qilish, analitika |
+| **Viewer** | Faqat statistikani ko'rish |
+
+### Boost/Reklama narxlari
+
+| Xizmat | Narx |
+|--------|------|
+| Ko'tarish (1 marta) | 15,000-25,000 UZS |
+| TOP (1 kun) | 30,000-50,000 UZS |
+| VIP (7 kun) | 99,000-149,000 UZS |
+| Mega paket (30 kun) | 249,000-399,000 UZS |
+
+### Daromad prognozi (3 yillik)
+
+| | Yil 1 (1,000 sotuvchi) | Yil 2 (5,000 sotuvchi) | Yil 3 (15,000 sotuvchi) |
+|--|----------------------|----------------------|------------------------|
+| **Yillik daromad** | ~$480,600 | ~$2,500,000 | ~$9,567,000 |
+
 ## Conventions
 
 - Barrel exports per feature (e.g., `features/auth/auth.dart`)
