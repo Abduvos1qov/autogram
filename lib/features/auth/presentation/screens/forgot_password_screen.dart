@@ -180,18 +180,14 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         final isLoading = state is AuthLoading;
 
         return Scaffold(
-          appBar: AppBar(
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () => context.pop(),
-            ),
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-          ),
-          body: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: _buildCurrentStep(isLoading),
+          body: GestureDetector(
+            onTap: () => FocusScope.of(context).unfocus(),
+            behavior: HitTestBehavior.opaque,
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: _buildCurrentStep(isLoading),
+              ),
             ),
           ),
         );

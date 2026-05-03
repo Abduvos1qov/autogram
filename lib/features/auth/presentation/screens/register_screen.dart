@@ -108,22 +108,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
         final isLoading = state is AuthLoading;
 
         return Scaffold(
-          appBar: AppBar(
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () => context.pop(),
-            ),
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-          ),
-          body: SafeArea(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
+          body: GestureDetector(
+            onTap: () => FocusScope.of(context).unfocus(),
+            behavior: HitTestBehavior.opaque,
+            child: SafeArea(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
               child: Form(
                 key: _formKey,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    const SizedBox(height: 32),
+
                     // Title
                     Text(
                       'Ro\'yxatdan o\'tish',
@@ -304,13 +301,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ],
                       ),
                     ),
-
+                    
                     const SizedBox(height: 24),
                   ],
                 ),
               ),
             ),
           ),
+        ),
         );
       },
     );

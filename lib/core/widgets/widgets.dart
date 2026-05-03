@@ -4,6 +4,7 @@
 export 'buttons/primary_button.dart';
 export 'buttons/secondary_button.dart';
 export 'buttons/icon_button.dart';
+export 'buttons/app_back_button.dart';
 
 // Inputs
 export 'inputs/app_text_field.dart';

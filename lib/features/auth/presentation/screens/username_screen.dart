@@ -60,10 +60,13 @@ class _UsernameScreenState extends State<UsernameScreen> {
         final isLoading = state is AuthLoading;
 
         return Scaffold(
-          body: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Form(
+          body: GestureDetector(
+            onTap: () => FocusScope.of(context).unfocus(),
+            behavior: HitTestBehavior.opaque,
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Form(
                 key: _formKey,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -131,6 +134,7 @@ class _UsernameScreenState extends State<UsernameScreen> {
 
                     const SizedBox(height: 32),
                   ],
+                ),
                 ),
               ),
             ),

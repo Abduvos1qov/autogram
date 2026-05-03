@@ -135,18 +135,13 @@ class _VerificationScreenState extends State<VerificationScreen> {
         final isLoading = state is AuthLoading;
 
         return Scaffold(
-          appBar: AppBar(
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () => context.pop(),
-            ),
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-          ),
-          body: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Column(
+          body: GestureDetector(
+            onTap: () => FocusScope.of(context).unfocus(),
+            behavior: HitTestBehavior.opaque,
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Column(
                 children: [
                   const Spacer(flex: 1),
 
@@ -282,6 +277,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
 
                   const Spacer(flex: 2),
                 ],
+              ),
               ),
             ),
           ),

@@ -91,11 +91,11 @@ class AppTheme {
         contentPadding: AppSpacing.inputPadding,
         border: OutlineInputBorder(
           borderRadius: AppSpacing.borderRadiusSm,
-          borderSide: BorderSide.none,
+          borderSide: const BorderSide(color: AppColors.grey200),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: AppSpacing.borderRadiusSm,
-          borderSide: BorderSide.none,
+          borderSide: const BorderSide(color: AppColors.grey200),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: AppSpacing.borderRadiusSm,
@@ -257,11 +257,11 @@ class AppTheme {
         contentPadding: AppSpacing.inputPadding,
         border: OutlineInputBorder(
           borderRadius: AppSpacing.borderRadiusSm,
-          borderSide: BorderSide.none,
+          borderSide: const BorderSide(color: AppColors.grey700),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: AppSpacing.borderRadiusSm,
-          borderSide: BorderSide.none,
+          borderSide: const BorderSide(color: AppColors.grey700),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: AppSpacing.borderRadiusSm,
