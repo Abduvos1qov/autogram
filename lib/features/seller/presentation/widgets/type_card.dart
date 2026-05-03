@@ -85,16 +85,16 @@ class TypeCard extends StatelessWidget {
             AppSpacing.gapVerticalMd,
             Text(
               type.label,
-              style: AppTypography.titleMedium.copyWith(
-                color: isSelected ? AppColors.primary : AppColors.textPrimary,
+              style: AppTypography.titleMedium(context).copyWith(
+                color: isSelected ? AppColors.primary : AppColors.textPrimaryOf(context),
                 fontWeight: FontWeight.w600,
               ),
             ),
             AppSpacing.gapVerticalXs,
             Text(
               type.description,
-              style: AppTypography.bodySmall.copyWith(
-                color: AppColors.textSecondary,
+              style: AppTypography.bodySmall(context).copyWith(
+                color: AppColors.textSecondaryOf(context),
               ),
             ),
           ],

@@ -94,7 +94,7 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
           Expanded(
             child: Text(
               conversation.otherUserName,
-              style: AppTypography.titleSmall.copyWith(
+              style: AppTypography.titleSmall(context).copyWith(
                 fontWeight:
                     conversation.hasUnread ? FontWeight.bold : FontWeight.normal,
               ),
@@ -105,8 +105,8 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
           if (conversation.lastMessageAt != null)
             Text(
               Formatters.formatRelativeTime(conversation.lastMessageAt!),
-              style: AppTypography.bodySmall.copyWith(
-                color: AppColors.textSecondary,
+              style: AppTypography.bodySmall(context).copyWith(
+                color: AppColors.textSecondaryOf(context),
               ),
             ),
         ],
@@ -131,10 +131,10 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
           Expanded(
             child: Text(
               conversation.lastMessageText ?? 'Yangi suhbat',
-              style: AppTypography.bodySmall.copyWith(
+              style: AppTypography.bodySmall(context).copyWith(
                 color: conversation.hasUnread
-                    ? AppColors.textPrimary
-                    : AppColors.textSecondary,
+                    ? AppColors.textPrimaryOf(context)
+                    : AppColors.textSecondaryOf(context),
                 fontWeight:
                     conversation.hasUnread ? FontWeight.w500 : FontWeight.normal,
               ),
@@ -153,7 +153,7 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
               ),
               child: Text(
                 '${conversation.unreadCount}',
-                style: AppTypography.labelSmall.copyWith(
+                style: AppTypography.labelSmall(context).copyWith(
                   color: AppColors.white,
                 ),
               ),

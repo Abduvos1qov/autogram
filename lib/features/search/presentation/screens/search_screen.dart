@@ -191,7 +191,7 @@ class _SearchScreenState extends State<SearchScreen> {
       padding: const EdgeInsets.only(bottom: AppSpacing.sm),
       child: Text(
         title,
-        style: AppTypography.titleMedium,
+        style: AppTypography.titleMedium(context),
       ),
     );
   }
@@ -240,8 +240,8 @@ class _SearchScreenState extends State<SearchScreen> {
             children: [
               Text(
                 '${state.results.length} ta natija',
-                style: AppTypography.bodyMedium.copyWith(
-                  color: AppColors.textSecondary,
+                style: AppTypography.bodyMedium(context).copyWith(
+                  color: AppColors.textSecondaryOf(context),
                 ),
               ),
               TextButton.icon(
@@ -298,7 +298,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 padding: const EdgeInsets.all(AppSpacing.md),
                 child: Text(
                   'Saralash',
-                  style: AppTypography.titleMedium,
+                  style: AppTypography.titleMedium(context),
                 ),
               ),
               ...SortOption.values.map((option) {

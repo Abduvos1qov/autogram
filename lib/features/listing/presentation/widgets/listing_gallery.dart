@@ -79,11 +79,11 @@ class _ListingGalleryState extends State<ListingGallery> {
     if (_allMedia.isEmpty) {
       return Container(
         color: AppColors.surface,
-        child: const Center(
+        child: Center(
           child: Icon(
             Icons.image_not_supported,
             size: 48,
-            color: AppColors.textSecondary,
+            color: AppColors.textSecondaryOf(context),
           ),
         ),
       );

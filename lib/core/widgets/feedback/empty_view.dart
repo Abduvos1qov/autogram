@@ -43,7 +43,7 @@ class EmptyView extends StatelessWidget {
             if (title != null) ...[
               Text(
                 title!,
-                style: AppTypography.headlineSmall,
+                style: AppTypography.headlineSmall(context),
                 textAlign: TextAlign.center,
               ),
               AppSpacing.gapVerticalSm,
@@ -51,8 +51,8 @@ class EmptyView extends StatelessWidget {
             if (message != null)
               Text(
                 message!,
-                style: AppTypography.bodyMedium.copyWith(
-                  color: AppColors.textSecondary,
+                style: AppTypography.bodyMedium(context).copyWith(
+                  color: AppColors.textSecondaryOf(context),
                 ),
                 textAlign: TextAlign.center,
               ),

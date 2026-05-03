@@ -74,8 +74,8 @@ class AppTextField extends StatelessWidget {
         if (label != null) ...[
           Text(
             label!,
-            style: AppTypography.labelMedium.copyWith(
-              color: AppColors.textSecondary,
+            style: AppTypography.labelMedium(context).copyWith(
+              color: AppColors.textSecondaryOf(context),
             ),
           ),
           AppSpacing.gapVerticalSm,
@@ -94,7 +94,7 @@ class AppTextField extends StatelessWidget {
           textInputAction: textInputAction,
           textCapitalization: textCapitalization,
           inputFormatters: inputFormatters,
-          style: AppTypography.bodyMedium,
+          style: AppTypography.bodyMedium(context),
           decoration: InputDecoration(
             hintText: hint,
             errorText: errorText,

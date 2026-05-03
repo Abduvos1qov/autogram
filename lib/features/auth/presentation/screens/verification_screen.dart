@@ -165,7 +165,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
                   // Title
                   Text(
                     'Tasdiqlash kodi',
-                    style: AppTypography.displaySmall.copyWith(
+                    style: AppTypography.displaySmall(context).copyWith(
                       fontWeight: FontWeight.bold,
                     ),
                     textAlign: TextAlign.center,
@@ -177,16 +177,16 @@ class _VerificationScreenState extends State<VerificationScreen> {
                   RichText(
                     textAlign: TextAlign.center,
                     text: TextSpan(
-                      style: AppTypography.bodyMedium.copyWith(
-                        color: AppColors.textSecondary,
+                      style: AppTypography.bodyMedium(context).copyWith(
+                        color: AppColors.textSecondaryOf(context),
                       ),
                       children: [
                         const TextSpan(text: 'Tasdiqlash kodini '),
                         TextSpan(
                           text: widget.email,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontWeight: FontWeight.w600,
-                            color: AppColors.textPrimary,
+                            color: AppColors.textPrimaryOf(context),
                           ),
                         ),
                         const TextSpan(text: ' manziliga yubordik'),
@@ -213,7 +213,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
                           textAlign: TextAlign.center,
                           maxLength: 1,
                           enabled: !isLoading,
-                          style: AppTypography.headlineSmall.copyWith(
+                          style: AppTypography.headlineSmall(context).copyWith(
                             fontWeight: FontWeight.bold,
                           ),
                           decoration: InputDecoration(
@@ -262,7 +262,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
                           onPressed: _resendOtp,
                           child: Text(
                             'Kodni qayta yuborish',
-                            style: AppTypography.bodyMedium.copyWith(
+                            style: AppTypography.bodyMedium(context).copyWith(
                               color: AppColors.primary,
                               fontWeight: FontWeight.w600,
                             ),
@@ -270,8 +270,8 @@ class _VerificationScreenState extends State<VerificationScreen> {
                         )
                       : Text(
                           'Qayta yuborish: ${_remainingSeconds}s',
-                          style: AppTypography.bodyMedium.copyWith(
-                            color: AppColors.textSecondary,
+                          style: AppTypography.bodyMedium(context).copyWith(
+                            color: AppColors.textSecondaryOf(context),
                           ),
                         ),
 

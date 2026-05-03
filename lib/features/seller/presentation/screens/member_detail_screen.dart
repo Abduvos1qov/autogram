@@ -79,7 +79,7 @@ class MemberDetailScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Member header
-                _buildMemberHeader(member),
+                _buildMemberHeader(context, member),
                 AppSpacing.gapVerticalXl,
 
                 // Role section
@@ -87,11 +87,11 @@ class MemberDetailScreen extends StatelessWidget {
                 AppSpacing.gapVerticalXl,
 
                 // Permissions section
-                _buildPermissionsSection(member),
+                _buildPermissionsSection(context, member),
                 AppSpacing.gapVerticalXl,
 
                 // Info section
-                _buildInfoSection(member),
+                _buildInfoSection(context, member),
                 AppSpacing.gapVerticalXl,
 
                 // Remove button
@@ -107,7 +107,7 @@ class MemberDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildMemberHeader(SellerMember member) {
+  Widget _buildMemberHeader(BuildContext context, SellerMember member) {
     return Center(
       child: Column(
         children: [
@@ -120,7 +120,7 @@ class MemberDetailScreen extends StatelessWidget {
             child: member.memberAvatarUrl == null
                 ? Text(
                     _getInitials(member.memberName),
-                    style: AppTypography.headlineSmall.copyWith(
+                    style: AppTypography.headlineSmall(context).copyWith(
                       color: AppColors.primary,
                     ),
                   )
@@ -129,14 +129,14 @@ class MemberDetailScreen extends StatelessWidget {
           AppSpacing.gapVerticalMd,
           Text(
             member.memberName,
-            style: AppTypography.headlineSmall,
+            style: AppTypography.headlineSmall(context),
           ),
           if (member.memberEmail != null) ...[
             AppSpacing.gapVerticalXs,
             Text(
               member.memberEmail!,
-              style: AppTypography.bodyMedium.copyWith(
-                color: AppColors.textSecondary,
+              style: AppTypography.bodyMedium(context).copyWith(
+                color: AppColors.textSecondaryOf(context),
               ),
             ),
           ],
@@ -158,7 +158,7 @@ class MemberDetailScreen extends StatelessWidget {
       children: [
         Text(
           'Rol',
-          style: AppTypography.titleSmall,
+          style: AppTypography.titleSmall(context),
         ),
         AppSpacing.gapVerticalSm,
         Container(
@@ -175,13 +175,13 @@ class MemberDetailScreen extends StatelessWidget {
                   children: [
                     Text(
                       member.role.label,
-                      style: AppTypography.titleSmall,
+                      style: AppTypography.titleSmall(context),
                     ),
                     AppSpacing.gapVerticalXs,
                     Text(
                       member.role.description,
-                      style: AppTypography.bodySmall.copyWith(
-                        color: AppColors.textSecondary,
+                      style: AppTypography.bodySmall(context).copyWith(
+                        color: AppColors.textSecondaryOf(context),
                       ),
                     ),
                   ],
@@ -221,13 +221,13 @@ class MemberDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildPermissionsSection(SellerMember member) {
+  Widget _buildPermissionsSection(BuildContext context, SellerMember member) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'Ruxsatlar',
-          style: AppTypography.titleSmall,
+          style: AppTypography.titleSmall(context),
         ),
         AppSpacing.gapVerticalSm,
         PermissionGrid(
@@ -238,28 +238,31 @@ class MemberDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoSection(SellerMember member) {
+  Widget _buildInfoSection(BuildContext context, SellerMember member) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'Ma\'lumotlar',
-          style: AppTypography.titleSmall,
+          style: AppTypography.titleSmall(context),
         ),
         AppSpacing.gapVerticalSm,
         if (member.joinedAt != null)
           _buildInfoRow(
+            context,
             Icons.calendar_today_outlined,
             'Qo\'shilgan sana',
             Formatters.formatDate(member.joinedAt!),
           ),
         if (member.invitedAt != null)
           _buildInfoRow(
+            context,
             Icons.send_outlined,
             'Taklif qilingan',
             Formatters.formatDate(member.invitedAt!),
           ),
         _buildInfoRow(
+          context,
           Icons.access_time_outlined,
           'Yangilangan',
           Formatters.formatRelativeTime(member.updatedAt),
@@ -268,23 +271,24 @@ class MemberDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoRow(IconData icon, String label, String value) {
+  Widget _buildInfoRow(
+      BuildContext context, IconData icon, String label, String value) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
         children: [
-          Icon(icon, size: 20, color: AppColors.textSecondary),
+          Icon(icon, size: 20, color: AppColors.textSecondaryOf(context)),
           AppSpacing.gapHorizontalSm,
           Text(
             label,
-            style: AppTypography.bodyMedium.copyWith(
-              color: AppColors.textSecondary,
+            style: AppTypography.bodyMedium(context).copyWith(
+              color: AppColors.textSecondaryOf(context),
             ),
           ),
           const Spacer(),
           Text(
             value,
-            style: AppTypography.bodyMedium,
+            style: AppTypography.bodyMedium(context),
           ),
         ],
       ),

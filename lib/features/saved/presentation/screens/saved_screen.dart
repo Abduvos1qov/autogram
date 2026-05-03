@@ -133,14 +133,14 @@ class _SavedScreenState extends State<SavedScreen> {
                     children: [
                       Text(
                         item.title,
-                        style: AppTypography.titleSmall,
+                        style: AppTypography.titleSmall(context),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
                       AppSpacing.gapVerticalXs,
                       Text(
                         Formatters.formatPrice(item.price, currency: item.currency),
-                        style: AppTypography.titleMedium.copyWith(
+                        style: AppTypography.titleMedium(context).copyWith(
                           fontWeight: FontWeight.bold,
                           color: AppColors.primary,
                         ),
@@ -149,8 +149,8 @@ class _SavedScreenState extends State<SavedScreen> {
                       if (item.autoDetails != null)
                         Text(
                           _buildSpecsText(item.autoDetails!),
-                          style: AppTypography.bodySmall.copyWith(
-                            color: AppColors.textSecondary,
+                          style: AppTypography.bodySmall(context).copyWith(
+                            color: AppColors.textSecondaryOf(context),
                           ),
                         ),
                       AppSpacing.gapVerticalXs,
@@ -158,8 +158,8 @@ class _SavedScreenState extends State<SavedScreen> {
                         children: [
                           Text(
                             item.sellerName,
-                            style: AppTypography.bodySmall.copyWith(
-                              color: AppColors.textSecondary,
+                            style: AppTypography.bodySmall(context).copyWith(
+                              color: AppColors.textSecondaryOf(context),
                             ),
                           ),
                           if (item.isSellerVerified) ...[

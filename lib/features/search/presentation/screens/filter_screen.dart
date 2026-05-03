@@ -281,7 +281,7 @@ class _FilterScreenState extends State<FilterScreen> {
       padding: const EdgeInsets.only(bottom: AppSpacing.sm),
       child: Text(
         title,
-        style: AppTypography.titleSmall,
+        style: AppTypography.titleSmall(context),
       ),
     );
   }

@@ -52,13 +52,13 @@ class UpgradeScreen extends StatelessWidget {
                   // Header
                   Text(
                     'Biznes turini tanlang',
-                    style: AppTypography.headlineSmall,
+                    style: AppTypography.headlineSmall(context),
                   ),
                   AppSpacing.gapVerticalSm,
                   Text(
                     'Sizning faoliyat turingizni tanlang',
-                    style: AppTypography.bodyMedium.copyWith(
-                      color: AppColors.textSecondary,
+                    style: AppTypography.bodyMedium(context).copyWith(
+                      color: AppColors.textSecondaryOf(context),
                     ),
                   ),
                   AppSpacing.gapVerticalXl,

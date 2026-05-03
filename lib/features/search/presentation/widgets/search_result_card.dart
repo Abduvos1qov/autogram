@@ -115,7 +115,7 @@ class SearchResultCard extends StatelessWidget {
                     // Price
                     Text(
                       Formatters.formatPrice(result.price, currency: result.currency),
-                      style: AppTypography.titleMedium.copyWith(
+                      style: AppTypography.titleMedium(context).copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                       maxLines: 1,
@@ -126,7 +126,7 @@ class SearchResultCard extends StatelessWidget {
                     // Title
                     Text(
                       result.title,
-                      style: AppTypography.bodySmall,
+                      style: AppTypography.bodySmall(context),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -137,8 +137,8 @@ class SearchResultCard extends StatelessWidget {
                     if (result.autoDetails != null)
                       Text(
                         _buildSpecsText(),
-                        style: AppTypography.labelSmall.copyWith(
-                          color: AppColors.textSecondary,
+                        style: AppTypography.labelSmall(context).copyWith(
+                          color: AppColors.textSecondaryOf(context),
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -148,33 +148,33 @@ class SearchResultCard extends StatelessWidget {
                     Row(
                       children: [
                         if (result.city != null) ...[
-                          const Icon(
+                          Icon(
                             Icons.location_on_outlined,
                             size: 12,
-                            color: AppColors.textSecondary,
+                            color: AppColors.textSecondaryOf(context),
                           ),
                           const SizedBox(width: 2),
                           Expanded(
                             child: Text(
                               result.city!,
-                              style: AppTypography.labelSmall.copyWith(
-                                color: AppColors.textSecondary,
+                              style: AppTypography.labelSmall(context).copyWith(
+                                color: AppColors.textSecondaryOf(context),
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ],
-                        const Icon(
+                        Icon(
                           Icons.visibility_outlined,
                           size: 12,
-                          color: AppColors.textSecondary,
+                          color: AppColors.textSecondaryOf(context),
                         ),
                         const SizedBox(width: 2),
                         Text(
                           Formatters.formatNumber(result.viewsCount),
-                          style: AppTypography.labelSmall.copyWith(
-                            color: AppColors.textSecondary,
+                          style: AppTypography.labelSmall(context).copyWith(
+                            color: AppColors.textSecondaryOf(context),
                           ),
                         ),
                       ],

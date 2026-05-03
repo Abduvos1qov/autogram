@@ -79,8 +79,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 onPressed: _completeOnboarding,
                 child: Text(
                   'O\'tkazib yuborish',
-                  style: AppTypography.labelLarge.copyWith(
-                    color: AppColors.textSecondary,
+                  style: AppTypography.labelLarge(context).copyWith(
+                    color: AppColors.textSecondaryOf(context),
                   ),
                 ),
               ),
@@ -153,14 +153,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           AppSpacing.gapVerticalXl,
           Text(
             page.title,
-            style: AppTypography.headlineMedium,
+            style: AppTypography.headlineMedium(context),
             textAlign: TextAlign.center,
           ),
           AppSpacing.gapVerticalMd,
           Text(
             page.description,
-            style: AppTypography.bodyMedium.copyWith(
-              color: AppColors.textSecondary,
+            style: AppTypography.bodyMedium(context).copyWith(
+              color: AppColors.textSecondaryOf(context),
             ),
             textAlign: TextAlign.center,
           ),

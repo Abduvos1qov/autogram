@@ -60,7 +60,7 @@ class SearchField extends StatelessWidget {
               autofocus: autofocus,
               readOnly: readOnly,
               textInputAction: TextInputAction.search,
-              style: AppTypography.bodyMedium,
+              style: AppTypography.bodyMedium(context),
               decoration: InputDecoration(
                 hintText: hint ?? 'Qidirish...',
                 border: InputBorder.none,
@@ -128,8 +128,8 @@ class SearchFieldButton extends StatelessWidget {
             AppSpacing.gapHorizontalSm,
             Text(
               hint ?? 'Qidirish...',
-              style: AppTypography.bodyMedium.copyWith(
-                color: AppColors.textHint,
+              style: AppTypography.bodyMedium(context).copyWith(
+                color: AppColors.textHintOf(context),
               ),
             ),
           ],

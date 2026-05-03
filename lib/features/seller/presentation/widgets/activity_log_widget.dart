@@ -43,13 +43,13 @@ class ActivityLogWidget extends StatelessWidget {
               Icon(
                 Icons.history_outlined,
                 size: 48,
-                color: AppColors.textSecondary.withValues(alpha: 0.5),
+                color: AppColors.textSecondaryOf(context).withValues(alpha: 0.5),
               ),
               AppSpacing.gapVerticalSm,
               Text(
                 'Faoliyat tarixi yo\'q',
-                style: AppTypography.bodyMedium.copyWith(
-                  color: AppColors.textSecondary,
+                style: AppTypography.bodyMedium(context).copyWith(
+                  color: AppColors.textSecondaryOf(context),
                 ),
               ),
             ],
@@ -65,7 +65,7 @@ class ActivityLogWidget extends StatelessWidget {
           final activity = entry.value;
           final isLast = index == activities.length - 1;
 
-          return _buildActivityItem(activity, isLast);
+          return _buildActivityItem(context, activity, isLast);
         }),
         if (hasMore && onLoadMore != null)
           Padding(
@@ -85,8 +85,9 @@ class ActivityLogWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildActivityItem(ActivityLog activity, bool isLast) {
-    final color = _getColorForType(activity.actionType);
+  Widget _buildActivityItem(
+      BuildContext context, ActivityLog activity, bool isLast) {
+    final color = _getColorForType(context, activity.actionType);
 
     return IntrinsicHeight(
       child: Row(
@@ -135,7 +136,7 @@ class ActivityLogWidget extends StatelessWidget {
                       Expanded(
                         child: Text(
                           activity.description,
-                          style: AppTypography.bodySmall,
+                          style: AppTypography.bodySmall(context),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -149,8 +150,8 @@ class ActivityLogWidget extends StatelessWidget {
                       if (activity.actorName != null) ...[
                         Text(
                           activity.actorName!,
-                          style: AppTypography.caption.copyWith(
-                            color: AppColors.textSecondary,
+                          style: AppTypography.caption(context).copyWith(
+                            color: AppColors.textSecondaryOf(context),
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -158,8 +159,8 @@ class ActivityLogWidget extends StatelessWidget {
                       ],
                       Text(
                         Formatters.formatRelativeTime(activity.createdAt),
-                        style: AppTypography.caption.copyWith(
-                          color: AppColors.textSecondary,
+                        style: AppTypography.caption(context).copyWith(
+                          color: AppColors.textSecondaryOf(context),
                         ),
                       ),
                     ],
@@ -173,16 +174,16 @@ class ActivityLogWidget extends StatelessWidget {
     );
   }
 
-  Color _getColorForType(ActivityType type) {
+  Color _getColorForType(BuildContext context, ActivityType type) {
     switch (type.category) {
       case 'listings':
         return AppColors.primary;
       case 'members':
         return AppColors.success;
       case 'settings':
-        return AppColors.textSecondary;
+        return AppColors.textSecondaryOf(context);
       default:
-        return AppColors.textSecondary;
+        return AppColors.textSecondaryOf(context);
     }
   }
 }

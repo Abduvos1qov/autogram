@@ -124,15 +124,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     // Title
                     Text(
                       'Ro\'yxatdan o\'tish',
-                      style: AppTypography.displayMedium.copyWith(
+                      style: AppTypography.displayMedium(context).copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     AppSpacing.gapVerticalSm,
                     Text(
                       'Davom etish uchun hisob yarating!',
-                      style: AppTypography.bodyMedium.copyWith(
-                        color: AppColors.textSecondary,
+                      style: AppTypography.bodyMedium(context).copyWith(
+                        color: AppColors.textSecondaryOf(context),
                       ),
                     ),
 
@@ -284,15 +284,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         children: [
                           Text(
                             'Hisobingiz bormi? ',
-                            style: AppTypography.bodyMedium.copyWith(
-                              color: AppColors.textSecondary,
+                            style: AppTypography.bodyMedium(context).copyWith(
+                              color: AppColors.textSecondaryOf(context),
                             ),
                           ),
                           GestureDetector(
                             onTap: () => context.pop(),
                             child: Text(
                               'Kirish',
-                              style: AppTypography.bodyMedium.copyWith(
+                              style: AppTypography.bodyMedium(context).copyWith(
                                 color: AppColors.primary,
                                 fontWeight: FontWeight.w600,
                               ),

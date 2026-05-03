@@ -80,7 +80,7 @@ class _UpgradeSuccessScreenState extends State<UpgradeSuccessScreen>
                   opacity: _fadeAnimation,
                   child: Text(
                     'Tabriklaymiz!',
-                    style: AppTypography.displaySmall.copyWith(
+                    style: AppTypography.displaySmall(context).copyWith(
                       fontWeight: FontWeight.bold,
                     ),
                     textAlign: TextAlign.center,
@@ -92,8 +92,8 @@ class _UpgradeSuccessScreenState extends State<UpgradeSuccessScreen>
                   opacity: _fadeAnimation,
                   child: Text(
                     'Siz endi Autogram sotuvchisisiz.\nE\'lonlaringizni joylashni boshlang!',
-                    style: AppTypography.bodyLarge.copyWith(
-                      color: AppColors.textSecondary,
+                    style: AppTypography.bodyLarge(context).copyWith(
+                      color: AppColors.textSecondaryOf(context),
                     ),
                     textAlign: TextAlign.center,
                   ),

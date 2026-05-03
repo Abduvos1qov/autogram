@@ -51,7 +51,7 @@ class InvitationListTile extends StatelessWidget {
               children: [
                 Text(
                   invitation.email,
-                  style: AppTypography.titleSmall,
+                  style: AppTypography.titleSmall(context),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -62,10 +62,10 @@ class InvitationListTile extends StatelessWidget {
                     AppSpacing.gapHorizontalSm,
                     Text(
                       '$daysRemaining kun qoldi',
-                      style: AppTypography.caption.copyWith(
+                      style: AppTypography.caption(context).copyWith(
                         color: daysRemaining <= 1
                             ? AppColors.error
-                            : AppColors.textSecondary,
+                            : AppColors.textSecondaryOf(context),
                       ),
                     ),
                   ],

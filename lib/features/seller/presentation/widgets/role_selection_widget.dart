@@ -143,16 +143,16 @@ class _RoleCard extends StatelessWidget {
             AppSpacing.gapVerticalMd,
             Text(
               role.label,
-              style: AppTypography.titleMedium.copyWith(
-                color: isSelected ? AppColors.primary : AppColors.textPrimary,
+              style: AppTypography.titleMedium(context).copyWith(
+                color: isSelected ? AppColors.primary : AppColors.textPrimaryOf(context),
                 fontWeight: FontWeight.w600,
               ),
             ),
             AppSpacing.gapVerticalXs,
             Text(
               role.description,
-              style: AppTypography.bodySmall.copyWith(
-                color: AppColors.textSecondary,
+              style: AppTypography.bodySmall(context).copyWith(
+                color: AppColors.textSecondaryOf(context),
               ),
             ),
           ],

@@ -79,8 +79,8 @@ class _ActivityLogScreenState extends State<ActivityLogScreen> {
     return FilterChip(
       label: Text(
         label,
-        style: AppTypography.labelMedium.copyWith(
-          color: isSelected ? Colors.white : AppColors.textPrimary,
+        style: AppTypography.labelMedium(context).copyWith(
+          color: isSelected ? Colors.white : AppColors.textPrimaryOf(context),
         ),
       ),
       selected: isSelected,

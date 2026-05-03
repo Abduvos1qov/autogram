@@ -39,7 +39,7 @@ class FeedCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Header
-          _buildHeader(),
+          _buildHeader(context),
 
           // Media (Video/Image)
           _buildMedia(),
@@ -48,19 +48,19 @@ class FeedCard extends StatelessWidget {
           _buildActions(),
 
           // Likes count
-          _buildLikesCount(),
+          _buildLikesCount(context),
 
           // Title and description
-          _buildContent(),
+          _buildContent(context),
 
           // Price and specs
-          _buildPriceSpecs(),
+          _buildPriceSpecs(context),
         ],
       ),
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.md,
@@ -86,7 +86,7 @@ class FeedCard extends StatelessWidget {
                       Flexible(
                         child: Text(
                           item.sellerName,
-                          style: AppTypography.titleSmall,
+                          style: AppTypography.titleSmall(context),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -104,7 +104,7 @@ class FeedCard extends StatelessWidget {
                   if (item.location.isNotEmpty)
                     Text(
                       item.location,
-                      style: AppTypography.bodySmall,
+                      style: AppTypography.bodySmall(context),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -212,21 +212,21 @@ class FeedCard extends StatelessWidget {
     );
   }
 
-  Widget _buildLikesCount() {
+  Widget _buildLikesCount(BuildContext context) {
     if (item.likesCount == 0) return const SizedBox.shrink();
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
       child: Text(
         '${item.likesCount.compactFormatted} ta yoqtirish',
-        style: AppTypography.labelMedium.copyWith(
+        style: AppTypography.labelMedium(context).copyWith(
           fontWeight: FontWeight.w600,
         ),
       ),
     );
   }
 
-  Widget _buildContent() {
+  Widget _buildContent(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.md,
@@ -237,7 +237,7 @@ class FeedCard extends StatelessWidget {
         children: [
           Text(
             item.title,
-            style: AppTypography.titleMedium,
+            style: AppTypography.titleMedium(context),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
@@ -245,7 +245,7 @@ class FeedCard extends StatelessWidget {
             AppSpacing.gapVerticalXs,
             Text(
               item.description!,
-              style: AppTypography.bodySmall,
+              style: AppTypography.bodySmall(context),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
@@ -255,7 +255,7 @@ class FeedCard extends StatelessWidget {
     );
   }
 
-  Widget _buildPriceSpecs() {
+  Widget _buildPriceSpecs(BuildContext context) {
     final specs = <String>[];
 
     if (item.autoDetails != null) {
@@ -281,7 +281,7 @@ class FeedCard extends StatelessWidget {
         children: [
           Text(
             Formatters.formatPrice(item.price, currency: item.currency),
-            style: AppTypography.price,
+            style: AppTypography.price(context),
           ),
           if (item.isNegotiable) ...[
             AppSpacing.gapHorizontalSm,
@@ -296,7 +296,7 @@ class FeedCard extends StatelessWidget {
               ),
               child: Text(
                 'Kelishiladi',
-                style: AppTypography.labelSmall,
+                style: AppTypography.labelSmall(context),
               ),
             ),
           ],
@@ -304,7 +304,7 @@ class FeedCard extends StatelessWidget {
           if (specs.isNotEmpty)
             Text(
               specs.join(' • '),
-              style: AppTypography.bodySmall,
+              style: AppTypography.bodySmall(context),
             ),
         ],
       ),

@@ -83,13 +83,13 @@ class _PlanSelectionScreenState extends State<PlanSelectionScreen> {
                         // Header
                         Text(
                           'Tarifni tanlang',
-                          style: AppTypography.headlineSmall,
+                          style: AppTypography.headlineSmall(context),
                         ),
                         AppSpacing.gapVerticalSm,
                         Text(
                           'Keyinroq tarifni o\'zgartirishingiz mumkin',
-                          style: AppTypography.bodyMedium.copyWith(
-                            color: AppColors.textSecondary,
+                          style: AppTypography.bodyMedium(context).copyWith(
+                            color: AppColors.textSecondaryOf(context),
                           ),
                         ),
                         AppSpacing.gapVerticalXl,
@@ -133,7 +133,7 @@ class _PlanSelectionScreenState extends State<PlanSelectionScreen> {
                               Expanded(
                                 child: Text(
                                   'Bepul tarifdan boshlang va kerak bo\'lganda yangilang',
-                                  style: AppTypography.bodySmall.copyWith(
+                                  style: AppTypography.bodySmall(context).copyWith(
                                     color: AppColors.info,
                                   ),
                                 ),
@@ -166,8 +166,8 @@ class _PlanSelectionScreenState extends State<PlanSelectionScreen> {
                           padding: const EdgeInsets.only(bottom: 12),
                           child: Text(
                             'Keyingi sahifada to\'lovni amalga oshirasiz',
-                            style: AppTypography.bodySmall.copyWith(
-                              color: AppColors.textSecondary,
+                            style: AppTypography.bodySmall(context).copyWith(
+                              color: AppColors.textSecondaryOf(context),
                             ),
                             textAlign: TextAlign.center,
                           ),

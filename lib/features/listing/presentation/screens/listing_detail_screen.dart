@@ -126,7 +126,7 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
                 // Title
                 Text(
                   listing.title,
-                  style: AppTypography.headlineSmall,
+                  style: AppTypography.headlineSmall(context),
                 ),
                 AppSpacing.gapVerticalSm,
 
@@ -135,7 +135,7 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
                   children: [
                     Text(
                       Formatters.formatPrice(listing.price, currency: listing.currency),
-                      style: AppTypography.headlineMedium.copyWith(
+                      style: AppTypography.headlineMedium(context).copyWith(
                         fontWeight: FontWeight.bold,
                         color: AppColors.primary,
                       ),
@@ -153,7 +153,7 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
                         ),
                         child: Text(
                           'Kelishiladi',
-                          style: AppTypography.labelSmall.copyWith(
+                          style: AppTypography.labelSmall(context).copyWith(
                             color: AppColors.primary,
                           ),
                         ),
@@ -178,7 +178,7 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
 
                 // Specs
                 if (listing.autoDetails != null) ...[
-                  Text('Xususiyatlar', style: AppTypography.titleMedium),
+                  Text('Xususiyatlar', style: AppTypography.titleMedium(context)),
                   AppSpacing.gapVerticalSm,
                   ListingSpecs(autoDetails: listing.autoDetails!),
                   AppSpacing.gapVerticalLg,
@@ -186,17 +186,17 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
 
                 // Description
                 if (listing.description != null && listing.description!.isNotEmpty) ...[
-                  Text('Tavsif', style: AppTypography.titleMedium),
+                  Text('Tavsif', style: AppTypography.titleMedium(context)),
                   AppSpacing.gapVerticalSm,
                   Text(
                     listing.description!,
-                    style: AppTypography.bodyMedium,
+                    style: AppTypography.bodyMedium(context),
                   ),
                   AppSpacing.gapVerticalLg,
                 ],
 
                 // Seller
-                Text('Sotuvchi', style: AppTypography.titleMedium),
+                Text('Sotuvchi', style: AppTypography.titleMedium(context)),
                 AppSpacing.gapVerticalSm,
                 SellerCard(
                   seller: listing.seller,
@@ -209,7 +209,7 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
 
                 // Similar listings
                 if (state.similarListings.isNotEmpty) ...[
-                  Text('O\'xshash e\'lonlar', style: AppTypography.titleMedium),
+                  Text('O\'xshash e\'lonlar', style: AppTypography.titleMedium(context)),
                   AppSpacing.gapVerticalSm,
                 ],
               ],
@@ -250,12 +250,12 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 16, color: AppColors.textSecondary),
+        Icon(icon, size: 16, color: AppColors.textSecondaryOf(context)),
         const SizedBox(width: 4),
         Text(
           value,
-          style: AppTypography.bodySmall.copyWith(
-            color: AppColors.textSecondary,
+          style: AppTypography.bodySmall(context).copyWith(
+            color: AppColors.textSecondaryOf(context),
           ),
         ),
       ],
@@ -290,7 +290,7 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
                   children: [
                     Text(
                       Formatters.formatPrice(listing.price, currency: listing.currency),
-                      style: AppTypography.titleSmall.copyWith(
+                      style: AppTypography.titleSmall(context).copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                       maxLines: 1,
@@ -298,7 +298,7 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
                     const SizedBox(height: 2),
                     Text(
                       listing.title,
-                      style: AppTypography.bodySmall,
+                      style: AppTypography.bodySmall(context),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),

@@ -108,7 +108,7 @@ class _SplashScreenState extends State<SplashScreen>
                       // App name
                       Text(
                         'AUTOGRAM',
-                        style: AppTypography.displayMedium.copyWith(
+                        style: AppTypography.displayMedium(context).copyWith(
                           color: AppColors.white,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 4,
@@ -117,7 +117,7 @@ class _SplashScreenState extends State<SplashScreen>
                       const SizedBox(height: 8),
                       Text(
                         'Avtomobillar dunyosi',
-                        style: AppTypography.bodyMedium.copyWith(
+                        style: AppTypography.bodyMedium(context).copyWith(
                           color: AppColors.white.withValues(alpha: 0.8),
                         ),
                       ),

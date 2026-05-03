@@ -220,7 +220,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
           Text(
             'Parolni tiklash',
-            style: AppTypography.displayMedium.copyWith(
+            style: AppTypography.displayMedium(context).copyWith(
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -229,8 +229,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
           Text(
             'Email manzilingizni kiriting, biz sizga tasdiqlash kodini yuboramiz',
-            style: AppTypography.bodyMedium.copyWith(
-              color: AppColors.textSecondary,
+            style: AppTypography.bodyMedium(context).copyWith(
+              color: AppColors.textSecondaryOf(context),
             ),
           ),
 
@@ -263,7 +263,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               onPressed: () => context.pop(),
               child: Text(
                 'Kirishga qaytish',
-                style: AppTypography.bodyMedium.copyWith(
+                style: AppTypography.bodyMedium(context).copyWith(
                   color: AppColors.primary,
                   fontWeight: FontWeight.w600,
                 ),
@@ -298,7 +298,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
         Text(
           'Tasdiqlash kodi',
-          style: AppTypography.displaySmall.copyWith(
+          style: AppTypography.displaySmall(context).copyWith(
             fontWeight: FontWeight.bold,
           ),
           textAlign: TextAlign.center,
@@ -309,16 +309,16 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         RichText(
           textAlign: TextAlign.center,
           text: TextSpan(
-            style: AppTypography.bodyMedium.copyWith(
-              color: AppColors.textSecondary,
+            style: AppTypography.bodyMedium(context).copyWith(
+              color: AppColors.textSecondaryOf(context),
             ),
             children: [
               const TextSpan(text: 'Tasdiqlash kodini '),
               TextSpan(
                 text: _email ?? '',
-                style: const TextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.w600,
-                  color: AppColors.textPrimary,
+                  color: AppColors.textPrimaryOf(context),
                 ),
               ),
               const TextSpan(text: ' manziliga yubordik'),
@@ -345,7 +345,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 textAlign: TextAlign.center,
                 maxLength: 1,
                 enabled: !isLoading,
-                style: AppTypography.headlineSmall.copyWith(
+                style: AppTypography.headlineSmall(context).copyWith(
                   fontWeight: FontWeight.bold,
                 ),
                 decoration: InputDecoration(
@@ -390,7 +390,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 onPressed: _resendOtp,
                 child: Text(
                   'Kodni qayta yuborish',
-                  style: AppTypography.bodyMedium.copyWith(
+                  style: AppTypography.bodyMedium(context).copyWith(
                     color: AppColors.primary,
                     fontWeight: FontWeight.w600,
                   ),
@@ -398,8 +398,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               )
             : Text(
                 'Qayta yuborish: ${_remainingSeconds}s',
-                style: AppTypography.bodyMedium.copyWith(
-                  color: AppColors.textSecondary,
+                style: AppTypography.bodyMedium(context).copyWith(
+                  color: AppColors.textSecondaryOf(context),
                 ),
               ),
 
@@ -418,7 +418,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
           Text(
             'Yangi parol',
-            style: AppTypography.displayMedium.copyWith(
+            style: AppTypography.displayMedium(context).copyWith(
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -427,8 +427,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
           Text(
             'Yangi parolingizni kiriting',
-            style: AppTypography.bodyMedium.copyWith(
-              color: AppColors.textSecondary,
+            style: AppTypography.bodyMedium(context).copyWith(
+              color: AppColors.textSecondaryOf(context),
             ),
           ),
 
@@ -522,7 +522,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
         Text(
           'Parol yangilandi!',
-          style: AppTypography.displaySmall.copyWith(
+          style: AppTypography.displaySmall(context).copyWith(
             fontWeight: FontWeight.bold,
           ),
           textAlign: TextAlign.center,
@@ -532,8 +532,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
         Text(
           'Parolingiz muvaffaqiyatli yangilandi. Endi yangi parol bilan kirishingiz mumkin.',
-          style: AppTypography.bodyMedium.copyWith(
-            color: AppColors.textSecondary,
+          style: AppTypography.bodyMedium(context).copyWith(
+            color: AppColors.textSecondaryOf(context),
           ),
           textAlign: TextAlign.center,
         ),

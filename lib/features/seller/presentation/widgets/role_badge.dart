@@ -18,7 +18,7 @@ class RoleBadge extends StatelessWidget {
     this.compact = false,
   });
 
-  Color get _color {
+  Color _resolveColor(BuildContext context) {
     switch (role) {
       case MemberRole.owner:
         return AppColors.primary;
@@ -27,16 +27,17 @@ class RoleBadge extends StatelessWidget {
       case MemberRole.manager:
         return AppColors.accent;
       case MemberRole.marketing:
-        return Colors.amber;
+        return AppColors.warning;
       case MemberRole.viewer:
-        return AppColors.textSecondary;
+        return AppColors.textSecondaryOf(context);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final bgColor = _color.withValues(alpha: 0.12);
-    final textColor = _color;
+    final color = _resolveColor(context);
+    final bgColor = color.withValues(alpha: 0.12);
+    final textColor = color;
 
     return Container(
       padding: EdgeInsets.symmetric(
@@ -49,7 +50,7 @@ class RoleBadge extends StatelessWidget {
       ),
       child: Text(
         role.label,
-        style: (compact ? AppTypography.labelSmall : AppTypography.labelMedium)
+        style: (compact ? AppTypography.labelSmall(context) : AppTypography.labelMedium(context))
             .copyWith(
           color: textColor,
           fontWeight: FontWeight.w600,

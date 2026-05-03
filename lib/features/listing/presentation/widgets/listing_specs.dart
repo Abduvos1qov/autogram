@@ -30,26 +30,26 @@ class ListingSpecs extends StatelessWidget {
           Row(
             children: [
               if (autoDetails.year != null)
-                Expanded(child: _buildSpecItem('Yil', '${autoDetails.year}')),
+                Expanded(child: _buildSpecItem(context,'Yil', '${autoDetails.year}')),
               if (autoDetails.mileage != null)
-                Expanded(child: _buildSpecItem('Yurgan', Formatters.formatMileage(autoDetails.mileage!))),
+                Expanded(child: _buildSpecItem(context,'Yurgan', Formatters.formatMileage(autoDetails.mileage!))),
               if (autoDetails.engineVolume != null)
-                Expanded(child: _buildSpecItem('Dvigatel', '${autoDetails.engineVolume}L')),
+                Expanded(child: _buildSpecItem(context,'Dvigatel', '${autoDetails.engineVolume}L')),
             ],
           ),
           const Divider(height: 24),
 
           // Detailed specs
-          _buildSpecRow('Marka', autoDetails.brand),
-          _buildSpecRow('Model', autoDetails.model),
-          _buildSpecRow('Uzatmalar qutisi', _getTransmissionLabel(autoDetails.transmission)),
-          _buildSpecRow('Yoqilg\'i turi', _getFuelLabel(autoDetails.fuelType)),
-          _buildSpecRow('Kuzov turi', _getBodyLabel(autoDetails.bodyType)),
-          _buildSpecRow('Haydovchi turi', _getDriveLabel(autoDetails.driveType)),
-          _buildSpecRow('Rang', autoDetails.color),
-          _buildSpecRow('Holati', _getConditionLabel(autoDetails.condition)),
-          _buildSpecRow('Avariya', autoDetails.hasAccident ? 'Ha' : 'Yo\'q'),
-          _buildSpecRow('Egalar soni', '${autoDetails.ownersCount}'),
+          _buildSpecRow(context,'Marka', autoDetails.brand),
+          _buildSpecRow(context,'Model', autoDetails.model),
+          _buildSpecRow(context,'Uzatmalar qutisi', _getTransmissionLabel(autoDetails.transmission)),
+          _buildSpecRow(context,'Yoqilg\'i turi', _getFuelLabel(autoDetails.fuelType)),
+          _buildSpecRow(context,'Kuzov turi', _getBodyLabel(autoDetails.bodyType)),
+          _buildSpecRow(context,'Haydovchi turi', _getDriveLabel(autoDetails.driveType)),
+          _buildSpecRow(context,'Rang', autoDetails.color),
+          _buildSpecRow(context,'Holati', _getConditionLabel(autoDetails.condition)),
+          _buildSpecRow(context,'Avariya', autoDetails.hasAccident ? 'Ha' : 'Yo\'q'),
+          _buildSpecRow(context,'Egalar soni', '${autoDetails.ownersCount}'),
 
           // Features
           if (autoDetails.features.isNotEmpty) ...[
@@ -58,7 +58,7 @@ class ListingSpecs extends StatelessWidget {
               alignment: Alignment.centerLeft,
               child: Text(
                 'Qo\'shimcha jihozlar',
-                style: AppTypography.titleSmall,
+                style: AppTypography.titleSmall(context),
               ),
             ),
             AppSpacing.gapVerticalSm,
@@ -69,7 +69,7 @@ class ListingSpecs extends StatelessWidget {
                 return Chip(
                   label: Text(feature),
                   backgroundColor: AppColors.primary.withValues(alpha: 0.1),
-                  labelStyle: AppTypography.labelSmall.copyWith(
+                  labelStyle: AppTypography.labelSmall(context).copyWith(
                     color: AppColors.primary,
                   ),
                 );
@@ -81,27 +81,27 @@ class ListingSpecs extends StatelessWidget {
     );
   }
 
-  Widget _buildSpecItem(String label, String value) {
+  Widget _buildSpecItem(BuildContext context, String label, String value) {
     return Column(
       children: [
         Text(
           value,
-          style: AppTypography.titleMedium.copyWith(
+          style: AppTypography.titleMedium(context).copyWith(
             fontWeight: FontWeight.bold,
           ),
         ),
         const SizedBox(height: 4),
         Text(
           label,
-          style: AppTypography.bodySmall.copyWith(
-            color: AppColors.textSecondary,
+          style: AppTypography.bodySmall(context).copyWith(
+            color: AppColors.textSecondaryOf(context),
           ),
         ),
       ],
     );
   }
 
-  Widget _buildSpecRow(String label, String? value) {
+  Widget _buildSpecRow(BuildContext context, String label, String? value) {
     if (value == null || value.isEmpty) return const SizedBox.shrink();
 
     return Padding(
@@ -111,13 +111,13 @@ class ListingSpecs extends StatelessWidget {
         children: [
           Text(
             label,
-            style: AppTypography.bodyMedium.copyWith(
-              color: AppColors.textSecondary,
+            style: AppTypography.bodyMedium(context).copyWith(
+              color: AppColors.textSecondaryOf(context),
             ),
           ),
           Text(
             value,
-            style: AppTypography.bodyMedium.copyWith(
+            style: AppTypography.bodyMedium(context).copyWith(
               fontWeight: FontWeight.w500,
             ),
           ),

@@ -103,9 +103,9 @@ class LoadingPage extends StatelessWidget {
               const SizedBox(height: 16),
               Text(
                 message!,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 14,
-                  color: AppColors.textSecondary,
+                  color: AppColors.textSecondaryOf(context),
                 ),
               ),
             ],

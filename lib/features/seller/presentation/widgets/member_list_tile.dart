@@ -42,7 +42,7 @@ class MemberListTile extends StatelessWidget {
         child: Row(
           children: [
             // Avatar
-            _buildAvatar(),
+            _buildAvatar(context),
             AppSpacing.gapHorizontalMd,
 
             // Name, email, and role badge
@@ -52,7 +52,7 @@ class MemberListTile extends StatelessWidget {
                 children: [
                   Text(
                     member.memberName,
-                    style: AppTypography.titleSmall,
+                    style: AppTypography.titleSmall(context),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -60,8 +60,8 @@ class MemberListTile extends StatelessWidget {
                     AppSpacing.gapVerticalXs,
                     Text(
                       member.memberEmail!,
-                      style: AppTypography.bodySmall.copyWith(
-                        color: AppColors.textSecondary,
+                      style: AppTypography.bodySmall(context).copyWith(
+                        color: AppColors.textSecondaryOf(context),
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -88,7 +88,7 @@ class MemberListTile extends StatelessWidget {
     );
   }
 
-  Widget _buildAvatar() {
+  Widget _buildAvatar(BuildContext context) {
     if (member.memberAvatarUrl != null &&
         member.memberAvatarUrl!.isNotEmpty) {
       return CircleAvatar(
@@ -103,7 +103,7 @@ class MemberListTile extends StatelessWidget {
       backgroundColor: AppColors.primary.withValues(alpha: 0.12),
       child: Text(
         _initials,
-        style: AppTypography.titleSmall.copyWith(
+        style: AppTypography.titleSmall(context).copyWith(
           color: AppColors.primary,
           fontWeight: FontWeight.w600,
         ),

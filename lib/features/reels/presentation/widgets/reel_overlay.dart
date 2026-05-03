@@ -51,7 +51,7 @@ class ReelOverlay extends StatelessWidget {
               // Title
               Text(
                 reel.title,
-                style: AppTypography.titleMedium.copyWith(
+                style: AppTypography.titleMedium(context).copyWith(
                   color: AppColors.white,
                 ),
                 maxLines: 2,
@@ -60,7 +60,7 @@ class ReelOverlay extends StatelessWidget {
               AppSpacing.gapVerticalSm,
 
               // Price and specs
-              _buildPriceSpecs(),
+              _buildPriceSpecs(context),
 
               // Description (if any)
               if (reel.description != null &&
@@ -68,7 +68,7 @@ class ReelOverlay extends StatelessWidget {
                 AppSpacing.gapVerticalSm,
                 Text(
                   reel.description!,
-                  style: AppTypography.bodySmall.copyWith(
+                  style: AppTypography.bodySmall(context).copyWith(
                     color: AppColors.white.withValues(alpha: 0.8),
                   ),
                   maxLines: 2,
@@ -108,7 +108,7 @@ class ReelOverlay extends StatelessWidget {
                     Flexible(
                       child: Text(
                         reel.sellerName,
-                        style: AppTypography.titleSmall.copyWith(
+                        style: AppTypography.titleSmall(context).copyWith(
                           color: AppColors.white,
                         ),
                         maxLines: 1,
@@ -128,7 +128,7 @@ class ReelOverlay extends StatelessWidget {
                 if (reel.city != null)
                   Text(
                     reel.city!,
-                    style: AppTypography.bodySmall.copyWith(
+                    style: AppTypography.bodySmall(context).copyWith(
                       color: AppColors.white.withValues(alpha: 0.7),
                     ),
                   ),
@@ -157,7 +157,7 @@ class ReelOverlay extends StatelessWidget {
     );
   }
 
-  Widget _buildPriceSpecs() {
+  Widget _buildPriceSpecs(BuildContext context) {
     final specs = <String>[];
 
     if (reel.autoDetails != null) {
@@ -178,7 +178,7 @@ class ReelOverlay extends StatelessWidget {
       children: [
         Text(
           Formatters.formatPrice(reel.price, currency: reel.currency),
-          style: AppTypography.headlineSmall.copyWith(
+          style: AppTypography.headlineSmall(context).copyWith(
             color: AppColors.white,
             fontWeight: FontWeight.bold,
           ),
@@ -196,7 +196,7 @@ class ReelOverlay extends StatelessWidget {
             ),
             child: Text(
               'Kelishiladi',
-              style: AppTypography.labelSmall.copyWith(
+              style: AppTypography.labelSmall(context).copyWith(
                 color: AppColors.white,
               ),
             ),
@@ -206,7 +206,7 @@ class ReelOverlay extends StatelessWidget {
           AppSpacing.gapHorizontalMd,
           Text(
             specs.join(' • '),
-            style: AppTypography.bodySmall.copyWith(
+            style: AppTypography.bodySmall(context).copyWith(
               color: AppColors.white.withValues(alpha: 0.7),
             ),
           ),

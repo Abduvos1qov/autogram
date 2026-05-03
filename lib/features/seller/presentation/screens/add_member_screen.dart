@@ -80,7 +80,7 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
                     // Email input
                     Text(
                       'Email manzili',
-                      style: AppTypography.titleSmall,
+                      style: AppTypography.titleSmall(context),
                     ),
                     AppSpacing.gapVerticalSm,
                     AppTextField(
@@ -104,7 +104,7 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
                     // Role selection
                     Text(
                       'Rolni tanlang',
-                      style: AppTypography.titleSmall,
+                      style: AppTypography.titleSmall(context),
                     ),
                     AppSpacing.gapVerticalSm,
                     Expanded(

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_colors.dart';
+
 /// BuildContext extensions for easier access to common properties
 
 extension ContextExtensions on BuildContext {
@@ -83,7 +85,7 @@ extension ContextExtensions on BuildContext {
   }
 
   void showSuccessSnackBar(String message) {
-    showSnackBar(message, backgroundColor: Colors.green);
+    showSnackBar(message, backgroundColor: AppColors.success);
   }
 
   // Focus

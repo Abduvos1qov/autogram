@@ -91,7 +91,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         AppSpacing.gapHorizontalSm,
                         Text(
                           'Autogram',
-                          style: AppTypography.headlineMedium.copyWith(
+                          style: AppTypography.headlineMedium(context).copyWith(
                             fontWeight: FontWeight.bold,
                             color: AppColors.primary,
                           ),
@@ -104,15 +104,15 @@ class _LoginScreenState extends State<LoginScreen> {
                     // Title
                     Text(
                       'Hisobingizga\nkiring',
-                      style: AppTypography.displayMedium.copyWith(
+                      style: AppTypography.displayMedium(context).copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     AppSpacing.gapVerticalSm,
                     Text(
                       'Kirish uchun email va parolingizni kiriting',
-                      style: AppTypography.bodyMedium.copyWith(
-                        color: AppColors.textSecondary,
+                      style: AppTypography.bodyMedium(context).copyWith(
+                        color: AppColors.textSecondaryOf(context),
                       ),
                     ),
 
@@ -175,7 +175,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         child: Text(
                           'Parolni unutdingizmi?',
-                          style: AppTypography.bodySmall.copyWith(
+                          style: AppTypography.bodySmall(context).copyWith(
                             color: AppColors.primary,
                             fontWeight: FontWeight.w600,
                           ),
@@ -203,8 +203,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: Text(
                             'Yoki',
-                            style: AppTypography.bodySmall.copyWith(
-                              color: AppColors.textSecondary,
+                            style: AppTypography.bodySmall(context).copyWith(
+                              color: AppColors.textSecondaryOf(context),
                             ),
                           ),
                         ),
@@ -221,15 +221,15 @@ class _LoginScreenState extends State<LoginScreen> {
                         children: [
                           Text(
                             'Hisobingiz yo\'qmi? ',
-                            style: AppTypography.bodyMedium.copyWith(
-                              color: AppColors.textSecondary,
+                            style: AppTypography.bodyMedium(context).copyWith(
+                              color: AppColors.textSecondaryOf(context),
                             ),
                           ),
                           GestureDetector(
                             onTap: () => context.push('/register'),
                             child: Text(
                               'Ro\'yxatdan o\'tish',
-                              style: AppTypography.bodyMedium.copyWith(
+                              style: AppTypography.bodyMedium(context).copyWith(
                                 color: AppColors.primary,
                                 fontWeight: FontWeight.w600,
                               ),

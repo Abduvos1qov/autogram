@@ -88,7 +88,7 @@ class FeaturedSellersBar extends StatelessWidget {
             children: [
               Text(
                 'Mashhur salonlar',
-                style: AppTypography.titleMedium,
+                style: AppTypography.titleMedium(context),
               ),
               TextButton(
                 onPressed: () {
@@ -120,14 +120,14 @@ class FeaturedSellersBar extends StatelessWidget {
                       AppSpacing.gapVerticalSm,
                       Text(
                         'Salon ${index + 1}',
-                        style: AppTypography.bodySmall,
+                        style: AppTypography.bodySmall(context),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         textAlign: TextAlign.center,
                       ),
                       Text(
                         '${(index + 1) * 15} ta e\'lon',
-                        style: AppTypography.labelSmall,
+                        style: AppTypography.labelSmall(context),
                         textAlign: TextAlign.center,
                       ),
                     ],

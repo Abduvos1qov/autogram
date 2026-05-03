@@ -51,14 +51,14 @@ class AppIconButton extends StatelessWidget {
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
                           valueColor: AlwaysStoppedAnimation<Color>(
-                            color ?? AppColors.textPrimary,
+                            color ?? AppColors.textPrimaryOf(context),
                           ),
                         ),
                       )
                     : Icon(
                         icon,
                         size: iconSize,
-                        color: color ?? AppColors.textPrimary,
+                        color: color ?? AppColors.textPrimaryOf(context),
                       ),
               ),
             ),

@@ -76,7 +76,7 @@ class _UsernameScreenState extends State<UsernameScreen> {
                     // Title
                     Text(
                       'Username tanlang',
-                      style: AppTypography.displayMedium.copyWith(
+                      style: AppTypography.displayMedium(context).copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -85,8 +85,8 @@ class _UsernameScreenState extends State<UsernameScreen> {
 
                     Text(
                       'Boshqa foydalanuvchilar sizni shu nom bilan topishi mumkin',
-                      style: AppTypography.bodyMedium.copyWith(
-                        color: AppColors.textSecondary,
+                      style: AppTypography.bodyMedium(context).copyWith(
+                        color: AppColors.textSecondaryOf(context),
                       ),
                     ),
 
@@ -101,8 +101,8 @@ class _UsernameScreenState extends State<UsernameScreen> {
                         padding: const EdgeInsets.only(left: 12),
                         child: Text(
                           '@',
-                          style: AppTypography.bodyLarge.copyWith(
-                            color: AppColors.textSecondary,
+                          style: AppTypography.bodyLarge(context).copyWith(
+                            color: AppColors.textSecondaryOf(context),
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -117,8 +117,8 @@ class _UsernameScreenState extends State<UsernameScreen> {
 
                     Text(
                       'Faqat harflar, raqamlar va pastki chiziq. Kamida 3 belgi.',
-                      style: AppTypography.bodySmall.copyWith(
-                        color: AppColors.textSecondary,
+                      style: AppTypography.bodySmall(context).copyWith(
+                        color: AppColors.textSecondaryOf(context),
                       ),
                     ),
 

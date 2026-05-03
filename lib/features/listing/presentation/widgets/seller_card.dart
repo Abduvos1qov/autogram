@@ -53,7 +53,7 @@ class SellerCard extends StatelessWidget {
                           Flexible(
                             child: Text(
                               seller.businessName,
-                              style: AppTypography.titleMedium,
+                              style: AppTypography.titleMedium(context),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -79,15 +79,15 @@ class SellerCard extends StatelessWidget {
                           const SizedBox(width: 4),
                           Text(
                             '${seller.avgRating.toStringAsFixed(1)} (${seller.totalReviews})',
-                            style: AppTypography.bodySmall.copyWith(
-                              color: AppColors.textSecondary,
+                            style: AppTypography.bodySmall(context).copyWith(
+                              color: AppColors.textSecondaryOf(context),
                             ),
                           ),
                           AppSpacing.gapHorizontalMd,
                           Text(
                             '${seller.totalSold} ta sotilgan',
-                            style: AppTypography.bodySmall.copyWith(
-                              color: AppColors.textSecondary,
+                            style: AppTypography.bodySmall(context).copyWith(
+                              color: AppColors.textSecondaryOf(context),
                             ),
                           ),
                         ],
@@ -96,16 +96,16 @@ class SellerCard extends StatelessWidget {
                         const SizedBox(height: 4),
                         Row(
                           children: [
-                            const Icon(
+                            Icon(
                               Icons.location_on_outlined,
                               size: 14,
-                              color: AppColors.textSecondary,
+                              color: AppColors.textSecondaryOf(context),
                             ),
                             const SizedBox(width: 4),
                             Text(
                               seller.city!,
-                              style: AppTypography.bodySmall.copyWith(
-                                color: AppColors.textSecondary,
+                              style: AppTypography.bodySmall(context).copyWith(
+                                color: AppColors.textSecondaryOf(context),
                               ),
                             ),
                           ],
@@ -121,9 +121,9 @@ class SellerCard extends StatelessWidget {
                     onPressed: onFollow,
                     style: OutlinedButton.styleFrom(
                       foregroundColor:
-                          seller.isFollowing ? AppColors.textSecondary : AppColors.primary,
+                          seller.isFollowing ? AppColors.textSecondaryOf(context) : AppColors.primary,
                       side: BorderSide(
-                        color: seller.isFollowing ? AppColors.textSecondary : AppColors.primary,
+                        color: seller.isFollowing ? AppColors.textSecondaryOf(context) : AppColors.primary,
                       ),
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                     ),
@@ -137,9 +137,9 @@ class SellerCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildStat('E\'lonlar', '${seller.activeListings}'),
-                _buildStat('Ko\'rishlar', _formatCount(seller.totalViews)),
-                _buildStat('Sotilgan', '${seller.totalSold}'),
+                _buildStat(context, 'E\'lonlar', '${seller.activeListings}'),
+                _buildStat(context, 'Ko\'rishlar', _formatCount(seller.totalViews)),
+                _buildStat(context, 'Sotilgan', '${seller.totalSold}'),
               ],
             ),
 
@@ -158,20 +158,20 @@ class SellerCard extends StatelessWidget {
     );
   }
 
-  Widget _buildStat(String label, String value) {
+  Widget _buildStat(BuildContext context, String label, String value) {
     return Column(
       children: [
         Text(
           value,
-          style: AppTypography.titleMedium.copyWith(
+          style: AppTypography.titleMedium(context).copyWith(
             fontWeight: FontWeight.bold,
           ),
         ),
         const SizedBox(height: 4),
         Text(
           label,
-          style: AppTypography.bodySmall.copyWith(
-            color: AppColors.textSecondary,
+          style: AppTypography.bodySmall(context).copyWith(
+            color: AppColors.textSecondaryOf(context),
           ),
         ),
       ],

@@ -131,12 +131,12 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           ),
           child: Icon(
             notification.type.icon,
-            color: notification.isRead ? AppColors.textSecondary : AppColors.primary,
+            color: notification.isRead ? AppColors.textSecondaryOf(context) : AppColors.primary,
           ),
         ),
         title: Text(
           notification.title,
-          style: AppTypography.titleSmall.copyWith(
+          style: AppTypography.titleSmall(context).copyWith(
             fontWeight: notification.isRead ? FontWeight.normal : FontWeight.bold,
           ),
         ),
@@ -146,8 +146,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             if (notification.body != null) ...[
               Text(
                 notification.body!,
-                style: AppTypography.bodySmall.copyWith(
-                  color: AppColors.textSecondary,
+                style: AppTypography.bodySmall(context).copyWith(
+                  color: AppColors.textSecondaryOf(context),
                 ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
@@ -156,8 +156,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             ],
             Text(
               Formatters.formatDateTime(notification.createdAt),
-              style: AppTypography.labelSmall.copyWith(
-                color: AppColors.textSecondary,
+              style: AppTypography.labelSmall(context).copyWith(
+                color: AppColors.textSecondaryOf(context),
               ),
             ),
           ],

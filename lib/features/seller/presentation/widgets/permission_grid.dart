@@ -70,8 +70,8 @@ class _PermissionItem extends StatelessWidget {
         Flexible(
           child: Text(
             permission.label,
-            style: AppTypography.bodySmall.copyWith(
-              color: isGranted ? AppColors.textPrimary : AppColors.grey500,
+            style: AppTypography.bodySmall(context).copyWith(
+              color: isGranted ? AppColors.textPrimaryOf(context) : AppColors.grey500,
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,

@@ -129,13 +129,13 @@ class _ChatScreenState extends State<ChatScreen> {
                     children: [
                       Text(
                         _conversation!.otherUserName,
-                        style: AppTypography.titleSmall,
+                        style: AppTypography.titleSmall(context),
                       ),
                       if (_conversation!.listingTitle != null)
                         Text(
                           _conversation!.listingTitle!,
-                          style: AppTypography.bodySmall.copyWith(
-                            color: AppColors.textSecondary,
+                          style: AppTypography.bodySmall(context).copyWith(
+                            color: AppColors.textSecondaryOf(context),
                           ),
                         ),
                     ],
@@ -199,8 +199,8 @@ class _ChatScreenState extends State<ChatScreen> {
           children: [
             Text(
               message.content,
-              style: AppTypography.bodyMedium.copyWith(
-                color: isMine ? AppColors.white : AppColors.textPrimary,
+              style: AppTypography.bodyMedium(context).copyWith(
+                color: isMine ? AppColors.white : AppColors.textPrimaryOf(context),
               ),
             ),
             const SizedBox(height: 4),
@@ -209,10 +209,10 @@ class _ChatScreenState extends State<ChatScreen> {
               children: [
                 Text(
                   Formatters.formatTime(message.createdAt),
-                  style: AppTypography.labelSmall.copyWith(
+                  style: AppTypography.labelSmall(context).copyWith(
                     color: isMine
                         ? AppColors.white.withValues(alpha: 0.7)
-                        : AppColors.textSecondary,
+                        : AppColors.textSecondaryOf(context),
                   ),
                 ),
                 if (isMine) ...[

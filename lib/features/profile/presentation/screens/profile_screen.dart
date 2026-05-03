@@ -81,13 +81,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       AppSpacing.gapVerticalMd,
                       Text(
                         profile.fullName,
-                        style: AppTypography.headlineSmall,
+                        style: AppTypography.headlineSmall(context),
                       ),
                       AppSpacing.gapVerticalXs,
                       Text(
                         profile.phone,
-                        style: AppTypography.bodyMedium.copyWith(
-                          color: AppColors.textSecondary,
+                        style: AppTypography.bodyMedium(context).copyWith(
+                          color: AppColors.textSecondaryOf(context),
                         ),
                       ),
                       if (profile.isSeller) ...[
@@ -103,7 +103,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                           child: Text(
                             'Sotuvchi',
-                            style: AppTypography.labelSmall.copyWith(
+                            style: AppTypography.labelSmall(context).copyWith(
                               color: AppColors.primary,
                             ),
                           ),
@@ -154,7 +154,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       child: Text(
                         'Yangi',
-                        style: AppTypography.labelSmall.copyWith(
+                        style: AppTypography.labelSmall(context).copyWith(
                           color: AppColors.white,
                         ),
                       ),
@@ -214,7 +214,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       leading: Icon(icon, color: textColor),
       title: Text(
         title,
-        style: AppTypography.bodyLarge.copyWith(color: textColor),
+        style: AppTypography.bodyLarge(context).copyWith(color: textColor),
       ),
       subtitle: subtitle != null ? Text(subtitle) : null,
       trailing: trailing ?? const Icon(Icons.chevron_right),

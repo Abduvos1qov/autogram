@@ -164,7 +164,7 @@ class _TeamMembersScreenState extends State<TeamMembersScreen> {
       children: [
         Text(
           title,
-          style: AppTypography.titleSmall,
+          style: AppTypography.titleSmall(context),
         ),
         AppSpacing.gapHorizontalSm,
         Container(
@@ -175,8 +175,8 @@ class _TeamMembersScreenState extends State<TeamMembersScreen> {
           ),
           child: Text(
             count,
-            style: AppTypography.caption.copyWith(
-              color: AppColors.textSecondary,
+            style: AppTypography.caption(context).copyWith(
+              color: AppColors.textSecondaryOf(context),
             ),
           ),
         ),

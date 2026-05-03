@@ -101,13 +101,13 @@ class _BusinessInfoScreenState extends State<BusinessInfoScreen> {
                           // Header
                           Text(
                             'Biznes haqida',
-                            style: AppTypography.headlineSmall,
+                            style: AppTypography.headlineSmall(context),
                           ),
                           AppSpacing.gapVerticalSm,
                           Text(
                             'Biznesingiz haqida ma\'lumot kiriting',
-                            style: AppTypography.bodyMedium.copyWith(
-                              color: AppColors.textSecondary,
+                            style: AppTypography.bodyMedium(context).copyWith(
+                              color: AppColors.textSecondaryOf(context),
                             ),
                           ),
                           AppSpacing.gapVerticalXl,

@@ -173,11 +173,11 @@ class AppAvatar extends StatelessWidget {
       AppColors.primary,
       AppColors.secondary,
       AppColors.accent,
-      Colors.purple,
-      Colors.indigo,
-      Colors.teal,
-      Colors.orange,
-      Colors.pink,
+      AppColors.info,
+      AppColors.warning,
+      AppColors.primaryLight,
+      AppColors.secondaryDark,
+      AppColors.accentDark,
     ];
 
     final hash = name!.codeUnits.fold<int>(0, (sum, code) => sum + code);
@@ -247,18 +247,7 @@ class StoryAvatar extends StatelessWidget {
             padding: const EdgeInsets.all(2),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              gradient: hasUnseenStory
-                  ? const LinearGradient(
-                      colors: [
-                        Color(0xFFF58529),
-                        Color(0xFFDD2A7B),
-                        Color(0xFF8134AF),
-                        Color(0xFF515BD4),
-                      ],
-                      begin: Alignment.topRight,
-                      end: Alignment.bottomLeft,
-                    )
-                  : null,
+              gradient: hasUnseenStory ? AppColors.storyGradient : null,
               border: hasUnseenStory
                   ? null
                   : Border.all(color: AppColors.grey300, width: 1),

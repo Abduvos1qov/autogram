@@ -43,8 +43,8 @@ class PhoneInput extends StatelessWidget {
         if (label != null) ...[
           Text(
             label!,
-            style: AppTypography.labelMedium.copyWith(
-              color: AppColors.textSecondary,
+            style: AppTypography.labelMedium(context).copyWith(
+              color: AppColors.textSecondaryOf(context),
             ),
           ),
           AppSpacing.gapVerticalSm,
@@ -56,7 +56,7 @@ class PhoneInput extends StatelessWidget {
           autofocus: autofocus,
           keyboardType: TextInputType.phone,
           textInputAction: TextInputAction.done,
-          style: AppTypography.bodyLarge,
+          style: AppTypography.bodyLarge(context),
           inputFormatters: [
             FilteringTextInputFormatter.digitsOnly,
             LengthLimitingTextInputFormatter(9),
@@ -78,7 +78,7 @@ class PhoneInput extends StatelessWidget {
                   AppSpacing.gapHorizontalSm,
                   Text(
                     AppConstants.uzbekPhonePrefix,
-                    style: AppTypography.bodyLarge.copyWith(
+                    style: AppTypography.bodyLarge(context).copyWith(
                       fontWeight: FontWeight.w500,
                     ),
                   ),

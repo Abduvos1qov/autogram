@@ -59,18 +59,18 @@ class PlanCard extends StatelessWidget {
                       children: [
                         Text(
                           plan.name,
-                          style: AppTypography.titleMedium.copyWith(
+                          style: AppTypography.titleMedium(context).copyWith(
                             fontWeight: FontWeight.bold,
                             color: isSelected
                                 ? AppColors.primary
-                                : AppColors.textPrimary,
+                                : AppColors.textPrimaryOf(context),
                           ),
                         ),
                         AppSpacing.gapVerticalXs,
                         if (isFree)
                           Text(
                             'Bepul',
-                            style: AppTypography.headlineSmall.copyWith(
+                            style: AppTypography.headlineSmall(context).copyWith(
                               color: AppColors.success,
                               fontWeight: FontWeight.bold,
                             ),
@@ -84,14 +84,14 @@ class PlanCard extends StatelessWidget {
                                   plan.monthlyPrice.toDouble(),
                                   currency: 'UZS',
                                 ),
-                                style: AppTypography.headlineSmall.copyWith(
+                                style: AppTypography.headlineSmall(context).copyWith(
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
                               Text(
                                 '/oy',
-                                style: AppTypography.bodySmall.copyWith(
-                                  color: AppColors.textSecondary,
+                                style: AppTypography.bodySmall(context).copyWith(
+                                  color: AppColors.textSecondaryOf(context),
                                 ),
                               ),
                             ],
@@ -123,8 +123,8 @@ class PlanCard extends StatelessWidget {
                         ),
                         child: Text(
                           'Joriy',
-                          style: AppTypography.labelSmall.copyWith(
-                            color: AppColors.textSecondary,
+                          style: AppTypography.labelSmall(context).copyWith(
+                            color: AppColors.textSecondaryOf(context),
                           ),
                         ),
                       ),
@@ -133,8 +133,8 @@ class PlanCard extends StatelessWidget {
                 AppSpacing.gapVerticalMd,
                 Text(
                   plan.description,
-                  style: AppTypography.bodySmall.copyWith(
-                    color: AppColors.textSecondary,
+                  style: AppTypography.bodySmall(context).copyWith(
+                    color: AppColors.textSecondaryOf(context),
                   ),
                 ),
                 AppSpacing.gapVerticalMd,
@@ -155,7 +155,7 @@ class PlanCard extends StatelessWidget {
                           Expanded(
                             child: Text(
                               feature,
-                              style: AppTypography.bodySmall,
+                              style: AppTypography.bodySmall(context),
                             ),
                           ),
                         ],
@@ -174,7 +174,7 @@ class PlanCard extends StatelessWidget {
                       plan.maxListings >= 999
                           ? 'Cheksiz e\'lonlar'
                           : '${plan.maxListings} ta e\'lon',
-                      style: AppTypography.bodySmall.copyWith(
+                      style: AppTypography.bodySmall(context).copyWith(
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -198,7 +198,7 @@ class PlanCard extends StatelessWidget {
                 ),
                 child: Text(
                   'Mashhur',
-                  style: AppTypography.labelSmall.copyWith(
+                  style: AppTypography.labelSmall(context).copyWith(
                     color: AppColors.white,
                     fontWeight: FontWeight.w600,
                   ),
