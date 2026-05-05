@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
@@ -7,10 +8,13 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/widgets/feedback/error_view.dart';
 import '../../../../core/widgets/feedback/loading_indicator.dart';
-import '../../../../core/widgets/media/avatar.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../auth/presentation/bloc/auth_event.dart';
 import '../bloc/profile_bloc.dart';
+import '../widgets/profile_header.dart';
+import '../widgets/profile_menu_section.dart';
+import '../widgets/profile_menu_tile.dart';
+import '../widgets/profile_stats_card.dart';
 
 /// Profile screen
 
@@ -30,215 +34,187 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Profil'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () => context.push('/settings'),
-          ),
-        ],
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.light.copyWith(
+        statusBarColor: Colors.transparent,
       ),
-      body: BlocBuilder<ProfileBloc, ProfileState>(
-        builder: (context, state) {
-          if (state.isLoading) {
-            return const Center(child: LoadingIndicator());
-          }
+      child: Scaffold(
+        backgroundColor: AppColors.surfaceOf(context),
+        body: BlocBuilder<ProfileBloc, ProfileState>(
+          builder: (context, state) {
+            if (state.isLoading) {
+              return const Center(child: LoadingIndicator());
+            }
 
-          if (state.hasError) {
-            return ErrorView(
-              failure: state.failure,
-              onRetry: () {
+            if (state.hasError) {
+              return ErrorView(
+                failure: state.failure,
+                onRetry: () {
+                  context
+                      .read<ProfileBloc>()
+                      .add(const ProfileLoadRequested());
+                },
+              );
+            }
+
+            if (state.profile == null) {
+              return const SizedBox.shrink();
+            }
+
+            final profile = state.profile!;
+
+            return RefreshIndicator(
+              onRefresh: () async {
                 context.read<ProfileBloc>().add(const ProfileLoadRequested());
               },
-            );
-          }
-
-          if (state.profile == null) {
-            return const SizedBox.shrink();
-          }
-
-          final profile = state.profile!;
-
-          return RefreshIndicator(
-            onRefresh: () async {
-              context.read<ProfileBloc>().add(const ProfileLoadRequested());
-            },
-            child: ListView(
-              padding: const EdgeInsets.all(AppSpacing.md),
-              children: [
-                // Profile header
-                Center(
-                  child: Column(
-                    children: [
-                      AppAvatar(
-                        imageUrl: profile.avatarUrl,
-                        name: profile.fullName,
-                        size: AvatarSize.xl,
-                        isVerified: profile.isVerified,
-                      ),
-                      AppSpacing.gapVerticalMd,
-                      Text(
-                        profile.fullName,
-                        style: AppTypography.headlineSmall(context),
-                      ),
-                      AppSpacing.gapVerticalXs,
-                      Text(
-                        profile.phone,
-                        style: AppTypography.bodyMedium(context).copyWith(
-                          color: AppColors.textSecondaryOf(context),
-                        ),
-                      ),
-                      if (profile.isSeller) ...[
-                        AppSpacing.gapVerticalXs,
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: AppColors.primary.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: Text(
-                            'Sotuvchi',
-                            style: AppTypography.labelSmall(context).copyWith(
-                              color: AppColors.primary,
-                            ),
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.only(bottom: 120),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        ProfileHeader(profile: profile),
+                        Positioned(
+                          left: 0,
+                          right: 0,
+                          bottom: -AppSpacing.xl,
+                          child: const ProfileStatsCard(
+                            // TODO: wire to real stats from listings/saved blocs
+                            activeListings: 0,
+                            savedCount: 0,
                           ),
                         ),
                       ],
-                    ],
-                  ),
-                ),
-                AppSpacing.gapVerticalXl,
+                    ),
+                    const SizedBox(height: AppSpacing.xl),
 
-                // Menu items
-                _buildMenuItem(
-                  icon: Icons.person_outline,
-                  title: 'Profilni tahrirlash',
-                  onTap: () => context.push('/profile/edit'),
-                ),
-                _buildMenuItem(
-                  icon: Icons.bookmark_border,
-                  title: 'Saqlanganlar',
-                  onTap: () => context.push('/saved'),
-                ),
-                _buildMenuItem(
-                  icon: Icons.favorite_border,
-                  title: 'Yoqtirilganlar',
-                  onTap: () => context.push('/liked'),
-                ),
-                _buildMenuItem(
-                  icon: Icons.history,
-                  title: 'Ko\'rishlar tarixi',
-                  onTap: () => context.push('/history'),
-                ),
+                    // ACCOUNT
+                    ProfileMenuSection(
+                      title: 'HISOB',
+                      tiles: [
+                        ProfileMenuTile(
+                          icon: Icons.person_outline,
+                          title: 'Profilni tahrirlash',
+                          onTap: () => context.push('/profile/edit'),
+                        ),
+                        ProfileMenuTile(
+                          icon: Icons.bookmark_outline,
+                          title: 'Saqlanganlar',
+                          onTap: () => context.push('/saved'),
+                        ),
+                        ProfileMenuTile(
+                          icon: Icons.language,
+                          title: 'Til',
+                          trailing: Text(
+                            _languageCode(profile.language),
+                            style: AppTypography.bodyMedium(context).copyWith(
+                              color: AppColors.textSecondaryOf(context),
+                            ),
+                          ),
+                          onTap: () => _showLanguageDialog(context),
+                        ),
+                      ],
+                    ),
 
-                if (!profile.isSeller) ...[
-                  const Divider(height: 32),
-                  _buildMenuItem(
-                    icon: Icons.storefront,
-                    title: 'Sotuvchi bo\'lish',
-                    subtitle: 'E\'lon joylash imkoniyati',
-                    onTap: () => context.push('/upgrade'),
-                    trailing: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 2,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColors.success,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
+                    // ACTIVITY
+                    ProfileMenuSection(
+                      title: 'FAOLIYAT',
+                      tiles: [
+                        ProfileMenuTile(
+                          icon: Icons.history,
+                          title: 'Ko\'rishlar tarixi',
+                          onTap: () => context.push('/history'),
+                        ),
+                        ProfileMenuTile(
+                          icon: Icons.favorite_outline,
+                          title: 'Yoqtirilganlar',
+                          onTap: () => context.push('/liked'),
+                        ),
+                        ProfileMenuTile(
+                          icon: Icons.local_fire_department_outlined,
+                          title: 'Boost',
+                          trailing: _NewBadge(),
+                          onTap: () => context.push('/boost'),
+                        ),
+                      ],
+                    ),
+
+                    // SUPPORT
+                    ProfileMenuSection(
+                      title: 'YORDAM',
+                      tiles: [
+                        ProfileMenuTile(
+                          icon: Icons.headset_mic_outlined,
+                          title: 'Yordam markazi',
+                          onTap: () => context.push('/help'),
+                        ),
+                        ProfileMenuTile(
+                          icon: Icons.notifications_outlined,
+                          title: 'Bildirishnomalar',
+                          onTap: () => context.push('/notifications/settings'),
+                        ),
+                        ProfileMenuTile(
+                          icon: Icons.shield_outlined,
+                          title: 'Foydalanish shartlari',
+                          onTap: () => context.push('/about'),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: AppSpacing.sm),
+
+                    // Sign out
+                    ProfileMenuTile(
+                      icon: Icons.logout,
+                      title: 'Chiqish',
+                      iconColor: AppColors.error,
+                      iconBackground: AppColors.errorSoft,
+                      titleColor: AppColors.error,
+                      showChevron: false,
+                      onTap: () => _showLogoutDialog(context),
+                    ),
+
+                    const SizedBox(height: AppSpacing.lg),
+
+                    // Footer
+                    Center(
                       child: Text(
-                        'Yangi',
-                        style: AppTypography.labelSmall(context).copyWith(
-                          color: AppColors.white,
+                        'Autogram · v1.0.0',
+                        style: AppTypography.bodySmallStyle.copyWith(
+                          color: AppColors.textTertiaryOf(context),
                         ),
                       ),
                     ),
-                  ),
-                ],
-
-                const Divider(height: 32),
-                _buildMenuItem(
-                  icon: Icons.notifications_outlined,
-                  title: 'Bildirishnomalar',
-                  onTap: () => context.push('/notifications/settings'),
+                  ],
                 ),
-                _buildMenuItem(
-                  icon: Icons.language,
-                  title: 'Til',
-                  subtitle: _getLanguageName(profile.language),
-                  onTap: () => _showLanguageDialog(context),
-                ),
-                _buildMenuItem(
-                  icon: Icons.help_outline,
-                  title: 'Yordam',
-                  onTap: () => context.push('/help'),
-                ),
-                _buildMenuItem(
-                  icon: Icons.info_outline,
-                  title: 'Ilova haqida',
-                  onTap: () => context.push('/about'),
-                ),
-
-                const Divider(height: 32),
-                _buildMenuItem(
-                  icon: Icons.logout,
-                  title: 'Chiqish',
-                  textColor: AppColors.error,
-                  onTap: () => _showLogoutDialog(context),
-                ),
-
-                AppSpacing.gapVerticalXl,
-              ],
-            ),
-          );
-        },
+              ),
+            );
+          },
+        ),
       ),
     );
   }
 
-  Widget _buildMenuItem({
-    required IconData icon,
-    required String title,
-    String? subtitle,
-    required VoidCallback onTap,
-    Color? textColor,
-    Widget? trailing,
-  }) {
-    return ListTile(
-      leading: Icon(icon, color: textColor),
-      title: Text(
-        title,
-        style: AppTypography.bodyLarge(context).copyWith(color: textColor),
-      ),
-      subtitle: subtitle != null ? Text(subtitle) : null,
-      trailing: trailing ?? const Icon(Icons.chevron_right),
-      onTap: onTap,
-    );
-  }
-
-  String _getLanguageName(String code) {
+  String _languageCode(String code) {
     switch (code) {
       case 'uz':
-        return 'O\'zbekcha';
+        return 'UZ';
       case 'ru':
-        return 'Русский';
+        return 'RU';
       case 'en':
-        return 'English';
+        return 'EN';
       default:
-        return code;
+        return code.toUpperCase();
     }
   }
 
   void _showLanguageDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder: (context) {
+      builder: (dialogContext) {
         return AlertDialog(
           title: const Text('Tilni tanlang'),
           content: Column(
@@ -250,7 +226,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   context.read<ProfileBloc>().add(
                         const ProfileUpdateRequested(language: 'uz'),
                       );
-                  Navigator.pop(context);
+                  Navigator.pop(dialogContext);
                 },
               ),
               ListTile(
@@ -259,7 +235,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   context.read<ProfileBloc>().add(
                         const ProfileUpdateRequested(language: 'ru'),
                       );
-                  Navigator.pop(context);
+                  Navigator.pop(dialogContext);
                 },
               ),
               ListTile(
@@ -268,7 +244,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   context.read<ProfileBloc>().add(
                         const ProfileUpdateRequested(language: 'en'),
                       );
-                  Navigator.pop(context);
+                  Navigator.pop(dialogContext);
                 },
               ),
             ],
@@ -281,18 +257,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void _showLogoutDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder: (context) {
+      builder: (dialogContext) {
         return AlertDialog(
           title: const Text('Chiqish'),
           content: const Text('Haqiqatan ham chiqmoqchimisiz?'),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => Navigator.pop(dialogContext),
               child: const Text('Bekor qilish'),
             ),
             ElevatedButton(
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.pop(dialogContext);
                 context.read<AuthBloc>().add(const AuthLogoutRequested());
               },
               style: ElevatedButton.styleFrom(
@@ -303,6 +279,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ],
         );
       },
+    );
+  }
+}
+
+class _NewBadge extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        color: AppColors.successSoft,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Text(
+        'YANGI',
+        style: AppTypography.labelSmallStyle.copyWith(
+          color: AppColors.successDark,
+          fontWeight: AppTypography.bold,
+          fontSize: 10,
+        ),
+      ),
     );
   }
 }
