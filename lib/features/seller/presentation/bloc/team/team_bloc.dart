@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/usecases/usecase.dart';
@@ -389,17 +391,21 @@ class TeamBloc extends Bloc<TeamEvent, TeamState> {
     final sellerProfileId = state.sellerProfileId;
     if (sellerProfileId == null) return;
 
-    _logActivityUseCase(LogActivityParams(
-      sellerProfileId: sellerProfileId,
-      actionType: actionType,
-      description: description,
-      metadata: metadata,
-    )).then((result) {
-      result.fold(
-        (failure) => AppLogger.warning(
-            'Failed to log activity: ${failure.message}'),
-        (_) => AppLogger.debug('Activity logged: $description'),
-      );
-    });
+    unawaited(
+      _logActivityUseCase(LogActivityParams(
+        sellerProfileId: sellerProfileId,
+        actionType: actionType,
+        description: description,
+        metadata: metadata,
+      )).then(
+        (result) => result.fold(
+          (failure) =>
+              AppLogger.warning('Failed to log activity: ${failure.message}'),
+          (_) => AppLogger.debug('Activity logged: $description'),
+        ),
+      ).catchError((Object e) {
+        AppLogger.warning('Activity logging crashed: $e');
+      }),
+    );
   }
 }

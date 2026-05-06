@@ -64,8 +64,111 @@ lib/
 - **Error handling:** `dartz` Either pattern — `Left(Failure)` / `Right(SuccessData)` throughout repositories and use cases
 - **DI:** Manual GetIt registration in `di/injection.dart` — LazySingleton for repos/services, Factory for BLoCs
 - **Navigation:** GoRouter with `StatefulShellRoute` for 5 bottom tabs (Home, Reels, Search, Chat, Profile)
-- **State management:** BLoC with separate event/state files per feature, all provided in `app.dart`
+- **State management:** BLoC with separate event/state files per feature (3 files: `*_bloc.dart` + `*_event.dart` + `*_state.dart`, no `part of`), all provided in `app.dart`. See **Bloc State Convention** below.
 - **Localization:** `easy_localization` with JSON files in `assets/l10n/` (uz, ru, en). Uzbek is default/fallback.
+
+## Bloc State Convention (Hybrid)
+
+Two valid state shapes — pick by feature complexity, not preference:
+
+### A) State Hierarchy (Auth-style)
+
+**Use when:** 4+ mutually exclusive states with **different field shapes**, or multi-step flow (auth, payment, multi-step wizard).
+
+```dart
+abstract class AuthState extends Equatable { const AuthState(); ... }
+class AuthInitial extends AuthState { ... }
+class AuthLoading extends AuthState { ... }
+class AuthAuthenticated extends AuthState { final User user; ... }
+class AuthNeedsUsername extends AuthState { final User user; ... }
+class AuthError extends AuthState { final Failure failure; ... }
+```
+
+UI dispatches via `state is AuthAuthenticated`. Type-safe, exhaustive pattern matching.
+
+**Canonical reference:** `lib/features/auth/presentation/bloc/auth_state.dart`.
+
+### B) Status Enum (Feed-style)
+
+**Use when:** "Fetch list/entity → loading/loaded/error" pattern with a steady-state data field that persists across status changes (lists, optimistic updates, paginated data).
+
+```dart
+enum HomeStatus { initial, loading, loaded, loadingMore, error }
+
+class HomeState extends Equatable {
+  final HomeStatus status;
+  final List<FeedItem> items;
+  final Failure? failure;
+  final bool hasMore;
+
+  const HomeState({this.status = HomeStatus.initial, this.items = const [], this.failure, this.hasMore = true});
+
+  bool get isLoading => status == HomeStatus.loading;
+  HomeState copyWith({HomeStatus? status, List<FeedItem>? items, Failure? failure, bool? hasMore}) { ... }
+
+  @override
+  List<Object?> get props => [status, items, failure, hasMore];
+}
+```
+
+UI dispatches via `state.isLoading`, `state.status == HomeStatus.X`. Easy `copyWith` for optimistic updates.
+
+**Canonical reference:** `lib/features/home/presentation/bloc/home_state.dart`.
+
+**`copyWith` failure handling — `clearFailure: true` flag pattern:**
+
+Status-enum states preserve `failure` by default. Add an explicit `clearFailure: true` flag where you intend to drop a previous failure (typically when transitioning to `loading`):
+
+```dart
+HomeState copyWith({
+  HomeStatus? status,
+  List<FeedItem>? items,
+  Failure? failure,
+  bool clearFailure = false,
+}) =>
+    HomeState(
+      status: status ?? this.status,
+      items: items ?? this.items,
+      failure: clearFailure ? null : (failure ?? this.failure),
+    );
+
+// In handlers:
+emit(state.copyWith(status: HomeStatus.loading, clearFailure: true));   // start fresh
+emit(state.copyWith(status: HomeStatus.error, failure: failure));       // set failure
+emit(state.copyWith(status: HomeStatus.loaded, items: items));          // success — preserves failure if any (rare)
+```
+
+**Reference impls using this pattern:** `SellerState`, `TeamState`, `ProfileState`, `SavedState`, `ConversationsState`, `NotificationsState`.
+
+### Bloc provider scope (deliberate global pattern)
+
+All non-auth blocs are registered as `Factory` in `di/injection.dart` but provided **once** in `app.dart` `MultiBlocProvider`. This gives them effective app-lifetime scope. Trade-off accepted because:
+
+- `ConversationsBloc` — `navigation_shell.dart` reads the unread message count badge
+- `SellerBloc` — multi-screen upgrade flow (`upgrade_screen` → `business_info_screen` → `plan_selection_screen` → `upgrade_success_screen`) requires shared state
+- `TeamBloc` — multi-screen team management (`team_members_screen` → `add_member_screen` / `member_detail_screen` / `activity_log_screen`) requires shared state
+- `NotificationsBloc` — anticipated global unread badge
+
+Moving tab blocs (`HomeBloc`, `ReelsBloc`, `SearchBloc`, `ProfileBloc`) into `StatefulShellBranch` wrappers is a valid micro-optimization but is not required — `Factory` registration is preserved so future per-screen scoping is possible without refactoring DI.
+
+**On logout**, blocs retain old state until app is restarted. Address via dedicated logout cleanup if it becomes a UX issue (out of scope today).
+
+### Decision rule
+
+| Question | If yes → |
+|---|---|
+| Does each state carry a different data shape (e.g., `email`, `user`, `failure`)? | Hierarchy |
+| Does the bloc model a multi-step flow (4+ named distinct steps)? | Hierarchy |
+| Is the bloc "fetch X, show loading/loaded/error" with the same data field across statuses? | Status enum |
+| Do you do optimistic updates (`copyWith(items: ...)` then revert on failure)? | Status enum |
+
+When in doubt, mirror the closest existing feature (auth → hierarchy; home/reels/saved/profile → status enum).
+
+**Forbidden in BOTH patterns:**
+- `Cubit` (use event-driven `Bloc` only)
+- `part` / `part of` (always 3 separate files)
+- DI lookup in field initializer (`final foo = sl<Foo>();`) — use **constructor injection** of use cases
+- Raw `try/catch` around use case calls in handlers — `Either.fold(...)` only
 
 ## Test Mode
 

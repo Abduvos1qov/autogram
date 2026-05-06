@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../core/theme/app_colors.dart';
 import '../features/chat/presentation/bloc/conversations_bloc.dart';
+import '../features/chat/presentation/bloc/conversations_state.dart';
 
 /// Navigation shell with floating pill bottom navigation bar.
 ///

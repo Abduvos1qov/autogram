@@ -1,90 +1,29 @@
-import 'dart:io';
-
-import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../core/errors/failures.dart';
+import '../../../../core/usecases/usecase.dart';
 import '../../../../core/utils/logger.dart';
-import '../../domain/entities/user_profile.dart';
-import '../../domain/repositories/profile_repository.dart';
+import '../../domain/usecases/delete_account_usecase.dart';
+import '../../domain/usecases/get_profile_usecase.dart';
+import '../../domain/usecases/update_avatar_usecase.dart';
+import '../../domain/usecases/update_profile_usecase.dart';
+import 'profile_event.dart';
+import 'profile_state.dart';
 
-// Events
-sealed class ProfileEvent extends Equatable {
-  const ProfileEvent();
-  @override
-  List<Object?> get props => [];
-}
-
-class ProfileLoadRequested extends ProfileEvent {
-  const ProfileLoadRequested();
-}
-
-class ProfileUpdateRequested extends ProfileEvent {
-  final String? fullName;
-  final String? email;
-  final String? language;
-
-  const ProfileUpdateRequested({
-    this.fullName,
-    this.email,
-    this.language,
-  });
-
-  @override
-  List<Object?> get props => [fullName, email, language];
-}
-
-class ProfileAvatarUpdateRequested extends ProfileEvent {
-  final File imageFile;
-  const ProfileAvatarUpdateRequested(this.imageFile);
-  @override
-  List<Object?> get props => [imageFile];
-}
-
-class ProfileDeleteRequested extends ProfileEvent {
-  const ProfileDeleteRequested();
-}
-
-// State
-enum ProfileStatus { initial, loading, loaded, updating, error }
-
-class ProfileState extends Equatable {
-  final ProfileStatus status;
-  final UserProfile? profile;
-  final Failure? failure;
-
-  const ProfileState({
-    this.status = ProfileStatus.initial,
-    this.profile,
-    this.failure,
-  });
-
-  bool get isLoading => status == ProfileStatus.loading;
-  bool get isUpdating => status == ProfileStatus.updating;
-  bool get hasError => status == ProfileStatus.error;
-
-  ProfileState copyWith({
-    ProfileStatus? status,
-    UserProfile? profile,
-    Failure? failure,
-  }) {
-    return ProfileState(
-      status: status ?? this.status,
-      profile: profile ?? this.profile,
-      failure: failure,
-    );
-  }
-
-  @override
-  List<Object?> get props => [status, profile, failure];
-}
-
-// BLoC
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
-  final ProfileRepository _repository;
+  final GetProfileUseCase _getProfileUseCase;
+  final UpdateProfileUseCase _updateProfileUseCase;
+  final UpdateAvatarUseCase _updateAvatarUseCase;
+  final DeleteAccountUseCase _deleteAccountUseCase;
 
-  ProfileBloc({required ProfileRepository repository})
-      : _repository = repository,
+  ProfileBloc({
+    required GetProfileUseCase getProfileUseCase,
+    required UpdateProfileUseCase updateProfileUseCase,
+    required UpdateAvatarUseCase updateAvatarUseCase,
+    required DeleteAccountUseCase deleteAccountUseCase,
+  })  : _getProfileUseCase = getProfileUseCase,
+        _updateProfileUseCase = updateProfileUseCase,
+        _updateAvatarUseCase = updateAvatarUseCase,
+        _deleteAccountUseCase = deleteAccountUseCase,
         super(const ProfileState()) {
     on<ProfileLoadRequested>(_onLoadRequested);
     on<ProfileUpdateRequested>(_onUpdateRequested);
@@ -97,9 +36,9 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     Emitter<ProfileState> emit,
   ) async {
     AppLogger.info('Loading profile');
-    emit(state.copyWith(status: ProfileStatus.loading));
+    emit(state.copyWith(status: ProfileStatus.loading, clearFailure: true));
 
-    final result = await _repository.getProfile();
+    final result = await _getProfileUseCase(const NoParams());
 
     result.fold(
       (failure) {
@@ -124,12 +63,14 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     Emitter<ProfileState> emit,
   ) async {
     AppLogger.info('Updating profile');
-    emit(state.copyWith(status: ProfileStatus.updating));
+    emit(state.copyWith(status: ProfileStatus.updating, clearFailure: true));
 
-    final result = await _repository.updateProfile(
-      fullName: event.fullName,
-      email: event.email,
-      language: event.language,
+    final result = await _updateProfileUseCase(
+      UpdateProfileParams(
+        fullName: event.fullName,
+        email: event.email,
+        language: event.language,
+      ),
     );
 
     result.fold(
@@ -155,9 +96,11 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     Emitter<ProfileState> emit,
   ) async {
     AppLogger.info('Updating avatar');
-    emit(state.copyWith(status: ProfileStatus.updating));
+    emit(state.copyWith(status: ProfileStatus.updating, clearFailure: true));
 
-    final result = await _repository.updateAvatar(event.imageFile);
+    final result = await _updateAvatarUseCase(
+      UpdateAvatarParams(event.imageFile),
+    );
 
     result.fold(
       (failure) {
@@ -182,9 +125,9 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     Emitter<ProfileState> emit,
   ) async {
     AppLogger.info('Deleting account');
-    emit(state.copyWith(status: ProfileStatus.updating));
+    emit(state.copyWith(status: ProfileStatus.updating, clearFailure: true));
 
-    final result = await _repository.deleteAccount();
+    final result = await _deleteAccountUseCase(const NoParams());
 
     result.fold(
       (failure) {
@@ -196,7 +139,6 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       },
       (_) {
         AppLogger.info('Account deleted');
-        // Auth bloc will handle logout
       },
     );
   }

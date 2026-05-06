@@ -13,6 +13,8 @@ import '../../../../core/widgets/media/avatar.dart';
 import '../../../../core/widgets/media/cached_image.dart';
 import '../../domain/entities/conversation.dart';
 import '../bloc/conversations_bloc.dart';
+import '../bloc/conversations_event.dart';
+import '../bloc/conversations_state.dart';
 
 /// Conversations list screen
 

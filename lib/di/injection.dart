@@ -109,9 +109,20 @@ import '../features/seller/domain/usecases/get_member_activity_logs_usecase.dart
 // Permission Service
 import '../core/services/permission_service.dart';
 
+// Notifications
+import '../features/notifications/data/datasources/notification_remote_datasource.dart';
+import '../features/notifications/data/repositories/notification_repository_impl.dart';
+import '../features/notifications/domain/repositories/notification_repository.dart';
+import '../features/notifications/presentation/bloc/notifications_bloc.dart';
+
 // Profile
+import '../features/profile/data/datasources/profile_remote_datasource.dart';
 import '../features/profile/data/repositories/profile_repository_impl.dart';
 import '../features/profile/domain/repositories/profile_repository.dart';
+import '../features/profile/domain/usecases/delete_account_usecase.dart';
+import '../features/profile/domain/usecases/get_profile_usecase.dart';
+import '../features/profile/domain/usecases/update_avatar_usecase.dart';
+import '../features/profile/domain/usecases/update_profile_usecase.dart';
 import '../features/profile/presentation/bloc/profile_bloc.dart';
 
 final sl = GetIt.instance;
@@ -451,19 +462,48 @@ void _initTeam() {
 }
 
 void _initProfile() {
-  // Repository
-  sl.registerLazySingleton<ProfileRepository>(
-    () => ProfileRepositoryImpl(),
+  // Data sources
+  sl.registerLazySingleton<ProfileRemoteDataSource>(
+    () => ProfileRemoteDataSourceImpl(supabaseClient: sl()),
   );
 
+  // Repository
+  sl.registerLazySingleton<ProfileRepository>(
+    () => ProfileRepositoryImpl(
+      remoteDataSource: sl(),
+      networkInfo: sl(),
+    ),
+  );
+
+  // Use cases
+  sl.registerLazySingleton(() => GetProfileUseCase(sl()));
+  sl.registerLazySingleton(() => UpdateProfileUseCase(sl()));
+  sl.registerLazySingleton(() => UpdateAvatarUseCase(sl()));
+  sl.registerLazySingleton(() => DeleteAccountUseCase(sl()));
+
   // BLoC
-  sl.registerFactory(() => ProfileBloc(repository: sl()));
+  sl.registerFactory(() => ProfileBloc(
+        getProfileUseCase: sl(),
+        updateProfileUseCase: sl(),
+        updateAvatarUseCase: sl(),
+        deleteAccountUseCase: sl(),
+      ));
 }
 
 void _initNotifications() {
-  // Repository - needs implementation
-  // sl.registerLazySingleton<NotificationRepository>(() => NotificationRepositoryImpl(...));
+  // Data sources
+  sl.registerLazySingleton<NotificationRemoteDataSource>(
+    () => NotificationRemoteDataSourceImpl(supabaseClient: sl()),
+  );
 
-  // BLoC - commented until repository is implemented
-  // sl.registerFactory(() => NotificationsBloc(repository: sl()));
+  // Repository
+  sl.registerLazySingleton<NotificationRepository>(
+    () => NotificationRepositoryImpl(
+      remoteDataSource: sl(),
+      networkInfo: sl(),
+    ),
+  );
+
+  // BLoC
+  sl.registerFactory(() => NotificationsBloc(repository: sl()));
 }

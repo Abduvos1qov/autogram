@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../core/widgets/feedback/error_screen.dart';
 import '../features/auth/presentation/bloc/auth_bloc.dart';
 import '../features/auth/presentation/bloc/auth_state.dart';
 import '../features/auth/presentation/screens/forgot_password_screen.dart';
@@ -10,13 +11,18 @@ import '../features/auth/presentation/screens/register_screen.dart';
 import '../features/auth/presentation/screens/splash_screen.dart';
 import '../features/auth/presentation/screens/username_screen.dart';
 import '../features/auth/presentation/screens/verification_screen.dart';
+import '../features/boost/presentation/screens/boost_overview_screen.dart';
 import '../features/chat/presentation/screens/chat_screen.dart';
 import '../features/chat/presentation/screens/conversations_screen.dart';
 import '../features/home/presentation/screens/home_screen.dart';
 import '../features/listing/presentation/screens/listing_detail_screen.dart';
+import '../features/notifications/presentation/screens/notification_settings_screen.dart';
 import '../features/notifications/presentation/screens/notifications_screen.dart';
+import '../features/profile/presentation/screens/edit_profile_screen.dart';
+import '../features/profile/presentation/screens/history_screen.dart';
 import '../features/profile/presentation/screens/profile_screen.dart';
 import '../features/reels/presentation/screens/reels_screen.dart';
+import '../features/saved/presentation/screens/liked_screen.dart';
 import '../features/saved/presentation/screens/saved_screen.dart';
 import '../features/search/presentation/screens/filter_screen.dart';
 import '../features/search/presentation/screens/search_screen.dart';
@@ -29,6 +35,8 @@ import '../features/seller/presentation/screens/add_member_screen.dart';
 import '../features/seller/presentation/screens/member_detail_screen.dart';
 import '../features/seller/presentation/screens/activity_log_screen.dart';
 import '../features/seller/domain/entities/activity_log.dart';
+import '../features/settings/presentation/screens/about_screen.dart';
+import '../features/settings/presentation/screens/help_screen.dart';
 import 'navigation_shell.dart';
 import 'route_names.dart';
 
@@ -42,6 +50,7 @@ GoRouter createRouter(AuthBloc authBloc) {
     initialLocation: RoutePaths.splash,
     debugLogDiagnostics: true,
     refreshListenable: GoRouterRefreshStream(authBloc.stream),
+    errorBuilder: (context, state) => ErrorScreen(error: state.error),
     redirect: (context, state) {
       final authState = authBloc.state;
       final isAuthRoute = state.matchedLocation == RoutePaths.splash ||
@@ -227,6 +236,48 @@ GoRouter createRouter(AuthBloc authBloc) {
         name: RouteNames.notifications,
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const NotificationsScreen(),
+      ),
+      GoRoute(
+        path: RoutePaths.notificationSettings,
+        name: RouteNames.notificationSettings,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const NotificationSettingsScreen(),
+      ),
+      GoRoute(
+        path: RoutePaths.editProfile,
+        name: RouteNames.editProfile,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const EditProfileScreen(),
+      ),
+      GoRoute(
+        path: RoutePaths.history,
+        name: RouteNames.history,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const HistoryScreen(),
+      ),
+      GoRoute(
+        path: RoutePaths.liked,
+        name: RouteNames.liked,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const LikedScreen(),
+      ),
+      GoRoute(
+        path: RoutePaths.boost,
+        name: RouteNames.boost,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const BoostOverviewScreen(),
+      ),
+      GoRoute(
+        path: RoutePaths.help,
+        name: RouteNames.help,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const HelpScreen(),
+      ),
+      GoRoute(
+        path: RoutePaths.about,
+        name: RouteNames.about,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const AboutScreen(),
       ),
 
       // Seller upgrade routes

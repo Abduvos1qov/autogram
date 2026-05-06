@@ -1,16 +1,15 @@
 import 'package:dartz/dartz.dart';
 
-import '../../../../core/errors/error_handler.dart';
 import '../../../../core/errors/failures.dart';
+import '../../../../core/mixins/repository_mixin.dart';
 import '../../../../core/network/api_response.dart';
 import '../../../../core/network/network_info.dart';
+import '../../../../core/utils/logger.dart';
 import '../../domain/entities/reel.dart';
 import '../../domain/repositories/reels_repository.dart';
 import '../datasources/reels_remote_datasource.dart';
 
-/// Reels repository implementation
-
-class ReelsRepositoryImpl implements ReelsRepository {
+class ReelsRepositoryImpl with RepositoryMixin implements ReelsRepository {
   final ReelsRemoteDataSource _remoteDataSource;
   final NetworkInfo _networkInfo;
 
@@ -24,76 +23,38 @@ class ReelsRepositoryImpl implements ReelsRepository {
   Future<Either<Failure, PaginatedResponse<Reel>>> getReels({
     int page = 1,
     int pageSize = 10,
-  }) async {
-    if (!await _networkInfo.isConnected) {
-      return const Left(NetworkFailure());
-    }
-
-    try {
-      final result = await _remoteDataSource.getReels(
-        page: page,
-        pageSize: pageSize,
-      );
-      return Right(result);
-    } catch (e) {
-      return Left(ErrorHandler.handleException(e));
-    }
+  }) {
+    return safeRemoteCall(_networkInfo, () async {
+      return await _remoteDataSource.getReels(page: page, pageSize: pageSize);
+    });
   }
 
   @override
-  Future<Either<Failure, void>> likeReel(String reelId) async {
-    if (!await _networkInfo.isConnected) {
-      return const Left(NetworkFailure());
-    }
-
-    try {
+  Future<Either<Failure, void>> likeReel(String reelId) {
+    return safeRemoteCall(_networkInfo, () async {
       await _remoteDataSource.likeReel(reelId);
-      return const Right(null);
-    } catch (e) {
-      return Left(ErrorHandler.handleException(e));
-    }
+    });
   }
 
   @override
-  Future<Either<Failure, void>> unlikeReel(String reelId) async {
-    if (!await _networkInfo.isConnected) {
-      return const Left(NetworkFailure());
-    }
-
-    try {
+  Future<Either<Failure, void>> unlikeReel(String reelId) {
+    return safeRemoteCall(_networkInfo, () async {
       await _remoteDataSource.unlikeReel(reelId);
-      return const Right(null);
-    } catch (e) {
-      return Left(ErrorHandler.handleException(e));
-    }
+    });
   }
 
   @override
-  Future<Either<Failure, void>> saveReel(String reelId) async {
-    if (!await _networkInfo.isConnected) {
-      return const Left(NetworkFailure());
-    }
-
-    try {
+  Future<Either<Failure, void>> saveReel(String reelId) {
+    return safeRemoteCall(_networkInfo, () async {
       await _remoteDataSource.saveReel(reelId);
-      return const Right(null);
-    } catch (e) {
-      return Left(ErrorHandler.handleException(e));
-    }
+    });
   }
 
   @override
-  Future<Either<Failure, void>> unsaveReel(String reelId) async {
-    if (!await _networkInfo.isConnected) {
-      return const Left(NetworkFailure());
-    }
-
-    try {
+  Future<Either<Failure, void>> unsaveReel(String reelId) {
+    return safeRemoteCall(_networkInfo, () async {
       await _remoteDataSource.unsaveReel(reelId);
-      return const Right(null);
-    } catch (e) {
-      return Left(ErrorHandler.handleException(e));
-    }
+    });
   }
 
   @override
@@ -101,22 +62,30 @@ class ReelsRepositoryImpl implements ReelsRepository {
     required String reelId,
     required int duration,
   }) async {
-    try {
+    final result = await safeRemoteCall(_networkInfo, () async {
       await _remoteDataSource.recordView(reelId: reelId, duration: duration);
-      return const Right(null);
-    } catch (e) {
-      return const Right(null);
-    }
+    });
+    return result.fold(
+      (failure) {
+        AppLogger.warning('Failed to record reel view: ${failure.message}');
+        return const Right(null);
+      },
+      (_) => const Right(null),
+    );
   }
 
   @override
   Future<Either<Failure, void>> shareReel(String reelId) async {
-    try {
+    final result = await safeRemoteCall(_networkInfo, () async {
       await _remoteDataSource.shareReel(reelId);
-      return const Right(null);
-    } catch (e) {
-      return const Right(null);
-    }
+    });
+    return result.fold(
+      (failure) {
+        AppLogger.warning('Failed to share reel: ${failure.message}');
+        return const Right(null);
+      },
+      (_) => const Right(null),
+    );
   }
 
   @override

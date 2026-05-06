@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,9 +9,12 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/widgets/feedback/error_view.dart';
 import '../../../../core/widgets/feedback/loading_indicator.dart';
+import '../../../../navigation/route_names.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../auth/presentation/bloc/auth_event.dart';
 import '../bloc/profile_bloc.dart';
+import '../bloc/profile_event.dart';
+import '../bloc/profile_state.dart';
 import '../widgets/profile_header.dart';
 import '../widgets/profile_menu_section.dart';
 import '../widgets/profile_menu_tile.dart';
@@ -93,21 +97,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                     // ACCOUNT
                     ProfileMenuSection(
-                      title: 'HISOB',
+                      title: 'profile.account_section'.tr(),
                       tiles: [
                         ProfileMenuTile(
                           icon: Icons.person_outline,
-                          title: 'Profilni tahrirlash',
-                          onTap: () => context.push('/profile/edit'),
+                          title: 'profile.edit'.tr(),
+                          onTap: () => context.push(RoutePaths.editProfile),
                         ),
                         ProfileMenuTile(
                           icon: Icons.bookmark_outline,
-                          title: 'Saqlanganlar',
-                          onTap: () => context.push('/saved'),
+                          title: 'profile.saved'.tr(),
+                          onTap: () => context.push(RoutePaths.saved),
                         ),
                         ProfileMenuTile(
                           icon: Icons.language,
-                          title: 'Til',
+                          title: 'profile.language'.tr(),
                           trailing: Text(
                             _languageCode(profile.language),
                             style: AppTypography.bodyMedium(context).copyWith(
@@ -121,45 +125,45 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                     // ACTIVITY
                     ProfileMenuSection(
-                      title: 'FAOLIYAT',
+                      title: 'profile.activity_section'.tr(),
                       tiles: [
                         ProfileMenuTile(
                           icon: Icons.history,
-                          title: 'Ko\'rishlar tarixi',
-                          onTap: () => context.push('/history'),
+                          title: 'profile.history'.tr(),
+                          onTap: () => context.push(RoutePaths.history),
                         ),
                         ProfileMenuTile(
                           icon: Icons.favorite_outline,
-                          title: 'Yoqtirilganlar',
-                          onTap: () => context.push('/liked'),
+                          title: 'profile.liked'.tr(),
+                          onTap: () => context.push(RoutePaths.liked),
                         ),
                         ProfileMenuTile(
                           icon: Icons.local_fire_department_outlined,
-                          title: 'Boost',
+                          title: 'profile.boost'.tr(),
                           trailing: _NewBadge(),
-                          onTap: () => context.push('/boost'),
+                          onTap: () => context.push(RoutePaths.boost),
                         ),
                       ],
                     ),
 
                     // SUPPORT
                     ProfileMenuSection(
-                      title: 'YORDAM',
+                      title: 'profile.support_section'.tr(),
                       tiles: [
                         ProfileMenuTile(
                           icon: Icons.headset_mic_outlined,
-                          title: 'Yordam markazi',
-                          onTap: () => context.push('/help'),
+                          title: 'profile.help_center'.tr(),
+                          onTap: () => context.push(RoutePaths.help),
                         ),
                         ProfileMenuTile(
                           icon: Icons.notifications_outlined,
-                          title: 'Bildirishnomalar',
-                          onTap: () => context.push('/notifications/settings'),
+                          title: 'profile.notification_settings'.tr(),
+                          onTap: () => context.push(RoutePaths.notificationSettings),
                         ),
                         ProfileMenuTile(
                           icon: Icons.shield_outlined,
-                          title: 'Foydalanish shartlari',
-                          onTap: () => context.push('/about'),
+                          title: 'profile.terms'.tr(),
+                          onTap: () => context.push(RoutePaths.about),
                         ),
                       ],
                     ),
@@ -169,7 +173,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     // Sign out
                     ProfileMenuTile(
                       icon: Icons.logout,
-                      title: 'Chiqish',
+                      title: 'profile.logout'.tr(),
                       iconColor: AppColors.error,
                       iconBackground: AppColors.errorSoft,
                       titleColor: AppColors.error,
@@ -182,7 +186,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     // Footer
                     Center(
                       child: Text(
-                        'Autogram · v1.0.0',
+                        'profile.app_version'.tr(),
                         style: AppTypography.bodySmallStyle.copyWith(
                           color: AppColors.textTertiaryOf(context),
                         ),
@@ -216,12 +220,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
       context: context,
       builder: (dialogContext) {
         return AlertDialog(
-          title: const Text('Tilni tanlang'),
+          title: Text('profile.language_dialog_title'.tr()),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                title: const Text('O\'zbekcha'),
+                title: Text('profile.language_uz'.tr()),
                 onTap: () {
                   context.read<ProfileBloc>().add(
                         const ProfileUpdateRequested(language: 'uz'),
@@ -230,7 +234,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 },
               ),
               ListTile(
-                title: const Text('Русский'),
+                title: Text('profile.language_ru'.tr()),
                 onTap: () {
                   context.read<ProfileBloc>().add(
                         const ProfileUpdateRequested(language: 'ru'),
@@ -239,7 +243,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 },
               ),
               ListTile(
-                title: const Text('English'),
+                title: Text('profile.language_en'.tr()),
                 onTap: () {
                   context.read<ProfileBloc>().add(
                         const ProfileUpdateRequested(language: 'en'),
@@ -259,12 +263,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
       context: context,
       builder: (dialogContext) {
         return AlertDialog(
-          title: const Text('Chiqish'),
-          content: const Text('Haqiqatan ham chiqmoqchimisiz?'),
+          title: Text('profile.logout'.tr()),
+          content: Text('auth.logout_confirm'.tr()),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(dialogContext),
-              child: const Text('Bekor qilish'),
+              child: Text('common.cancel'.tr()),
             ),
             ElevatedButton(
               onPressed: () {
@@ -274,7 +278,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.error,
               ),
-              child: const Text('Chiqish'),
+              child: Text('profile.logout'.tr()),
             ),
           ],
         );
@@ -293,7 +297,7 @@ class _NewBadge extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
       ),
       child: Text(
-        'YANGI',
+        'profile.boost_new'.tr(),
         style: AppTypography.labelSmallStyle.copyWith(
           color: AppColors.successDark,
           fontWeight: AppTypography.bold,

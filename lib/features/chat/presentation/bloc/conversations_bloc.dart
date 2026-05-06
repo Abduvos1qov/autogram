@@ -1,70 +1,12 @@
 import 'dart:async';
 
-import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../core/errors/failures.dart';
 import '../../../../core/utils/logger.dart';
-import '../../domain/entities/conversation.dart';
 import '../../domain/repositories/chat_repository.dart';
+import 'conversations_event.dart';
+import 'conversations_state.dart';
 
-// Events
-sealed class ConversationsEvent extends Equatable {
-  const ConversationsEvent();
-  @override
-  List<Object?> get props => [];
-}
-
-class ConversationsLoadRequested extends ConversationsEvent {
-  const ConversationsLoadRequested();
-}
-
-class ConversationsUpdated extends ConversationsEvent {
-  final List<Conversation> conversations;
-  const ConversationsUpdated(this.conversations);
-  @override
-  List<Object?> get props => [conversations];
-}
-
-// State
-enum ConversationsStatus { initial, loading, loaded, error }
-
-class ConversationsState extends Equatable {
-  final ConversationsStatus status;
-  final List<Conversation> conversations;
-  final int unreadCount;
-  final Failure? failure;
-
-  const ConversationsState({
-    this.status = ConversationsStatus.initial,
-    this.conversations = const [],
-    this.unreadCount = 0,
-    this.failure,
-  });
-
-  bool get isLoading => status == ConversationsStatus.loading;
-  bool get hasError => status == ConversationsStatus.error;
-  bool get isEmpty => conversations.isEmpty && status == ConversationsStatus.loaded;
-
-  ConversationsState copyWith({
-    ConversationsStatus? status,
-    List<Conversation>? conversations,
-    int? unreadCount,
-    Failure? failure,
-  }) {
-    return ConversationsState(
-      status: status ?? this.status,
-      conversations: conversations ?? this.conversations,
-      unreadCount: unreadCount ?? this.unreadCount,
-      failure: failure,
-    );
-  }
-
-  @override
-  List<Object?> get props => [status, conversations, unreadCount, failure];
-}
-
-// BLoC
 class ConversationsBloc extends Bloc<ConversationsEvent, ConversationsState> {
   final ChatRepository _repository;
   StreamSubscription? _conversationsSubscription;
@@ -81,7 +23,7 @@ class ConversationsBloc extends Bloc<ConversationsEvent, ConversationsState> {
     Emitter<ConversationsState> emit,
   ) async {
     AppLogger.info('Loading conversations');
-    emit(state.copyWith(status: ConversationsStatus.loading));
+    emit(state.copyWith(status: ConversationsStatus.loading, clearFailure: true));
 
     final result = await _repository.getConversations();
 
@@ -96,7 +38,6 @@ class ConversationsBloc extends Bloc<ConversationsEvent, ConversationsState> {
       (conversations) async {
         AppLogger.info('Loaded ${conversations.length} conversations');
 
-        // Get unread count
         final unreadResult = await _repository.getUnreadCount();
         final unreadCount = unreadResult.fold((_) => 0, (count) => count);
 
@@ -106,7 +47,6 @@ class ConversationsBloc extends Bloc<ConversationsEvent, ConversationsState> {
           unreadCount: unreadCount,
         ));
 
-        // Start watching for updates
         _conversationsSubscription?.cancel();
         _conversationsSubscription = _repository.watchConversations().listen(
           (conversations) {

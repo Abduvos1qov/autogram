@@ -158,7 +158,20 @@
     "language": "Язык",
     "help": "Помощь",
     "about": "О приложении",
-    "logout": "Выйти"
+    "logout": "Выйти",
+    "account_section": "АККАУНТ",
+    "activity_section": "АКТИВНОСТЬ",
+    "support_section": "ПОДДЕРЖКА",
+    "boost": "Boost",
+    "boost_new": "НОВОЕ",
+    "help_center": "Центр помощи",
+    "notification_settings": "Уведомления",
+    "terms": "Условия использования",
+    "language_dialog_title": "Выберите язык",
+    "language_uz": "O'zbekcha",
+    "language_ru": "Русский",
+    "language_en": "English",
+    "app_version": "Autogram · v1.0.0"
   },
 
   "settings": {

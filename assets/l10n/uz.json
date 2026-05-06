@@ -158,7 +158,20 @@
     "language": "Til",
     "help": "Yordam",
     "about": "Ilova haqida",
-    "logout": "Chiqish"
+    "logout": "Chiqish",
+    "account_section": "HISOB",
+    "activity_section": "FAOLIYAT",
+    "support_section": "YORDAM",
+    "boost": "Boost",
+    "boost_new": "YANGI",
+    "help_center": "Yordam markazi",
+    "notification_settings": "Bildirishnomalar",
+    "terms": "Foydalanish shartlari",
+    "language_dialog_title": "Tilni tanlang",
+    "language_uz": "O'zbekcha",
+    "language_ru": "Русский",
+    "language_en": "English",
+    "app_version": "Autogram · v1.0.0"
   },
 
   "settings": {

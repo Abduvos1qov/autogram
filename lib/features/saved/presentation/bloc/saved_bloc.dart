@@ -1,68 +1,10 @@
-import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../core/errors/failures.dart';
 import '../../../../core/utils/logger.dart';
-import '../../domain/entities/saved_item.dart';
 import '../../domain/repositories/saved_repository.dart';
+import 'saved_event.dart';
+import 'saved_state.dart';
 
-// Events
-sealed class SavedEvent extends Equatable {
-  const SavedEvent();
-  @override
-  List<Object?> get props => [];
-}
-
-class SavedLoadRequested extends SavedEvent {
-  const SavedLoadRequested();
-}
-
-class SavedItemRemoved extends SavedEvent {
-  final String listingId;
-  const SavedItemRemoved(this.listingId);
-  @override
-  List<Object?> get props => [listingId];
-}
-
-class SavedCleared extends SavedEvent {
-  const SavedCleared();
-}
-
-// State
-enum SavedStatus { initial, loading, loaded, error }
-
-class SavedState extends Equatable {
-  final SavedStatus status;
-  final List<SavedItem> items;
-  final Failure? failure;
-
-  const SavedState({
-    this.status = SavedStatus.initial,
-    this.items = const [],
-    this.failure,
-  });
-
-  bool get isLoading => status == SavedStatus.loading;
-  bool get hasError => status == SavedStatus.error;
-  bool get isEmpty => items.isEmpty && status == SavedStatus.loaded;
-
-  SavedState copyWith({
-    SavedStatus? status,
-    List<SavedItem>? items,
-    Failure? failure,
-  }) {
-    return SavedState(
-      status: status ?? this.status,
-      items: items ?? this.items,
-      failure: failure,
-    );
-  }
-
-  @override
-  List<Object?> get props => [status, items, failure];
-}
-
-// BLoC
 class SavedBloc extends Bloc<SavedEvent, SavedState> {
   final SavedRepository _repository;
 
@@ -79,7 +21,7 @@ class SavedBloc extends Bloc<SavedEvent, SavedState> {
     Emitter<SavedState> emit,
   ) async {
     AppLogger.info('Loading saved items');
-    emit(state.copyWith(status: SavedStatus.loading));
+    emit(state.copyWith(status: SavedStatus.loading, clearFailure: true));
 
     final result = await _repository.getSavedItems();
 
@@ -105,7 +47,6 @@ class SavedBloc extends Bloc<SavedEvent, SavedState> {
     SavedItemRemoved event,
     Emitter<SavedState> emit,
   ) async {
-    // Optimistic update
     final updatedItems = state.items
         .where((item) => item.listingId != event.listingId)
         .toList();
@@ -116,7 +57,6 @@ class SavedBloc extends Bloc<SavedEvent, SavedState> {
     result.fold(
       (failure) {
         AppLogger.error('Failed to remove: ${failure.message}');
-        // Reload on error
         add(const SavedLoadRequested());
       },
       (_) {

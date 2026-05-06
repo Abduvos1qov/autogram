@@ -28,6 +28,12 @@ abstract class RouteNames {
   static const settings = 'settings';
   static const saved = 'saved';
   static const notifications = 'notifications';
+  static const notificationSettings = 'notificationSettings';
+  static const history = 'history';
+  static const liked = 'liked';
+  static const boost = 'boost';
+  static const help = 'help';
+  static const about = 'about';
 
   // Seller routes
   static const upgrade = 'upgrade';
@@ -71,6 +77,12 @@ abstract class RoutePaths {
   static const settings = '/settings';
   static const saved = '/saved';
   static const notifications = '/notifications';
+  static const notificationSettings = '/notifications/settings';
+  static const history = '/history';
+  static const liked = '/liked';
+  static const boost = '/boost';
+  static const help = '/help';
+  static const about = '/about';
 
   // Seller paths
   static const upgrade = '/upgrade';

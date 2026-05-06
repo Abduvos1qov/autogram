@@ -100,13 +100,9 @@ class AuthPasswordResetSuccess extends AuthState {
 /// Error state
 class AuthError extends AuthState {
   final Failure failure;
-  final AuthState? previousState;
 
-  const AuthError({
-    required this.failure,
-    this.previousState,
-  });
+  const AuthError({required this.failure});
 
   @override
-  List<Object?> get props => [failure, previousState];
+  List<Object?> get props => [failure];
 }

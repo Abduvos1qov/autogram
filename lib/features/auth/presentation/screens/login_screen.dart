@@ -9,6 +9,7 @@ import '../../../../core/theme/app_typography.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/buttons/primary_button.dart';
 import '../../../../core/widgets/inputs/app_text_field.dart';
+import '../../../../navigation/route_names.dart';
 import '../bloc/auth_bloc.dart';
 import '../bloc/auth_event.dart';
 import '../bloc/auth_state.dart';
@@ -51,9 +52,9 @@ class _LoginScreenState extends State<LoginScreen> {
     return BlocConsumer<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is AuthAuthenticated) {
-          context.go('/');
+          context.go(RoutePaths.home);
         } else if (state is AuthNeedsUsername) {
-          context.go('/username');
+          context.go(RoutePaths.username);
         } else if (state is AuthError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -167,7 +168,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     Align(
                       alignment: Alignment.centerRight,
                       child: TextButton(
-                        onPressed: () => context.push('/forgot-password'),
+                        onPressed: () => context.push(RoutePaths.forgotPassword),
                         style: TextButton.styleFrom(
                           padding: EdgeInsets.zero,
                           minimumSize: Size.zero,
@@ -226,7 +227,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
                           GestureDetector(
-                            onTap: () => context.push('/register'),
+                            onTap: () => context.push(RoutePaths.register),
                             child: Text(
                               'Ro\'yxatdan o\'tish',
                               style: AppTypography.bodyMedium(context).copyWith(

@@ -1,81 +1,13 @@
 import 'dart:async';
 
-import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../core/errors/failures.dart';
 import '../../../../core/utils/logger.dart';
 import '../../domain/entities/notification.dart';
 import '../../domain/repositories/notification_repository.dart';
+import 'notifications_event.dart';
+import 'notifications_state.dart';
 
-// Events
-sealed class NotificationsEvent extends Equatable {
-  const NotificationsEvent();
-  @override
-  List<Object?> get props => [];
-}
-
-class NotificationsLoadRequested extends NotificationsEvent {
-  const NotificationsLoadRequested();
-}
-
-class NotificationMarkAsRead extends NotificationsEvent {
-  final String notificationId;
-  const NotificationMarkAsRead(this.notificationId);
-  @override
-  List<Object?> get props => [notificationId];
-}
-
-class NotificationsMarkAllAsRead extends NotificationsEvent {
-  const NotificationsMarkAllAsRead();
-}
-
-class NotificationDeleted extends NotificationsEvent {
-  final String notificationId;
-  const NotificationDeleted(this.notificationId);
-  @override
-  List<Object?> get props => [notificationId];
-}
-
-// State
-enum NotificationsStatus { initial, loading, loaded, error }
-
-class NotificationsState extends Equatable {
-  final NotificationsStatus status;
-  final List<AppNotification> notifications;
-  final int unreadCount;
-  final Failure? failure;
-
-  const NotificationsState({
-    this.status = NotificationsStatus.initial,
-    this.notifications = const [],
-    this.unreadCount = 0,
-    this.failure,
-  });
-
-  bool get isLoading => status == NotificationsStatus.loading;
-  bool get hasError => status == NotificationsStatus.error;
-  bool get isEmpty => notifications.isEmpty && status == NotificationsStatus.loaded;
-
-  NotificationsState copyWith({
-    NotificationsStatus? status,
-    List<AppNotification>? notifications,
-    int? unreadCount,
-    Failure? failure,
-  }) {
-    return NotificationsState(
-      status: status ?? this.status,
-      notifications: notifications ?? this.notifications,
-      unreadCount: unreadCount ?? this.unreadCount,
-      failure: failure,
-    );
-  }
-
-  @override
-  List<Object?> get props => [status, notifications, unreadCount, failure];
-}
-
-// BLoC
 class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
   final NotificationRepository _repository;
   StreamSubscription? _notificationsSubscription;
@@ -84,6 +16,7 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
       : _repository = repository,
         super(const NotificationsState()) {
     on<NotificationsLoadRequested>(_onLoadRequested);
+    on<NotificationsUpdated>(_onUpdated);
     on<NotificationMarkAsRead>(_onMarkAsRead);
     on<NotificationsMarkAllAsRead>(_onMarkAllAsRead);
     on<NotificationDeleted>(_onDeleted);
@@ -94,7 +27,7 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
     Emitter<NotificationsState> emit,
   ) async {
     AppLogger.info('Loading notifications');
-    emit(state.copyWith(status: NotificationsStatus.loading));
+    emit(state.copyWith(status: NotificationsStatus.loading, clearFailure: true));
 
     final result = await _repository.getNotifications();
 
@@ -116,8 +49,26 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
           notifications: notifications,
           unreadCount: unreadCount,
         ));
+
+        _notificationsSubscription?.cancel();
+        _notificationsSubscription = _repository.watchNotifications().listen(
+          (notifications) {
+            add(NotificationsUpdated(notifications));
+          },
+        );
       },
     );
+  }
+
+  void _onUpdated(
+    NotificationsUpdated event,
+    Emitter<NotificationsState> emit,
+  ) {
+    final unreadCount = event.notifications.where((n) => !n.isRead).length;
+    emit(state.copyWith(
+      notifications: event.notifications,
+      unreadCount: unreadCount,
+    ));
   }
 
   Future<void> _onMarkAsRead(
@@ -189,7 +140,8 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
 
     emit(state.copyWith(
       notifications: updatedNotifications,
-      unreadCount: notification.isRead ? state.unreadCount : state.unreadCount - 1,
+      unreadCount:
+          notification.isRead ? state.unreadCount : state.unreadCount - 1,
     ));
 
     await _repository.deleteNotification(event.notificationId);

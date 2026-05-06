@@ -10,6 +10,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/widgets/buttons/primary_button.dart';
+import '../../../../navigation/route_names.dart';
 import '../bloc/auth_bloc.dart';
 import '../bloc/auth_event.dart';
 import '../bloc/auth_state.dart';
@@ -116,7 +117,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
     return BlocConsumer<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is AuthNeedsUsername) {
-          context.go('/username');
+          context.go(RoutePaths.username);
         } else if (state is AuthError) {
           // Clear OTP fields on error
           for (final c in _otpControllers) {

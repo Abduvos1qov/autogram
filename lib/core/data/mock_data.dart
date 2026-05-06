@@ -3,14 +3,90 @@ import '../../features/chat/domain/entities/conversation.dart';
 import '../../features/chat/domain/entities/message.dart';
 import '../../features/home/domain/entities/feed_item.dart' as home;
 import '../../features/listing/domain/entities/listing.dart';
+import '../../features/notifications/domain/entities/notification.dart';
+import '../../features/profile/domain/entities/user_profile.dart';
 import '../../features/reels/domain/entities/reel.dart';
 import '../../features/seller/domain/entities/activity_log.dart';
 import '../../features/seller/domain/entities/seller_invitation.dart';
 import '../../features/seller/domain/entities/seller_member.dart';
 import '../services/permission_service.dart';
 
-/// Mock data for testing the app without backend
+/// Mock data for testing the app without backend.
+///
+/// Mutable fields (e.g., [currentUserProfile], [currentNotifications]) are
+/// modified by datasources in test mode to simulate persistent state. Reset
+/// them via [resetMutableState] in tests that need a clean slate.
 class MockData {
+  /// Default profile used to initialize [currentUserProfile].
+  static UserProfile _defaultUserProfile() => UserProfile(
+        id: 'user-001',
+        phone: '+998901234567',
+        email: 'test@autogram.uz',
+        fullName: 'Test Foydalanuvchi',
+        avatarUrl: null,
+        role: 'buyer',
+        isVerified: true,
+        isActive: true,
+        language: 'uz',
+        sellerProfileId: null,
+        createdAt: DateTime(2024, 1, 1),
+        updatedAt: DateTime.now(),
+      );
+
+  /// Mutable profile — datasources mutate this to simulate updates in test mode.
+  static UserProfile currentUserProfile = _defaultUserProfile();
+
+  /// Default notifications used to initialize [currentNotifications].
+  static List<AppNotification> _defaultNotifications() => [
+        AppNotification(
+          id: 'n1',
+          userId: 'user-001',
+          type: NotificationType.newMessage,
+          title: 'Yangi xabar',
+          body: 'AutoStar Salon sizga xabar yubordi',
+          isRead: false,
+          createdAt: DateTime.now().subtract(const Duration(minutes: 15)),
+        ),
+        AppNotification(
+          id: 'n2',
+          userId: 'user-001',
+          type: NotificationType.priceDrop,
+          title: 'Narx tushdi',
+          body: 'Chevrolet Gentra 2022 narxi 500\$ ga tushdi',
+          isRead: false,
+          createdAt: DateTime.now().subtract(const Duration(hours: 2)),
+        ),
+        AppNotification(
+          id: 'n3',
+          userId: 'user-001',
+          type: NotificationType.listingViewed,
+          title: 'E\'loningiz ko\'rildi',
+          body: 'Sizning e\'loningiz 50 marta ko\'rildi',
+          isRead: true,
+          readAt: DateTime.now().subtract(const Duration(hours: 5)),
+          createdAt: DateTime.now().subtract(const Duration(hours: 6)),
+        ),
+        AppNotification(
+          id: 'n4',
+          userId: 'user-001',
+          type: NotificationType.systemUpdate,
+          title: 'Tizim yangilandi',
+          body: 'Yangi imkoniyatlar qo\'shildi',
+          isRead: true,
+          readAt: DateTime.now().subtract(const Duration(days: 1)),
+          createdAt: DateTime.now().subtract(const Duration(days: 1, hours: 3)),
+        ),
+      ];
+
+  /// Mutable notifications — datasources mutate this in test mode.
+  static List<AppNotification> currentNotifications = _defaultNotifications();
+
+  /// Reset all mutable test state. Call from `setUp` in tests that need it.
+  static void resetMutableState() {
+    currentUserProfile = _defaultUserProfile();
+    currentNotifications = _defaultNotifications();
+  }
+
   // Mock users
   static final List<User> mockUsers = [
     User(

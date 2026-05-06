@@ -11,6 +11,8 @@ import '../../../../core/widgets/feedback/error_view.dart';
 import '../../../../core/widgets/feedback/loading_indicator.dart';
 import '../../domain/entities/notification.dart';
 import '../bloc/notifications_bloc.dart';
+import '../bloc/notifications_event.dart';
+import '../bloc/notifications_state.dart';
 
 /// Notifications screen
 

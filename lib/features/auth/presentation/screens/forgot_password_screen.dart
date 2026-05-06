@@ -12,6 +12,7 @@ import '../../../../core/theme/app_typography.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/buttons/primary_button.dart';
 import '../../../../core/widgets/inputs/app_text_field.dart';
+import '../../../../navigation/route_names.dart';
 import '../bloc/auth_bloc.dart';
 import '../bloc/auth_event.dart';
 import '../bloc/auth_state.dart';
@@ -542,7 +543,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
         PrimaryButton(
           text: 'Kirishga o\'tish',
-          onPressed: () => context.go('/login'),
+          onPressed: () => context.go(RoutePaths.login),
           height: 52,
         ),
 

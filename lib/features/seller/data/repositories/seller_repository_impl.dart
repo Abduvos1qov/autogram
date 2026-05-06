@@ -1,15 +1,13 @@
 import 'package:dartz/dartz.dart';
 
-import '../../../../core/errors/error_handler.dart';
 import '../../../../core/errors/failures.dart';
+import '../../../../core/mixins/repository_mixin.dart';
 import '../../../../core/network/network_info.dart';
 import '../../domain/entities/seller_profile.dart';
 import '../../domain/repositories/seller_repository.dart';
 import '../datasources/seller_remote_datasource.dart';
 
-/// Seller repository implementation
-
-class SellerRepositoryImpl implements SellerRepository {
+class SellerRepositoryImpl with RepositoryMixin implements SellerRepository {
   final SellerRemoteDataSource _remoteDataSource;
   final NetworkInfo _networkInfo;
 
@@ -20,17 +18,10 @@ class SellerRepositoryImpl implements SellerRepository {
         _networkInfo = networkInfo;
 
   @override
-  Future<Either<Failure, SellerProfile?>> getSellerProfile() async {
-    if (!await _networkInfo.isConnected) {
-      return const Left(NetworkFailure());
-    }
-
-    try {
-      final profile = await _remoteDataSource.getSellerProfile();
-      return Right(profile);
-    } catch (e) {
-      return Left(ErrorHandler.handleException(e));
-    }
+  Future<Either<Failure, SellerProfile?>> getSellerProfile() {
+    return safeRemoteCall(_networkInfo, () async {
+      return await _remoteDataSource.getSellerProfile();
+    });
   }
 
   @override
@@ -41,13 +32,9 @@ class SellerRepositoryImpl implements SellerRepository {
     String? address,
     String? city,
     List<String>? contactPhones,
-  }) async {
-    if (!await _networkInfo.isConnected) {
-      return const Left(NetworkFailure());
-    }
-
-    try {
-      final profile = await _remoteDataSource.createSellerProfile(
+  }) {
+    return safeRemoteCall(_networkInfo, () async {
+      return await _remoteDataSource.createSellerProfile(
         businessName: businessName,
         businessType: businessType,
         description: description,
@@ -55,10 +42,7 @@ class SellerRepositoryImpl implements SellerRepository {
         city: city,
         contactPhones: contactPhones,
       );
-      return Right(profile);
-    } catch (e) {
-      return Left(ErrorHandler.handleException(e));
-    }
+    });
   }
 
   @override
@@ -78,12 +62,8 @@ class SellerRepositoryImpl implements SellerRepository {
     String? instagram,
     String? website,
     Map<String, WorkingHours>? workingHours,
-  }) async {
-    if (!await _networkInfo.isConnected) {
-      return const Left(NetworkFailure());
-    }
-
-    try {
+  }) {
+    return safeRemoteCall(_networkInfo, () async {
       final updates = <String, dynamic>{};
 
       if (businessName != null) updates['business_name'] = businessName;
@@ -102,99 +82,60 @@ class SellerRepositoryImpl implements SellerRepository {
       if (website != null) updates['website'] = website;
       if (workingHours != null) {
         updates['working_hours'] = workingHours.map((key, value) => MapEntry(
-          key,
-          {
-            'open': value.open,
-            'close': value.close,
-            'is_closed': value.isClosed,
-          },
-        ));
+              key,
+              {
+                'open': value.open,
+                'close': value.close,
+                'is_closed': value.isClosed,
+              },
+            ));
       }
 
-      final profile = await _remoteDataSource.updateSellerProfile(updates);
-      return Right(profile);
-    } catch (e) {
-      return Left(ErrorHandler.handleException(e));
-    }
+      return await _remoteDataSource.updateSellerProfile(updates);
+    });
   }
 
   @override
-  Future<Either<Failure, List<SubscriptionPlanDetails>>> getSubscriptionPlans() async {
-    if (!await _networkInfo.isConnected) {
-      return const Left(NetworkFailure());
-    }
-
-    try {
-      final plans = await _remoteDataSource.getSubscriptionPlans();
-      return Right(plans);
-    } catch (e) {
-      return Left(ErrorHandler.handleException(e));
-    }
+  Future<Either<Failure, List<SubscriptionPlanDetails>>>
+      getSubscriptionPlans() {
+    return safeRemoteCall(_networkInfo, () async {
+      return await _remoteDataSource.getSubscriptionPlans();
+    });
   }
 
   @override
-  Future<Either<Failure, SellerProfile>> subscribeToPlan(SubscriptionPlan plan) async {
-    if (!await _networkInfo.isConnected) {
-      return const Left(NetworkFailure());
-    }
-
-    try {
-      final profile = await _remoteDataSource.subscribeToPlan(plan);
-      return Right(profile);
-    } catch (e) {
-      return Left(ErrorHandler.handleException(e));
-    }
+  Future<Either<Failure, SellerProfile>> subscribeToPlan(
+      SubscriptionPlan plan) {
+    return safeRemoteCall(_networkInfo, () async {
+      return await _remoteDataSource.subscribeToPlan(plan);
+    });
   }
 
   @override
-  Future<Either<Failure, SellerProfile>> cancelSubscription() async {
-    if (!await _networkInfo.isConnected) {
-      return const Left(NetworkFailure());
-    }
-
-    try {
-      final profile = await _remoteDataSource.cancelSubscription();
-      return Right(profile);
-    } catch (e) {
-      return Left(ErrorHandler.handleException(e));
-    }
+  Future<Either<Failure, SellerProfile>> cancelSubscription() {
+    return safeRemoteCall(_networkInfo, () async {
+      return await _remoteDataSource.cancelSubscription();
+    });
   }
 
   @override
-  Future<Either<Failure, String>> uploadLogo(String filePath) async {
-    if (!await _networkInfo.isConnected) {
-      return const Left(NetworkFailure());
-    }
-
-    try {
-      final url = await _remoteDataSource.uploadLogo(filePath);
-      return Right(url);
-    } catch (e) {
-      return Left(ErrorHandler.handleException(e));
-    }
+  Future<Either<Failure, String>> uploadLogo(String filePath) {
+    return safeRemoteCall(_networkInfo, () async {
+      return await _remoteDataSource.uploadLogo(filePath);
+    });
   }
 
   @override
-  Future<Either<Failure, String>> uploadCover(String filePath) async {
-    if (!await _networkInfo.isConnected) {
-      return const Left(NetworkFailure());
-    }
-
-    try {
-      final url = await _remoteDataSource.uploadCover(filePath);
-      return Right(url);
-    } catch (e) {
-      return Left(ErrorHandler.handleException(e));
-    }
+  Future<Either<Failure, String>> uploadCover(String filePath) {
+    return safeRemoteCall(_networkInfo, () async {
+      return await _remoteDataSource.uploadCover(filePath);
+    });
   }
 
   @override
-  Future<Either<Failure, bool>> canBecomeASeller() async {
-    try {
-      final canBecome = await _remoteDataSource.canBecomeASeller();
-      return Right(canBecome);
-    } catch (e) {
-      return Left(ErrorHandler.handleException(e));
-    }
+  Future<Either<Failure, bool>> canBecomeASeller() {
+    return safeRemoteCall(_networkInfo, () async {
+      return await _remoteDataSource.canBecomeASeller();
+    });
   }
 }

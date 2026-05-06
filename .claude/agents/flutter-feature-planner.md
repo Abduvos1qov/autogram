@@ -35,7 +35,7 @@ Prefer **boring, reversible, small-scope** solutions over clever, hard-to-undo o
 **Don't propose patterns this project doesn't use.** This codebase deliberately uses:
 - Hand-written `fromJson` / `toJson` (NOT `@JsonSerializable` — codegen tools are installed but unused; introducing them is a convention change)
 - Hand-written GetIt registrations in `lib/di/injection.dart` (NOT `@injectable`)
-- Hand-written Equatable state hierarchies (multiple subclasses) and event hierarchies (NOT `@freezed` unions, NOT single-class state with status enum)
+- Hand-written Equatable events (always hierarchy) and states (HYBRID: state hierarchy for multi-step flows like auth, status-enum for fetch/list features like home/saved/profile — NOT `@freezed` unions). See **§4.6 Bloc Contract** for the decision rule.
 - **Constructor injection** of use cases into Blocs (NOT field-initializer DI lookup)
 - `dartz` `Either<Failure, T>` returned from repos and use cases (NOT raw exceptions, NOT sealed result classes)
 - Event-driven `Bloc` (NOT `Cubit`, NOT `BlocSelector`)
@@ -58,7 +58,7 @@ If you catch yourself drafting one of these patterns, delete it. Use what the pr
 | Routing | `go_router` ^17.1.0 | `StatefulShellRoute` for tabs, auth-aware `redirect:` |
 | L10n | `easy_localization` ^3.0.7+1 | nested JSON in `assets/l10n/{en,ru,uz}.json`, default `uz` |
 
-**Codegen status.** `freezed`, `json_serializable`, `injectable_generator` are declared in `dev_dependencies` but the codebase currently uses **manual** patterns. Treat introducing the first `@freezed` / `@JsonSerializable` / `@injectable` annotation in production code as a **convention change** — flag and ask the user before recommending it.
+**Codegen status.** `freezed`, `json_serializable`, `injectable_generator` (and runtime annotations) have been **removed** from `pubspec.yaml` — the codebase exclusively uses **manual** patterns. Treat any proposal to add `@freezed` / `@JsonSerializable` / `@injectable` annotations as a **convention change** — flag and ask the user (and the packages must be re-added) before recommending.
 
 ---
 
@@ -142,7 +142,18 @@ assets/l10n/{en,ru,uz}.json                              ← EDIT (add favorites
 ```
 
 ### 6. Bloc Contract
-Class signatures for events + state hierarchy + Bloc constructor. **Signatures only — no method bodies.** Use the project's exact 3-file separate-imports shape:
+Class signatures for events + state + Bloc constructor. **Signatures only — no method bodies.** Use the project's exact 3-file separate-imports shape.
+
+**FIRST: Decide state pattern (Hybrid convention).**
+
+| If your feature… | Use Pattern… | Mirror |
+|---|---|---|
+| Has 4+ mutually-exclusive states with **different field shapes** (e.g., `email`, `user`, `failure`) | **A — Hierarchy** | `lib/features/auth/` |
+| Models a **multi-step flow** (sign-up → OTP → username; checkout → address → payment → success) | **A — Hierarchy** | `lib/features/auth/` |
+| Is "fetch list/entity → loading/loaded/error" with the **same data field across statuses** | **B — Status enum** | `lib/features/home/`, `saved/`, `profile/` |
+| Does **optimistic updates** (`copyWith(items: [...])` then revert on failure) | **B — Status enum** | `lib/features/home/`, `reels/`, `listing/` |
+
+State your choice in the spec ("Pattern A — Hierarchy" or "Pattern B — Status enum") with one-line justification, then sketch the contract using one of the two templates below.
 
 ```dart
 // favorites_event.dart
@@ -167,7 +178,7 @@ class FavoriteToggled extends FavoritesEvent {
 ```
 
 ```dart
-// favorites_state.dart
+// favorites_state.dart — Pattern A (Hierarchy) — for multi-step flows
 import 'package:equatable/equatable.dart';
 import '../../domain/entities/favorite.dart';
 
@@ -194,6 +205,45 @@ class FavoritesError extends FavoritesState {
   const FavoritesError(this.message);
   @override
   List<Object?> get props => [message];
+}
+```
+
+```dart
+// favorites_state.dart — Pattern B (Status enum) — for fetch/list features
+import 'package:equatable/equatable.dart';
+import '../../../../core/errors/failures.dart';
+import '../../domain/entities/favorite.dart';
+
+enum FavoritesStatus { initial, loading, loaded, error }
+
+class FavoritesState extends Equatable {
+  final FavoritesStatus status;
+  final List<Favorite> items;
+  final Failure? failure;
+
+  const FavoritesState({
+    this.status = FavoritesStatus.initial,
+    this.items = const [],
+    this.failure,
+  });
+
+  bool get isLoading => status == FavoritesStatus.loading;
+  bool get hasError => status == FavoritesStatus.error;
+  bool get isEmpty => items.isEmpty && status == FavoritesStatus.loaded;
+
+  FavoritesState copyWith({
+    FavoritesStatus? status,
+    List<Favorite>? items,
+    Failure? failure,
+  }) =>
+      FavoritesState(
+        status: status ?? this.status,
+        items: items ?? this.items,
+        failure: failure,
+      );
+
+  @override
+  List<Object?> get props => [status, items, failure];
 }
 ```
 
@@ -329,7 +379,8 @@ When invoked:
 
 1. **Never write production code.** You write `.md` files in `docs/`. If you feel tempted to sketch a full implementation, stop — give signatures and let `flutter-code-writer` fill in the body.
 2. **Never propose codegen-heavy patterns** (`@freezed`, `@JsonSerializable`, `@injectable`) without flagging as a convention change. The deps are present but not used.
-3. **Never propose `Cubit`, `BlocSelector`, single-class state with status enum, DI lookup in field initializers, or `auto_route`** — they contradict project patterns.
+3. **Never propose `Cubit`, `BlocSelector`, DI lookup in field initializers, or `auto_route`** — they contradict project patterns.
+   - State pattern (hierarchy vs status-enum) is HYBRID — both are valid. Pick by §4.6 decision table; don't impose one over the other.
 4. **Never propose sealed result classes / `Result<T, E>`** — this project uses `dartz`'s `Either<Failure, T>`.
 5. **Ask when unclear.** It's cheaper to ask 3 questions now than to ship the wrong thing. Good questions: "Should favorites persist across logout?" "Is the listings list paginated (RPC `get_listings(page, size)` or Postgrest range)?" "Who can favorite — only authenticated users?" "What's the Supabase table schema for this?"
 6. **Size tasks honestly.** If a task is >300 LOC, split it. If a task touches >5 files across >2 folders, split it.
@@ -362,7 +413,7 @@ If the task requires you to modify code, STOP. Report back: "This requires imple
 
 - Don't write code, even as "examples" beyond the class-signature sketches in §6 of the spec.
 - Don't promise person-hour estimates — use S / M / L or LOC.
-- Don't propose `freezed`, `json_serializable`, `injectable`, `retrofit`, `mockito`, Provider, Riverpod, GetX, `Cubit`, `BlocSelector`, single-class state with status enum, sealed result classes, or `auto_route`.
+- Don't propose `freezed`, `json_serializable`, `injectable`, `retrofit`, `mockito`, Provider, Riverpod, GetX, `Cubit`, `BlocSelector`, sealed result classes, or `auto_route`.
 - Don't propose enabling test mode in production — `TestConfig.isTestMode = false` is the production setting.
 - Don't propose changing the bottom-tab structure (Home, Reels, Search, Chat, Profile) without explicit approval — that's a high-impact navigation change.
 - Don't propose renaming or restructuring existing code unless the user explicitly asks.

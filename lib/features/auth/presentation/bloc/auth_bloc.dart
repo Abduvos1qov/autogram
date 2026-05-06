@@ -113,7 +113,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     result.fold(
       (failure) {
         AppLogger.error('Sign in failed: ${failure.message}');
-        emit(AuthError(failure: failure, previousState: state));
+        emit(AuthError(failure: failure));
       },
       (user) {
         AppLogger.info('Sign in successful');
@@ -146,7 +146,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     result.fold(
       (failure) {
         AppLogger.error('Sign up failed: ${failure.message}');
-        emit(AuthError(failure: failure, previousState: state));
+        emit(AuthError(failure: failure));
       },
       (_) {
         AppLogger.info('Sign up successful, OTP verification needed');
@@ -169,7 +169,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     result.fold(
       (failure) {
         AppLogger.error('OTP verification failed: ${failure.message}');
-        emit(AuthError(failure: failure, previousState: state));
+        emit(AuthError(failure: failure));
       },
       (user) {
         AppLogger.info('OTP verified, proceeding to username');
@@ -189,7 +189,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     result.fold(
       (failure) {
         AppLogger.error('Resend OTP failed: ${failure.message}');
-        emit(AuthError(failure: failure, previousState: state));
+        emit(AuthError(failure: failure));
       },
       (_) {
         AppLogger.info('OTP resent successfully');
@@ -211,7 +211,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     result.fold(
       (failure) {
         AppLogger.error('Send forgot password OTP failed: ${failure.message}');
-        emit(AuthError(failure: failure, previousState: state));
+        emit(AuthError(failure: failure));
       },
       (_) {
         AppLogger.info('Forgot password OTP sent');
@@ -235,7 +235,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       (failure) {
         AppLogger.error(
             'Forgot password OTP verification failed: ${failure.message}');
-        emit(AuthError(failure: failure, previousState: state));
+        emit(AuthError(failure: failure));
       },
       (_) {
         AppLogger.info('Forgot password OTP verified');
@@ -261,7 +261,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     result.fold(
       (failure) {
         AppLogger.error('Password reset failed: ${failure.message}');
-        emit(AuthError(failure: failure, previousState: state));
+        emit(AuthError(failure: failure));
       },
       (_) {
         AppLogger.info('Password reset successful');
@@ -284,7 +284,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     result.fold(
       (failure) {
         AppLogger.error('Password reset failed: ${failure.message}');
-        emit(AuthError(failure: failure, previousState: state));
+        emit(AuthError(failure: failure));
       },
       (_) {
         AppLogger.info('Password reset email sent');
@@ -327,7 +327,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     result.fold(
       (failure) {
         AppLogger.error('Setting username failed: ${failure.message}');
-        emit(AuthError(failure: failure, previousState: state));
+        emit(AuthError(failure: failure));
       },
       (user) {
         AppLogger.info('Username set successfully');

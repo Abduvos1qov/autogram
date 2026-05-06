@@ -36,13 +36,13 @@ Project-specific patterns ALWAYS override generic advice. If `lib/features/auth/
 | Theme | Material 3 via `lib/core/theme/` (`AppColors`, `AppTypography`, `AppSpacing`) |
 | Test | `bloc_test` ^10.0.0, `mocktail` ^1.0.4 — `test/` mirrors `lib/` |
 
-**Codegen status — read carefully.** `freezed`, `json_serializable`, `injectable_generator` are **declared in `dev_dependencies`** but the codebase currently uses **manual** patterns:
+**Codegen status — read carefully.** `freezed`, `json_serializable`, `injectable_generator` and their runtime annotation packages have been **removed** from `pubspec.yaml`. The codebase exclusively uses **manual** patterns:
 
 - Models: hand-written `fromJson` / `toJson`.
 - DI: hand-written GetIt registrations.
 - States/events: hand-written `Equatable` hierarchies.
 
-Treat any new use of `@freezed`, `@JsonSerializable`, `@injectable` annotations in production code as a **convention change** — flag and ask the user before approving. Don't recommend introducing them unilaterally.
+Treat any proposal to **add** `@freezed`, `@JsonSerializable`, `@injectable` annotations as a **convention change** — flag and ask the user, and require re-adding the packages first. Don't recommend introducing them unilaterally.
 
 ---
 
@@ -170,7 +170,7 @@ class SignInParams extends Equatable {
 
 Use cases sit between Bloc and Repository. Keep them thin. They may compose multiple repositories or perform business glue (e.g., `LogoutUseCase` clears cached user + revokes session).
 
-### 2.4 Bloc — separate files, Equatable hierarchy, constructor injection
+### 2.4 Bloc — separate files, Equatable, constructor injection (hybrid state)
 
 **Layout** (NO `part` / `part of`):
 
@@ -178,8 +178,23 @@ Use cases sit between Bloc and Repository. Keep them thin. They may compose mult
 lib/features/<name>/presentation/bloc/
 ├── <name>_bloc.dart    # Bloc class + handlers; imports event + state
 ├── <name>_event.dart   # Equatable event hierarchy
-└── <name>_state.dart   # Equatable state hierarchy (multiple classes, not a single class with status enum)
+└── <name>_state.dart   # Equatable state — either hierarchy OR status-enum (see below)
 ```
+
+**State convention is HYBRID — pick by feature shape:**
+
+| Pattern | When to use | Canonical reference |
+|---|---|---|
+| **State Hierarchy** (multiple subclasses) | Multi-step flow OR 4+ states with different field shapes (email/user/failure/etc.) | `lib/features/auth/presentation/bloc/auth_state.dart` |
+| **Status Enum** (single class + enum + nullable fields) | "Fetch list/entity → loading/loaded/error" with steady-state data + optimistic updates | `lib/features/home/presentation/bloc/home_state.dart` |
+
+Choice criteria (apply in order):
+1. Does each state carry a **different data shape**? → Hierarchy
+2. Is it a **multi-step flow** (4+ named distinct steps like sign-up→OTP→username)? → Hierarchy
+3. Does the same data field (e.g., `List<FeedItem>`) persist across status changes with **optimistic updates** (`copyWith(items: ...)`)? → Status enum
+4. Otherwise, mirror the closest existing feature.
+
+Both patterns are valid project conventions. **Do NOT flag a feature for "wrong" pattern** — flag only when the chosen pattern misfits its use case.
 
 **Bloc class — constructor injection of use cases (named, required):**
 
@@ -206,7 +221,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 }
 ```
 
-**State — abstract base + concrete subclasses (not a single class with a status enum):**
+**State — Pattern A (Hierarchy, for multi-step flows):**
 
 ```dart
 abstract class AuthState extends Equatable {
@@ -236,6 +251,46 @@ class AuthError           extends AuthState {
   final String message;
   const AuthError(this.message);
   @override List<Object?> get props => [message];
+}
+```
+
+**State — Pattern B (Status enum, for fetch/list features):**
+
+```dart
+enum HomeStatus { initial, loading, loaded, loadingMore, error }
+
+class HomeState extends Equatable {
+  final HomeStatus status;
+  final List<FeedItem> items;
+  final Failure? failure;
+  final bool hasMore;
+
+  const HomeState({
+    this.status = HomeStatus.initial,
+    this.items = const [],
+    this.failure,
+    this.hasMore = true,
+  });
+
+  bool get isLoading => status == HomeStatus.loading;
+  bool get isLoadingMore => status == HomeStatus.loadingMore;
+  bool get hasError => status == HomeStatus.error;
+
+  HomeState copyWith({
+    HomeStatus? status,
+    List<FeedItem>? items,
+    Failure? failure,
+    bool? hasMore,
+  }) =>
+      HomeState(
+        status: status ?? this.status,
+        items: items ?? this.items,
+        failure: failure,
+        hasMore: hasMore ?? this.hasMore,
+      );
+
+  @override
+  List<Object?> get props => [status, items, failure, hasMore];
 }
 ```
 
@@ -278,8 +333,9 @@ Forbidden in Blocs:
 - ❌ `Cubit` — project uses event-driven `Bloc` only.
 - ❌ DI lookup in field initializer (`final foo = sl<Foo>();`) — use **constructor injection** (matches `AuthBloc`, `HomeBloc`, etc.).
 - ❌ Raw `try/catch` for use-case calls — `Either.fold(...)` only. Repo's `RepositoryMixin.safeRemoteCall` is what catches exceptions.
-- ❌ Inline `SnackBar`s for backend errors emitted from a Bloc — let the page render `AuthError` state into a UI affordance (`SnackBar` shown by the page in a `BlocListener`, or `ErrorView`).
-- ❌ A single `<Feature>State` class with a `status` enum — use the **state hierarchy** convention (multiple state subclasses).
+- ❌ Inline `SnackBar`s for backend errors emitted from a Bloc — let the page render the error state into a UI affordance (`SnackBar` shown by the page in a `BlocListener`, or `ErrorView`).
+- ❌ Mixing state patterns within a single Bloc (don't add an enum field to a hierarchy bloc, don't add subclasses to a status-enum bloc — pick one shape and stay consistent).
+- ❌ `part` / `part of` — always 3 separate `.dart` files with explicit imports.
 
 ### 2.5 DI registration (`lib/di/injection.dart`)
 
@@ -372,7 +428,8 @@ There is a `flutter-di-register` skill — when adding a single new datasource /
 
 | Concern | Canonical file |
 |---|---|
-| Bloc + state hierarchy + constructor injection | `lib/features/auth/presentation/bloc/auth_bloc.dart` (+ `_event.dart`, `_state.dart`) |
+| Bloc — Pattern A (state hierarchy, multi-step flow) | `lib/features/auth/presentation/bloc/auth_bloc.dart` (+ `_event.dart`, `_state.dart`) |
+| Bloc — Pattern B (status enum, fetch/list) | `lib/features/home/presentation/bloc/home_bloc.dart` (+ `_event.dart`, `_state.dart`) |
 | Repository impl with `RepositoryMixin` | `lib/features/auth/data/repositories/auth_repository_impl.dart` |
 | Abstract repository | `lib/features/auth/domain/repositories/auth_repository.dart` |
 | Use case (`UseCase<Type, Params>`) | `lib/features/auth/domain/usecases/sign_in_usecase.dart` |
@@ -410,7 +467,8 @@ When invoked, follow this sequence:
 8. **Verify Bloc shape:**
    - Three separate files (no `part` / `part of`)?
    - Constructor with `required` named parameters + colon-initializer for private fields?
-   - State is a class hierarchy (abstract `<Feature>State extends Equatable` + subclasses), NOT a single class with a status enum?
+   - State pattern matches use case (Hierarchy for multi-step flows, Status-enum for fetch/list — see §2.4 hybrid table)? Don't flag a valid choice; flag misfits (e.g., a sign-up flow using status-enum, or a paginated list using hierarchy).
+   - State patterns NOT mixed within one bloc (no enum field on a hierarchy bloc, no subclasses on a status-enum bloc)?
    - Async work via `Either.fold` (no raw try/catch)?
    - Bloc registered as `Factory` in `lib/di/injection.dart`?
 9. **Verify feature placement.** Reusable across multiple features? → goes in `lib/core/`. Feature-scoped? → stays in `lib/features/<name>/`. Quick test: would another feature import this? If yes → `core/`; if no → keep where it is.
@@ -469,6 +527,7 @@ Reinforce patterns done well. Be specific — "matches the canonical `AuthBloc` 
 - Don't propose migrating away from `flutter_bloc`, `get_it`, `go_router`, `dio`/`supabase_flutter`, `easy_localization`, `dartz`, or the single-package layout — those are project decisions.
 - Don't propose Provider, Riverpod, GetX, MobX, ChangeNotifier-based state — Bloc only.
 - Don't propose introducing `Cubit`, `BlocSelector` (not used in this codebase), or replacing `Either<Failure, T>` with sealed result classes — they contradict project patterns.
+- Don't propose forcing one state pattern over the other — both `state hierarchy` and `status enum` are valid (see §2.4). Only flag pattern *misfit*, not pattern *choice*.
 - Don't propose constructor-less Blocs with field-initializer DI — that's another project's pattern, not this one's.
 - Don't approve `@freezed` / `@JsonSerializable` / `@injectable` introduction without flagging it as a convention change to the user first.
 - Don't add or modify hooks / lifecycle reminders in CLAUDE.md unless the user asks.

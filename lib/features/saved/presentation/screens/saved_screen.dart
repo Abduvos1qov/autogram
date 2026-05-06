@@ -12,6 +12,8 @@ import '../../../../core/widgets/feedback/loading_indicator.dart';
 import '../../../../core/widgets/media/cached_image.dart';
 import '../../domain/entities/saved_item.dart';
 import '../bloc/saved_bloc.dart';
+import '../bloc/saved_event.dart';
+import '../bloc/saved_state.dart';
 
 /// Saved/Wishlist screen
 
