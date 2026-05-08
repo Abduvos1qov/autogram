@@ -222,6 +222,63 @@
     "contact": "Bog'lanish",
     "working_hours": "Ish vaqti",
 
+    "storefront": {
+      "stats": {
+        "listings": "E'lonlar",
+        "sold": "Sotilgan",
+        "followers": "Kuzatuvchilar",
+        "rating": "Reyting"
+      },
+      "actions": {
+        "edit_profile": "Profilni tahrirlash",
+        "share_profile": "Ulashish",
+        "boost": "Targ'ib qilish",
+        "team": "Jamoa",
+        "seats": "Joylar",
+        "subscription": "Obuna",
+        "manage_listings": "E'lonlarni boshqarish"
+      },
+      "tabs": {
+        "active": "Aktiv",
+        "sold": "Sotilgan",
+        "about": "Ma'lumot"
+      },
+      "tab_count": "{count}",
+      "empty": {
+        "active_title": "Aktiv e'lonlar yo'q",
+        "active_message": "Birinchi e'lonni qo'shing va xaridorlarga ko'rsating.",
+        "active_cta": "E'lon qo'shish",
+        "sold_title": "Sotilgan e'lonlar yo'q",
+        "sold_message": "Bu yerda sotilgan e'lonlaringiz ko'rinadi."
+      },
+      "about": {
+        "business_type": "Biznes turi",
+        "description": "Tavsif",
+        "no_description": "Tavsif kiritilmagan",
+        "address": "Manzil",
+        "no_address": "Manzil kiritilmagan",
+        "contact_phone": "Telefon",
+        "telegram": "Telegram",
+        "instagram": "Instagram",
+        "website": "Veb-sayt",
+        "working_hours": "Ish vaqti",
+        "closed": "Yopiq",
+        "member_since": "{date} dan beri",
+        "subscription_label": "Tarif",
+        "expires_at": "Amal qilish muddati: {date}"
+      },
+      "verified_tooltip": "Tasdiqlangan biznes",
+      "tier_badge": {
+        "pro": "PRO",
+        "premium": "PREMIUM",
+        "enterprise": "ENTERPRISE"
+      },
+      "share_message": "Mening Autogram profilim — {name}",
+      "no_business_title": "Biznes profili topilmadi",
+      "no_business_message": "Biznes profilingizni yarating va sotuvni boshlang.",
+      "no_business_cta": "Sotuvchi bo'lish"
+    },
+
     "business_info_screen": {
       "app_bar_title": "Biznes ma'lumotlari",
       "title": "Biznes haqida",
@@ -416,6 +473,7 @@
 
   "profile": {
     "title": "Profil",
+    "welcome": "Xush kelibsiz",
     "edit": "Profilni tahrirlash",
     "settings": "Sozlamalar",
     "saved": "Saqlanganlar",
@@ -444,7 +502,41 @@
     "language_uz": "O'zbekcha",
     "language_ru": "Русский",
     "language_en": "English",
-    "app_version": "Autogram · v1.0.0"
+    "app_version": "Autogram · v1.0.0",
+    "stats": {
+      "active": "Aktiv",
+      "saved": "Saqlangan",
+      "viewed": "Ko'rilgan"
+    },
+    "edit_screen": {
+      "title": "Profilni tahrirlash",
+      "avatar_change": "Suratni o'zgartirish",
+      "avatar_dialog_title": "Surat manbasi",
+      "avatar_camera": "Kamera",
+      "avatar_gallery": "Galereya",
+      "avatar_remove": "Suratni olib tashlash",
+      "full_name_label": "To'liq ism",
+      "full_name_hint": "Ismingiz va familiyangiz",
+      "full_name_required": "Ismni kiriting",
+      "full_name_min_length": "Kamida 2 belgi",
+      "email_label": "Email",
+      "email_hint": "email@example.com",
+      "email_invalid": "Noto'g'ri email format",
+      "phone_label": "Telefon",
+      "phone_readonly_note": "Telefon raqamini o'zgartirish uchun yordam markaziga murojaat qiling",
+      "language_label": "Til",
+      "save_button": "Saqlash",
+      "cancel_button": "Bekor qilish",
+      "success_message": "Profil yangilandi",
+      "no_changes": "O'zgarishlar yo'q"
+    },
+    "delete_account": {
+      "title": "Hisobni o'chirish",
+      "message": "Hisobingiz va barcha ma'lumotlaringiz o'chiriladi. Bu amalni bekor qilib bo'lmaydi.",
+      "confirm": "O'chirish",
+      "cancel": "Bekor qilish",
+      "success": "Hisob o'chirildi"
+    }
   },
 
   "settings": {

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -5,6 +6,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/widgets/media/avatar.dart';
+import '../../../../navigation/route_names.dart';
 import '../../domain/entities/user_profile.dart';
 
 class ProfileHeader extends StatelessWidget {
@@ -53,7 +55,7 @@ class ProfileHeader extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'Xush kelibsiz',
+                  'profile.welcome'.tr(),
                   style: AppTypography.bodySmallStyle.copyWith(
                     color: AppColors.white.withValues(alpha: 0.85),
                   ),
@@ -93,7 +95,7 @@ class ProfileHeader extends StatelessWidget {
             ),
           ),
           _NotificationButton(
-            onTap: () => context.push('/notifications'),
+            onTap: () => context.push(RoutePaths.notifications),
           ),
         ],
       ),

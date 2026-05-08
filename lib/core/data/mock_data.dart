@@ -9,6 +9,7 @@ import '../../features/reels/domain/entities/reel.dart';
 import '../../features/seller/domain/entities/activity_log.dart';
 import '../../features/seller/domain/entities/seller_invitation.dart';
 import '../../features/seller/domain/entities/seller_member.dart';
+import '../../features/seller/domain/entities/seller_profile.dart';
 import '../services/permission_service.dart';
 
 /// Mock data for testing the app without backend.
@@ -35,6 +36,95 @@ class MockData {
 
   /// Mutable profile — datasources mutate this to simulate updates in test mode.
   static UserProfile currentUserProfile = _defaultUserProfile();
+
+  /// Default seller profile used after the user goes through the upgrade flow
+  /// in test mode. `null` until the upgrade is completed (mirrors production
+  /// behavior where buyers have no seller_profile row).
+  static SellerProfile _buildSellerProfileFor({
+    required String userId,
+    required String businessName,
+    required BusinessType businessType,
+    String? description,
+    String? city,
+    String? address,
+    List<String>? contactPhones,
+  }) {
+    final now = DateTime.now();
+    return SellerProfile(
+      id: 'seller1',
+      userId: userId,
+      businessName: businessName,
+      businessType: businessType,
+      description: description ?? 'Eng yaxshi avtomobillar — yangi va ishlatilgan.',
+      logoUrl: 'https://ui-avatars.com/api/?name=${Uri.encodeComponent(businessName)}&size=200&background=10B981&color=fff',
+      coverUrl: 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1200&q=80',
+      address: address ?? 'Sergeli ko\'chasi 15',
+      city: city ?? 'Toshkent',
+      district: 'Sergeli',
+      contactPhones: contactPhones ?? const ['+998901234567', '+998971234567'],
+      telegram: '@autostar_uz',
+      instagram: '@autostar_uz',
+      website: 'https://autostar.uz',
+      workingHours: const {
+        'monday': WorkingHours(open: '09:00', close: '19:00'),
+        'tuesday': WorkingHours(open: '09:00', close: '19:00'),
+        'wednesday': WorkingHours(open: '09:00', close: '19:00'),
+        'thursday': WorkingHours(open: '09:00', close: '19:00'),
+        'friday': WorkingHours(open: '09:00', close: '19:00'),
+        'saturday': WorkingHours(open: '10:00', close: '18:00'),
+        'sunday': WorkingHours(open: '00:00', close: '00:00', isClosed: true),
+      },
+      isVerified: true,
+      verifiedAt: now.subtract(const Duration(days: 30)),
+      subscriptionPlan: SubscriptionPlan.pro,
+      subscriptionExpiresAt: now.add(const Duration(days: 365)),
+      stats: const SellerStats(
+        totalListings: 7,
+        activeListings: 4,
+        totalSold: 234,
+        totalViews: 12450,
+        avgRating: 4.8,
+        totalReviews: 156,
+        followersCount: 1247,
+      ),
+      seatsUsed: 1,
+      additionalSeats: 0,
+      createdAt: now.subtract(const Duration(days: 365)),
+      updatedAt: now,
+    );
+  }
+
+  /// Mutable seller profile — populated by `seller_remote_datasource` test mode
+  /// when the user upgrades. `null` while the user is a buyer.
+  static SellerProfile? currentSellerProfile;
+
+  /// Promote the test user to seller. Idempotent — second call updates the
+  /// existing seller profile but doesn't reset stats.
+  static SellerProfile promoteCurrentUserToSeller({
+    required String businessName,
+    required BusinessType businessType,
+    String? description,
+    String? city,
+    String? address,
+    List<String>? contactPhones,
+  }) {
+    final seller = _buildSellerProfileFor(
+      userId: currentUserProfile.id,
+      businessName: businessName,
+      businessType: businessType,
+      description: description,
+      city: city,
+      address: address,
+      contactPhones: contactPhones,
+    );
+    currentSellerProfile = seller;
+    currentUserProfile = currentUserProfile.copyWith(
+      role: 'seller',
+      sellerProfileId: seller.id,
+      updatedAt: DateTime.now(),
+    );
+    return seller;
+  }
 
   /// Default notifications used to initialize [currentNotifications].
   static List<AppNotification> _defaultNotifications() => [
@@ -85,6 +175,7 @@ class MockData {
   static void resetMutableState() {
     currentUserProfile = _defaultUserProfile();
     currentNotifications = _defaultNotifications();
+    currentSellerProfile = null;
   }
 
   // Mock users
@@ -593,7 +684,7 @@ class MockData {
       currency: 'USD',
       isNegotiable: true,
       status: ListingStatus.active,
-      isFeatured: false,
+      isFeatured: true,
       videoUrl: 'https://customer-m033z5x00ks6nunl.cloudflarestream.com/b236bde30eb07b9d01318940e5fc3eda/manifest/video.m3u8',
       videoThumbnailUrl: 'https://picsum.photos/400/600?random=17',
       videoDuration: 35,
@@ -629,6 +720,117 @@ class MockData {
       publishedAt: DateTime.now().subtract(const Duration(days: 3)),
       createdAt: DateTime.now().subtract(const Duration(days: 3, hours: 1)),
       updatedAt: DateTime.now().subtract(const Duration(days: 3)),
+    ),
+    // ── Sold listings (for seller storefront "sold" tab) ──────────
+    Listing(
+      id: 'listing-sold-1',
+      sellerId: 'seller1',
+      categoryId: 'cars',
+      title: 'Chevrolet Spark 2019',
+      description: 'Yaxshi holatda, sotib olingan.',
+      price: 8500,
+      currency: 'USD',
+      isNegotiable: false,
+      status: ListingStatus.sold,
+      isFeatured: false,
+      videoUrl: null,
+      videoThumbnailUrl: 'https://picsum.photos/400/600?random=21',
+      videoDuration: null,
+      images: ['https://picsum.photos/400/600?random=21'],
+      city: 'Toshkent',
+      district: 'Sergeli',
+      viewsCount: 1200,
+      likesCount: 67,
+      savesCount: 22,
+      sharesCount: 8,
+      isLiked: false,
+      isSaved: false,
+      autoDetails: const AutoDetails(
+        brand: 'Chevrolet',
+        model: 'Spark',
+        year: 2019,
+        mileage: 78000,
+        fuelType: 'Benzin',
+        transmission: 'Mexanika',
+        bodyType: 'Xetchbek',
+        color: 'Qizil',
+      ),
+      seller: mockSellers[0],
+      publishedAt: DateTime.now().subtract(const Duration(days: 30)),
+      createdAt: DateTime.now().subtract(const Duration(days: 32)),
+      updatedAt: DateTime.now().subtract(const Duration(days: 5)),
+    ),
+    Listing(
+      id: 'listing-sold-2',
+      sellerId: 'seller1',
+      categoryId: 'cars',
+      title: 'Chevrolet Nexia 3 2021',
+      description: 'Sotildi.',
+      price: 11000,
+      currency: 'USD',
+      isNegotiable: false,
+      status: ListingStatus.sold,
+      isFeatured: false,
+      videoThumbnailUrl: 'https://picsum.photos/400/600?random=22',
+      images: ['https://picsum.photos/400/600?random=22'],
+      city: 'Toshkent',
+      district: 'Sergeli',
+      viewsCount: 980,
+      likesCount: 54,
+      savesCount: 18,
+      sharesCount: 6,
+      isLiked: false,
+      isSaved: false,
+      autoDetails: const AutoDetails(
+        brand: 'Chevrolet',
+        model: 'Nexia 3',
+        year: 2021,
+        mileage: 22000,
+        fuelType: 'Benzin/Gaz',
+        transmission: 'Mexanika',
+        bodyType: 'Sedan',
+        color: 'Oq',
+      ),
+      seller: mockSellers[0],
+      publishedAt: DateTime.now().subtract(const Duration(days: 60)),
+      createdAt: DateTime.now().subtract(const Duration(days: 62)),
+      updatedAt: DateTime.now().subtract(const Duration(days: 12)),
+    ),
+    Listing(
+      id: 'listing-sold-3',
+      sellerId: 'seller1',
+      categoryId: 'cars',
+      title: 'Chevrolet Cobalt 2018',
+      description: 'Sotilgan, garovda.',
+      price: 9800,
+      currency: 'USD',
+      isNegotiable: false,
+      status: ListingStatus.sold,
+      isFeatured: false,
+      videoThumbnailUrl: 'https://picsum.photos/400/600?random=23',
+      images: ['https://picsum.photos/400/600?random=23'],
+      city: 'Toshkent',
+      district: 'Sergeli',
+      viewsCount: 1450,
+      likesCount: 73,
+      savesCount: 21,
+      sharesCount: 9,
+      isLiked: false,
+      isSaved: false,
+      autoDetails: const AutoDetails(
+        brand: 'Chevrolet',
+        model: 'Cobalt',
+        year: 2018,
+        mileage: 110000,
+        fuelType: 'Benzin',
+        transmission: 'Mexanika',
+        bodyType: 'Sedan',
+        color: 'Kumush',
+      ),
+      seller: mockSellers[0],
+      publishedAt: DateTime.now().subtract(const Duration(days: 90)),
+      createdAt: DateTime.now().subtract(const Duration(days: 92)),
+      updatedAt: DateTime.now().subtract(const Duration(days: 25)),
     ),
   ];
 
@@ -688,9 +890,12 @@ class MockData {
         .toList();
   }
 
-  // Mock feed items
+  // Mock feed items — only active listings show up on the home feed (sold
+  // entries live exclusively in the seller storefront's "Sold" tab).
   static List<home.FeedItem> get mockFeedItems {
-    return mockListings.map((listing) {
+    return mockListings
+        .where((listing) => listing.status == ListingStatus.active)
+        .map((listing) {
       // Convert AutoDetails from listing to home.AutoDetails
       home.AutoDetails? homeAutoDetails;
       if (listing.autoDetails != null) {

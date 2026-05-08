@@ -56,6 +56,7 @@ import '../features/listing/data/datasources/listing_remote_datasource.dart';
 import '../features/listing/data/repositories/listing_repository_impl.dart';
 import '../features/listing/domain/repositories/listing_repository.dart';
 import '../features/listing/domain/usecases/get_listing_usecase.dart';
+import '../features/listing/domain/usecases/get_seller_listings_usecase.dart';
 import '../features/listing/presentation/bloc/listing_bloc.dart';
 
 // Saved
@@ -74,6 +75,7 @@ import '../features/chat/presentation/bloc/conversations_bloc.dart';
 import '../features/seller/data/datasources/seller_remote_datasource.dart';
 import '../features/seller/data/repositories/seller_repository_impl.dart';
 import '../features/seller/domain/repositories/seller_repository.dart';
+import '../features/seller/domain/usecases/get_seller_profile_usecase.dart';
 import '../features/seller/domain/usecases/upgrade_to_seller_usecase.dart';
 import '../features/seller/presentation/bloc/seller_bloc.dart';
 
@@ -331,6 +333,7 @@ void _initListing() {
 
   // Use cases
   sl.registerLazySingleton(() => GetListingUseCase(sl()));
+  sl.registerLazySingleton(() => GetSellerListingsUseCase(sl()));
 
   // BLoC
   sl.registerFactory(() => ListingBloc(
@@ -391,6 +394,7 @@ void _initSeller() {
 
   // Use cases
   sl.registerLazySingleton(() => UpgradeToSellerUseCase(sl()));
+  sl.registerLazySingleton(() => GetSellerProfileUseCase(sl()));
 
   // BLoC
   sl.registerFactory(() => SellerBloc(
@@ -501,12 +505,16 @@ void _initProfile() {
   sl.registerLazySingleton(() => UpdateAvatarUseCase(sl()));
   sl.registerLazySingleton(() => DeleteAccountUseCase(sl()));
 
-  // BLoC
+  // BLoC — also depends on Seller + Listing use cases for the storefront view.
+  // These come from `_initSeller()` / `_initListing()` which run earlier in
+  // [initDependencies], so the singletons are already registered.
   sl.registerFactory(() => ProfileBloc(
         getProfileUseCase: sl(),
         updateProfileUseCase: sl(),
         updateAvatarUseCase: sl(),
         deleteAccountUseCase: sl(),
+        getSellerProfileUseCase: sl(),
+        getSellerListingsUseCase: sl(),
       ));
 }
 

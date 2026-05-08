@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
@@ -11,7 +12,10 @@ class HistoryScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.surfaceOf(context),
       appBar: AppBar(
-        title: const Text('Ko\'rishlar tarixi'),
+        title: Text('profile.history'.tr()),
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        backgroundColor: AppColors.surfaceOf(context),
       ),
       body: const SafeArea(
         child: ComingSoonView(icon: Icons.history),

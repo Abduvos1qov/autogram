@@ -8,6 +8,7 @@ import 'package:autogram/features/search/data/datasources/search_local_datasourc
 import 'package:autogram/features/chat/data/datasources/chat_remote_datasource.dart';
 import 'package:autogram/features/saved/data/datasources/saved_remote_datasource.dart';
 import 'package:autogram/features/listing/data/datasources/listing_remote_datasource.dart';
+import 'package:autogram/features/profile/data/datasources/profile_remote_datasource.dart';
 
 /// Mock Auth Data Sources
 class MockAuthRemoteDataSource extends Mock implements AuthRemoteDataSource {}
@@ -30,3 +31,6 @@ class MockSavedRemoteDataSource extends Mock implements SavedRemoteDataSource {}
 
 /// Mock Listing Data Sources
 class MockListingRemoteDataSource extends Mock implements ListingRemoteDataSource {}
+
+/// Mock Profile Data Sources
+class MockProfileRemoteDataSource extends Mock implements ProfileRemoteDataSource {}

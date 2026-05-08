@@ -40,6 +40,7 @@ class ListingRepositoryImpl implements ListingRepository {
     required String sellerId,
     int page = 1,
     int pageSize = 20,
+    ListingStatus? status,
   }) async {
     if (!await networkInfo.isConnected) {
       return Left(NetworkFailure());
@@ -50,6 +51,7 @@ class ListingRepositoryImpl implements ListingRepository {
         sellerId: sellerId,
         page: page,
         pageSize: pageSize,
+        status: status,
       );
       return Right(response);
     } on ServerException catch (e) {

@@ -10,11 +10,16 @@ abstract class ListingRepository {
   /// Get listing by ID
   Future<Either<Failure, Listing>> getListing(String id);
 
-  /// Get seller's listings
+  /// Get seller's listings.
+  ///
+  /// [status] optionally filters to a single listing status (e.g. only
+  /// `active` or only `sold`). When `null`, returns active listings — preserved
+  /// as the default for backward compatibility.
   Future<Either<Failure, PaginatedResponse<Listing>>> getSellerListings({
     required String sellerId,
     int page = 1,
     int pageSize = 20,
+    ListingStatus? status,
   });
 
   /// Get similar listings

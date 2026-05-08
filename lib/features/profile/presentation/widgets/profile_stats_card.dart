@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
@@ -40,7 +41,7 @@ class ProfileStatsCard extends StatelessWidget {
               child: _StatItem(
                 icon: Icons.inventory_2_outlined,
                 value: activeListings,
-                label: 'Aktiv',
+                label: 'profile.stats.active'.tr(),
               ),
             ),
             VerticalDivider(
@@ -52,7 +53,7 @@ class ProfileStatsCard extends StatelessWidget {
               child: _StatItem(
                 icon: Icons.bookmark_outline,
                 value: savedCount,
-                label: 'Saqlangan',
+                label: 'profile.stats.saved'.tr(),
               ),
             ),
           ],

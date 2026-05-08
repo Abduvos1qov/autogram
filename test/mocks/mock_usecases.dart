@@ -17,6 +17,12 @@ import 'package:autogram/features/search/domain/usecases/search_listings_usecase
 import 'package:autogram/features/search/domain/usecases/get_brands_usecase.dart';
 import 'package:autogram/features/listing/domain/usecases/get_listing_usecase.dart';
 import 'package:autogram/features/listing/domain/usecases/get_seller_usecase.dart';
+import 'package:autogram/features/listing/domain/usecases/get_seller_listings_usecase.dart';
+import 'package:autogram/features/profile/domain/usecases/get_profile_usecase.dart';
+import 'package:autogram/features/profile/domain/usecases/update_profile_usecase.dart';
+import 'package:autogram/features/profile/domain/usecases/update_avatar_usecase.dart';
+import 'package:autogram/features/profile/domain/usecases/delete_account_usecase.dart';
+import 'package:autogram/features/seller/domain/usecases/get_seller_profile_usecase.dart';
 
 /// Mock Auth Use Cases
 class MockSignInUseCase extends Mock implements SignInUseCase {}
@@ -59,3 +65,19 @@ class MockGetBrandsUseCase extends Mock implements GetBrandsUseCase {}
 class MockGetListingUseCase extends Mock implements GetListingUseCase {}
 
 class MockGetSellerUseCase extends Mock implements GetSellerUseCase {}
+
+class MockGetSellerListingsUseCase extends Mock
+    implements GetSellerListingsUseCase {}
+
+/// Mock Profile Use Cases
+class MockGetProfileUseCase extends Mock implements GetProfileUseCase {}
+
+class MockUpdateProfileUseCase extends Mock implements UpdateProfileUseCase {}
+
+class MockUpdateAvatarUseCase extends Mock implements UpdateAvatarUseCase {}
+
+class MockDeleteAccountUseCase extends Mock implements DeleteAccountUseCase {}
+
+/// Mock Seller Use Cases
+class MockGetSellerProfileUseCase extends Mock
+    implements GetSellerProfileUseCase {}

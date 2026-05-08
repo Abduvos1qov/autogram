@@ -222,6 +222,63 @@
     "contact": "Contact",
     "working_hours": "Working hours",
 
+    "storefront": {
+      "stats": {
+        "listings": "Listings",
+        "sold": "Sold",
+        "followers": "Followers",
+        "rating": "Rating"
+      },
+      "actions": {
+        "edit_profile": "Edit profile",
+        "share_profile": "Share",
+        "boost": "Boost",
+        "team": "Team",
+        "seats": "Seats",
+        "subscription": "Subscription",
+        "manage_listings": "Manage listings"
+      },
+      "tabs": {
+        "active": "Active",
+        "sold": "Sold",
+        "about": "About"
+      },
+      "tab_count": "{count}",
+      "empty": {
+        "active_title": "No active listings",
+        "active_message": "Add your first listing and reach buyers.",
+        "active_cta": "Add listing",
+        "sold_title": "No sold listings yet",
+        "sold_message": "Sold listings will appear here."
+      },
+      "about": {
+        "business_type": "Business type",
+        "description": "Description",
+        "no_description": "No description",
+        "address": "Address",
+        "no_address": "No address provided",
+        "contact_phone": "Phone",
+        "telegram": "Telegram",
+        "instagram": "Instagram",
+        "website": "Website",
+        "working_hours": "Working hours",
+        "closed": "Closed",
+        "member_since": "Member since {date}",
+        "subscription_label": "Plan",
+        "expires_at": "Valid until: {date}"
+      },
+      "verified_tooltip": "Verified business",
+      "tier_badge": {
+        "pro": "PRO",
+        "premium": "PREMIUM",
+        "enterprise": "ENTERPRISE"
+      },
+      "share_message": "My Autogram profile — {name}",
+      "no_business_title": "No business profile",
+      "no_business_message": "Create your business profile and start selling.",
+      "no_business_cta": "Become a seller"
+    },
+
     "business_info_screen": {
       "app_bar_title": "Business details",
       "title": "About business",
@@ -416,6 +473,7 @@
 
   "profile": {
     "title": "Profile",
+    "welcome": "Welcome",
     "edit": "Edit profile",
     "settings": "Settings",
     "saved": "Saved",
@@ -444,7 +502,41 @@
     "language_uz": "O'zbekcha",
     "language_ru": "Русский",
     "language_en": "English",
-    "app_version": "Autogram · v1.0.0"
+    "app_version": "Autogram · v1.0.0",
+    "stats": {
+      "active": "Active",
+      "saved": "Saved",
+      "viewed": "Viewed"
+    },
+    "edit_screen": {
+      "title": "Edit profile",
+      "avatar_change": "Change photo",
+      "avatar_dialog_title": "Photo source",
+      "avatar_camera": "Camera",
+      "avatar_gallery": "Gallery",
+      "avatar_remove": "Remove photo",
+      "full_name_label": "Full name",
+      "full_name_hint": "Your first and last name",
+      "full_name_required": "Enter your name",
+      "full_name_min_length": "At least 2 characters",
+      "email_label": "Email",
+      "email_hint": "email@example.com",
+      "email_invalid": "Invalid email format",
+      "phone_label": "Phone",
+      "phone_readonly_note": "To change your phone number, contact support",
+      "language_label": "Language",
+      "save_button": "Save",
+      "cancel_button": "Cancel",
+      "success_message": "Profile updated",
+      "no_changes": "No changes to save"
+    },
+    "delete_account": {
+      "title": "Delete account",
+      "message": "Your account and all data will be permanently deleted. This cannot be undone.",
+      "confirm": "Delete",
+      "cancel": "Cancel",
+      "success": "Account deleted"
+    }
   },
 
   "settings": {

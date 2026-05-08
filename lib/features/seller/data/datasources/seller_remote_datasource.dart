@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
 
 import '../../../../core/config/test_config.dart';
 import '../../../../core/constants/api_endpoints.dart';
+import '../../../../core/data/mock_data.dart';
 import '../../../../core/errors/error_handler.dart';
 import '../../../../core/errors/exceptions.dart' as app_exceptions;
 import '../../../../core/utils/logger.dart';
@@ -42,8 +43,10 @@ class SellerRemoteDataSourceImpl implements SellerRemoteDataSource {
   Future<SellerProfileModel?> getSellerProfile() async {
     if (TestConfig.isTestMode) {
       AppLogger.info('TEST MODE: Getting seller profile');
-      await Future.delayed(const Duration(milliseconds: 500));
-      return null; // User is not a seller yet
+      await Future.delayed(const Duration(milliseconds: 400));
+      final mock = MockData.currentSellerProfile;
+      if (mock == null) return null;
+      return SellerProfileModel.fromEntity(mock);
     }
 
     try {
@@ -83,22 +86,15 @@ class SellerRemoteDataSourceImpl implements SellerRemoteDataSource {
     if (TestConfig.isTestMode) {
       AppLogger.info('TEST MODE: Creating seller profile for $businessName');
       await Future.delayed(const Duration(milliseconds: 500));
-      final now = DateTime.now();
-      return SellerProfileModel(
-        id: 'test_seller_${now.millisecondsSinceEpoch}',
-        userId: 'test_user',
+      final seller = MockData.promoteCurrentUserToSeller(
         businessName: businessName,
         businessType: businessType,
         description: description,
         address: address,
         city: city,
-        contactPhones: contactPhones ?? [],
-        isVerified: false,
-        subscriptionPlan: SubscriptionPlan.free,
-        stats: const SellerStats(),
-        createdAt: now,
-        updatedAt: now,
+        contactPhones: contactPhones,
       );
+      return SellerProfileModel.fromEntity(seller);
     }
 
     try {
@@ -160,19 +156,32 @@ class SellerRemoteDataSourceImpl implements SellerRemoteDataSource {
   Future<SellerProfileModel> updateSellerProfile(Map<String, dynamic> updates) async {
     if (TestConfig.isTestMode) {
       AppLogger.info('TEST MODE: Updating seller profile');
-      await Future.delayed(const Duration(milliseconds: 500));
-      final now = DateTime.now();
-      return SellerProfileModel(
-        id: 'test_seller',
-        userId: 'test_user',
-        businessName: updates['business_name'] as String? ?? 'Test Business',
-        businessType: BusinessType.individual,
-        isVerified: false,
-        subscriptionPlan: SubscriptionPlan.free,
-        stats: const SellerStats(),
-        createdAt: now,
-        updatedAt: now,
+      await Future.delayed(const Duration(milliseconds: 400));
+      final current = MockData.currentSellerProfile;
+      if (current == null) {
+        throw const app_exceptions.ServerException(
+          message: 'No seller profile to update',
+        );
+      }
+      final updated = current.copyWith(
+        businessName: updates['business_name'] as String? ?? current.businessName,
+        description: updates['description'] as String? ?? current.description,
+        logoUrl: updates['logo_url'] as String? ?? current.logoUrl,
+        coverUrl: updates['cover_url'] as String? ?? current.coverUrl,
+        address: updates['address'] as String? ?? current.address,
+        city: updates['city'] as String? ?? current.city,
+        district: updates['district'] as String? ?? current.district,
+        telegram: updates['telegram'] as String? ?? current.telegram,
+        instagram: updates['instagram'] as String? ?? current.instagram,
+        website: updates['website'] as String? ?? current.website,
+        contactPhones: (updates['contact_phones'] as List?)
+                ?.map((e) => e.toString())
+                .toList() ??
+            current.contactPhones,
+        updatedAt: DateTime.now(),
       );
+      MockData.currentSellerProfile = updated;
+      return SellerProfileModel.fromEntity(updated);
     }
 
     try {

@@ -222,6 +222,63 @@
     "contact": "Контакты",
     "working_hours": "Время работы",
 
+    "storefront": {
+      "stats": {
+        "listings": "Объявления",
+        "sold": "Продано",
+        "followers": "Подписчики",
+        "rating": "Рейтинг"
+      },
+      "actions": {
+        "edit_profile": "Редактировать профиль",
+        "share_profile": "Поделиться",
+        "boost": "Продвижение",
+        "team": "Команда",
+        "seats": "Места",
+        "subscription": "Подписка",
+        "manage_listings": "Управление объявлениями"
+      },
+      "tabs": {
+        "active": "Активные",
+        "sold": "Проданные",
+        "about": "О бизнесе"
+      },
+      "tab_count": "{count}",
+      "empty": {
+        "active_title": "Нет активных объявлений",
+        "active_message": "Добавьте первое объявление и привлеките покупателей.",
+        "active_cta": "Добавить объявление",
+        "sold_title": "Проданных объявлений ещё нет",
+        "sold_message": "Здесь появятся ваши проданные объявления."
+      },
+      "about": {
+        "business_type": "Тип бизнеса",
+        "description": "Описание",
+        "no_description": "Описание не указано",
+        "address": "Адрес",
+        "no_address": "Адрес не указан",
+        "contact_phone": "Телефон",
+        "telegram": "Telegram",
+        "instagram": "Instagram",
+        "website": "Сайт",
+        "working_hours": "Время работы",
+        "closed": "Закрыто",
+        "member_since": "Зарегистрирован {date}",
+        "subscription_label": "Тариф",
+        "expires_at": "Действителен до: {date}"
+      },
+      "verified_tooltip": "Проверенный бизнес",
+      "tier_badge": {
+        "pro": "PRO",
+        "premium": "PREMIUM",
+        "enterprise": "ENTERPRISE"
+      },
+      "share_message": "Мой профиль на Autogram — {name}",
+      "no_business_title": "Бизнес-профиль не найден",
+      "no_business_message": "Создайте бизнес-профиль и начните продавать.",
+      "no_business_cta": "Стать продавцом"
+    },
+
     "business_info_screen": {
       "app_bar_title": "Информация о бизнесе",
       "title": "О бизнесе",
@@ -416,6 +473,7 @@
 
   "profile": {
     "title": "Профиль",
+    "welcome": "Добро пожаловать",
     "edit": "Редактировать профиль",
     "settings": "Настройки",
     "saved": "Сохранённые",
@@ -444,7 +502,41 @@
     "language_uz": "O'zbekcha",
     "language_ru": "Русский",
     "language_en": "English",
-    "app_version": "Autogram · v1.0.0"
+    "app_version": "Autogram · v1.0.0",
+    "stats": {
+      "active": "Активные",
+      "saved": "Сохранено",
+      "viewed": "Просмотрено"
+    },
+    "edit_screen": {
+      "title": "Редактировать профиль",
+      "avatar_change": "Изменить фото",
+      "avatar_dialog_title": "Источник фото",
+      "avatar_camera": "Камера",
+      "avatar_gallery": "Галерея",
+      "avatar_remove": "Удалить фото",
+      "full_name_label": "Полное имя",
+      "full_name_hint": "Ваше имя и фамилия",
+      "full_name_required": "Введите имя",
+      "full_name_min_length": "Минимум 2 символа",
+      "email_label": "Email",
+      "email_hint": "email@example.com",
+      "email_invalid": "Неверный формат email",
+      "phone_label": "Телефон",
+      "phone_readonly_note": "Чтобы изменить номер телефона, обратитесь в поддержку",
+      "language_label": "Язык",
+      "save_button": "Сохранить",
+      "cancel_button": "Отмена",
+      "success_message": "Профиль обновлён",
+      "no_changes": "Нет изменений для сохранения"
+    },
+    "delete_account": {
+      "title": "Удалить аккаунт",
+      "message": "Ваш аккаунт и все данные будут безвозвратно удалены. Это действие нельзя отменить.",
+      "confirm": "Удалить",
+      "cancel": "Отмена",
+      "success": "Аккаунт удалён"
+    }
   },
 
   "settings": {

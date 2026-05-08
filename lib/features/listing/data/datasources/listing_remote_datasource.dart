@@ -6,6 +6,7 @@ import '../../../../core/data/mock_data.dart';
 import '../../../../core/errors/error_handler.dart';
 import '../../../../core/errors/exceptions.dart';
 import '../../../../core/network/api_response.dart';
+import '../../domain/entities/listing.dart';
 import '../models/listing_model.dart';
 
 /// Listing remote data source
@@ -16,6 +17,7 @@ abstract class ListingRemoteDataSource {
     required String sellerId,
     int page = 1,
     int pageSize = 20,
+    ListingStatus? status,
   });
   Future<List<ListingModel>> getSimilarListings(String listingId);
   Future<void> likeListing(String listingId);
@@ -79,8 +81,44 @@ class ListingRemoteDataSourceImpl implements ListingRemoteDataSource {
     required String sellerId,
     int page = 1,
     int pageSize = 20,
+    ListingStatus? status,
   }) async {
     try {
+      final filterStatus = status ?? ListingStatus.active;
+
+      if (TestConfig.isTestMode) {
+        await Future.delayed(const Duration(milliseconds: 400));
+        final all = MockData.mockListings
+            .where(
+              (l) => l.sellerId == sellerId && l.status == filterStatus,
+            )
+            .toList();
+
+        final start = (page - 1) * pageSize;
+        if (start >= all.length) {
+          return PaginatedResponse(
+            data: const [],
+            page: page,
+            pageSize: pageSize,
+            total: all.length,
+            hasMore: false,
+          );
+        }
+        final end = (start + pageSize).clamp(0, all.length);
+        final pageItems = all
+            .sublist(start, end)
+            .map((l) => ListingModel.fromEntity(l))
+            .toList();
+
+        return PaginatedResponse(
+          data: pageItems,
+          page: page,
+          pageSize: pageSize,
+          total: all.length,
+          hasMore: end < all.length,
+        );
+      }
+
       final offset = (page - 1) * pageSize;
 
       final response = await supabaseClient
@@ -91,7 +129,7 @@ class ListingRemoteDataSourceImpl implements ListingRemoteDataSource {
             listing_auto_details(*)
           ''')
           .eq('seller_id', sellerId)
-          .eq('status', 'active')
+          .eq('status', filterStatus.name)
           .order('created_at', ascending: false)
           .range(offset, offset + pageSize - 1);
 
@@ -103,7 +141,7 @@ class ListingRemoteDataSourceImpl implements ListingRemoteDataSource {
           .from(ApiEndpoints.listings)
           .select('id')
           .eq('seller_id', sellerId)
-          .eq('status', 'active')
+          .eq('status', filterStatus.name)
           .count(supabase.CountOption.exact);
 
       final total = countResponse.count;

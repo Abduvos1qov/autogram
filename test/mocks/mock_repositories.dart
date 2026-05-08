@@ -8,6 +8,7 @@ import 'package:autogram/features/saved/domain/repositories/saved_repository.dar
 import 'package:autogram/features/listing/domain/repositories/listing_repository.dart';
 import 'package:autogram/features/profile/domain/repositories/profile_repository.dart';
 import 'package:autogram/features/notifications/domain/repositories/notification_repository.dart';
+import 'package:autogram/features/seller/domain/repositories/seller_repository.dart';
 import 'package:autogram/core/network/network_info.dart';
 
 /// Mock Auth Repository
@@ -33,6 +34,9 @@ class MockProfileRepository extends Mock implements ProfileRepository {}
 
 /// Mock Notification Repository
 class MockNotificationRepository extends Mock implements NotificationRepository {}
+
+/// Mock Seller Repository
+class MockSellerRepository extends Mock implements SellerRepository {}
 
 /// Mock Network Info
 class MockNetworkInfo extends Mock implements NetworkInfo {}
