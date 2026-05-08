@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -67,8 +68,8 @@ class _VerificationScreenState extends State<VerificationScreen> {
       context.read<AuthBloc>().add(AuthResendOtpRequested(widget.email));
       _startTimer();
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Tasdiqlash kodi qayta yuborildi'),
+        SnackBar(
+          content: Text('auth.verification_screen.resent_snackbar'.tr()),
           backgroundColor: AppColors.success,
         ),
       );
@@ -136,6 +137,27 @@ class _VerificationScreenState extends State<VerificationScreen> {
         final isLoading = state is AuthLoading;
 
         return Scaffold(
+          backgroundColor: AppColors.backgroundOf(context),
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            scrolledUnderElevation: 0,
+            leading: IconButton(
+              icon: Icon(
+                Icons.arrow_back_ios_new_rounded,
+                color: AppColors.textPrimaryOf(context),
+                size: 20,
+              ),
+              onPressed: isLoading ? null : () => context.pop(),
+            ),
+            title: Text(
+              'auth.verification_screen.app_bar_title'.tr(),
+              style: AppTypography.titleLarge(context).copyWith(
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            centerTitle: true,
+          ),
           body: GestureDetector(
             onTap: () => FocusScope.of(context).unfocus(),
             behavior: HitTestBehavior.opaque,
@@ -165,7 +187,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
 
                   // Title
                   Text(
-                    'Tasdiqlash kodi',
+                    'auth.verification_screen.title'.tr(),
                     style: AppTypography.displaySmall(context).copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -182,7 +204,10 @@ class _VerificationScreenState extends State<VerificationScreen> {
                         color: AppColors.textSecondaryOf(context),
                       ),
                       children: [
-                        const TextSpan(text: 'Tasdiqlash kodini '),
+                        TextSpan(
+                          text:
+                              'auth.verification_screen.subtitle_prefix'.tr(),
+                        ),
                         TextSpan(
                           text: widget.email,
                           style: TextStyle(
@@ -190,7 +215,10 @@ class _VerificationScreenState extends State<VerificationScreen> {
                             color: AppColors.textPrimaryOf(context),
                           ),
                         ),
-                        const TextSpan(text: ' manziliga yubordik'),
+                        TextSpan(
+                          text:
+                              'auth.verification_screen.subtitle_suffix'.tr(),
+                        ),
                       ],
                     ),
                   ),
@@ -247,7 +275,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
 
                   // Verify button
                   PrimaryButton(
-                    text: 'Tasdiqlash',
+                    text: 'auth.verification_screen.submit'.tr(),
                     onPressed: isLoading || _otpCode.length < 6
                         ? null
                         : _submit,
@@ -262,7 +290,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
                       ? TextButton(
                           onPressed: _resendOtp,
                           child: Text(
-                            'Kodni qayta yuborish',
+                            'auth.verification_screen.resend_label'.tr(),
                             style: AppTypography.bodyMedium(context).copyWith(
                               color: AppColors.primary,
                               fontWeight: FontWeight.w600,
@@ -270,7 +298,11 @@ class _VerificationScreenState extends State<VerificationScreen> {
                           ),
                         )
                       : Text(
-                          'Qayta yuborish: ${_remainingSeconds}s',
+                          'auth.verification_screen.resend_in'.tr(
+                            namedArgs: {
+                              'seconds': '$_remainingSeconds',
+                            },
+                          ),
                           style: AppTypography.bodyMedium(context).copyWith(
                             color: AppColors.textSecondaryOf(context),
                           ),

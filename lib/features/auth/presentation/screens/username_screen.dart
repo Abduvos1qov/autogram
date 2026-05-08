@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -49,9 +50,16 @@ class _UsernameScreenState extends State<UsernameScreen> {
         if (state is AuthAuthenticated) {
           context.go(RoutePaths.home);
         } else if (state is AuthError) {
+          // The bloc emits a translation key as the failure message for the
+          // "username already taken" case; resolve it here. Other failures
+          // fall through to ErrorHandler.getUserMessage.
+          final raw = state.failure.message;
+          final message = raw.startsWith('auth.')
+              ? raw.tr()
+              : ErrorHandler.getUserMessage(state.failure);
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(ErrorHandler.getUserMessage(state.failure)),
+              content: Text(message),
               backgroundColor: AppColors.error,
             ),
           );
@@ -76,7 +84,7 @@ class _UsernameScreenState extends State<UsernameScreen> {
 
                     // Title
                     Text(
-                      'Username tanlang',
+                      'auth.username_screen.title'.tr(),
                       style: AppTypography.displayMedium(context).copyWith(
                         fontWeight: FontWeight.bold,
                       ),
@@ -85,7 +93,7 @@ class _UsernameScreenState extends State<UsernameScreen> {
                     AppSpacing.gapVerticalSm,
 
                     Text(
-                      'Boshqa foydalanuvchilar sizni shu nom bilan topishi mumkin',
+                      'auth.username_screen.subtitle'.tr(),
                       style: AppTypography.bodyMedium(context).copyWith(
                         color: AppColors.textSecondaryOf(context),
                       ),
@@ -96,8 +104,8 @@ class _UsernameScreenState extends State<UsernameScreen> {
                     // Username input
                     AppTextField(
                       controller: _usernameController,
-                      label: 'Username',
-                      hint: 'username',
+                      label: 'auth.username_screen.label'.tr(),
+                      hint: 'auth.username_screen.hint'.tr(),
                       prefixIcon: Padding(
                         padding: const EdgeInsets.only(left: 12),
                         child: Text(
@@ -117,7 +125,7 @@ class _UsernameScreenState extends State<UsernameScreen> {
                     AppSpacing.gapVerticalSm,
 
                     Text(
-                      'Faqat harflar, raqamlar va pastki chiziq. Kamida 3 belgi.',
+                      'auth.username_screen.helper'.tr(),
                       style: AppTypography.bodySmall(context).copyWith(
                         color: AppColors.textSecondaryOf(context),
                       ),
@@ -127,7 +135,7 @@ class _UsernameScreenState extends State<UsernameScreen> {
 
                     // Continue button
                     PrimaryButton(
-                      text: 'Davom etish',
+                      text: 'auth.username_screen.submit'.tr(),
                       onPressed: isLoading ? null : _submit,
                       isLoading: isLoading,
                       height: 52,

@@ -9,11 +9,17 @@ Autogram is a mobile car marketplace for Uzbekistan with a TikTok/Reels-style vi
 ## Build & Run Commands
 
 ```bash
-# Run the app (debug)
+# Run for production (real Supabase backend) — default
 flutter run
 
-# Build APK
+# Run with test mode (mock backend, no network)
+flutter run --dart-define=TEST_MODE=true
+
+# Build APK (production)
 flutter build apk
+
+# Build APK with test mode baked in (rare — for offline demo builds)
+flutter build apk --dart-define=TEST_MODE=true
 
 # Build iOS
 flutter build ios
@@ -172,7 +178,13 @@ When in doubt, mirror the closest existing feature (auth → hierarchy; home/ree
 
 ## Test Mode
 
-Test mode is enabled by default (`TestConfig.isTestMode = true` in `lib/core/config/test_config.dart`). Uses mock data sources with 500ms simulated delay. Test credentials: any email with OTP `123456`, or sign in with `test@autogram.uz` / `Test1234!`. Mock data lives in `lib/core/data/mock_data.dart`.
+`TestConfig.isTestMode` is wired to `bool.fromEnvironment('TEST_MODE', defaultValue: false)` in `lib/core/config/test_config.dart`. Production builds (`flutter run` / `flutter build apk` without flags) hit the real Supabase backend by default. For local development with mock data:
+
+```bash
+flutter run --dart-define=TEST_MODE=true
+```
+
+Test mode uses mock data sources with 500ms simulated delay. Test credentials: any email with OTP `123456`, or sign in with `test@autogram.uz` / `Test1234!`. Mock data lives in `lib/core/data/mock_data.dart`.
 
 ## Auth Flows
 
@@ -260,6 +272,16 @@ Komissiya modeli yo'q. Daromad faqat obuna + seat + boost/reklamadan keladi.
 |--|----------------------|----------------------|------------------------|
 | **Yillik daromad** | ~$480,600 | ~$2,500,000 | ~$9,567,000 |
 
+### Implementation status
+
+- Phase 1: Architecture Cleanup — completed
+- Phase 2: Tariff Plan Refactor (Free / Pro / Premium / Enterprise) — completed
+- Phase 3: Payment Integration (Click WebView gateway, mock for test mode) — completed
+- Phase 4: UX Polish — completed
+- Phase 5: i18n Migration (auth + seller) — completed
+- Phase 6: Production Readiness — in progress
+- Backend: Supabase Edge Functions (`create-click-payment`, `click-webhook`) — TODO
+
 ## Conventions
 
 - Barrel exports per feature (e.g., `features/auth/auth.dart`)
@@ -267,3 +289,4 @@ Komissiya modeli yo'q. Daromad faqat obuna + seat + boost/reklamadan keladi.
 - Currencies: USD and UZS
 - Phone format: +998XXXXXXXXX (Uzbekistan)
 - Android namespace: `com.example.autogram` (needs updating for production)
+- All user-facing strings in `lib/features/{auth,seller,payment}/` use `easy_localization`'s `.tr()` extension. Translation keys live in `assets/l10n/{uz,ru,en}.json` with parity enforced (use the `flutter-translation-sync` skill to validate).

@@ -131,26 +131,3 @@ class AuthResetPasswordWithNewPassword extends AuthEvent {
 class AuthLogoutRequested extends AuthEvent {
   const AuthLogoutRequested();
 }
-
-/// Upgrade to seller
-class AuthUpgradeToSellerRequested extends AuthEvent {
-  const AuthUpgradeToSellerRequested();
-}
-
-/// Update profile
-class AuthProfileUpdateRequested extends AuthEvent {
-  final String? fullName;
-  final String? email;
-  final String? avatarUrl;
-  final String? language;
-
-  const AuthProfileUpdateRequested({
-    this.fullName,
-    this.email,
-    this.avatarUrl,
-    this.language,
-  });
-
-  @override
-  List<Object?> get props => [fullName, email, avatarUrl, language];
-}

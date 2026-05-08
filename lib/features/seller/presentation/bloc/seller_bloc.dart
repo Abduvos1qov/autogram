@@ -120,10 +120,14 @@ class SellerBloc extends Bloc<SellerEvent, SellerState> {
       },
       (profile) {
         AppLogger.info('Successfully upgraded to seller');
-        emit(state.copyWith(
-          status: SellerStatus.upgraded,
-          profile: profile,
-        ));
+        // Drop transient upgrade-flow fields so a future re-entry to the
+        // upgrade flow starts from a clean state.
+        emit(state
+            .copyWith(
+              status: SellerStatus.upgraded,
+              profile: profile,
+            )
+            .resetUpgradeFlow(status: SellerStatus.upgraded));
       },
     );
   }
@@ -189,6 +193,10 @@ class SellerBloc extends Bloc<SellerEvent, SellerState> {
     result.fold(
       (failure) {
         AppLogger.error('Failed to load plans: ${failure.message}');
+        emit(state.copyWith(
+          status: SellerStatus.error,
+          failure: failure,
+        ));
       },
       (plans) {
         emit(state.copyWith(plans: plans));

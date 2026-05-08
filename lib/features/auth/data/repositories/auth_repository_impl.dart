@@ -156,32 +156,6 @@ class AuthRepositoryImpl with RepositoryMixin implements AuthRepository {
   }
 
   @override
-  Future<Either<Failure, User>> updateProfile({
-    String? fullName,
-    String? email,
-    String? avatarUrl,
-    String? language,
-  }) =>
-      safeRemoteCall(_networkInfo, () async {
-        final user = await _remoteDataSource.updateProfile(
-          fullName: fullName,
-          email: email,
-          avatarUrl: avatarUrl,
-          language: language,
-        );
-        await _localDataSource.cacheUser(user);
-        return user;
-      });
-
-  @override
-  Future<Either<Failure, User>> upgradeToSeller() =>
-      safeRemoteCall(_networkInfo, () async {
-        final user = await _remoteDataSource.upgradeToSeller();
-        await _localDataSource.cacheUser(user);
-        return user;
-      });
-
-  @override
   Future<Either<Failure, void>> logout() async {
     try {
       await _remoteDataSource.logout();

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/services/permission_service.dart';
@@ -49,7 +50,7 @@ class RoleBadge extends StatelessWidget {
         borderRadius: BorderRadius.circular(4),
       ),
       child: Text(
-        role.label,
+        role.labelKey.tr(),
         style: (compact ? AppTypography.labelSmall(context) : AppTypography.labelMedium(context))
             .copyWith(
           color: textColor,

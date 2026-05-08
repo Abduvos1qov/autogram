@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -6,6 +7,7 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/widgets/buttons/primary_button.dart';
 import '../../../../core/widgets/buttons/secondary_button.dart';
+import '../../../../navigation/route_names.dart';
 
 /// Success screen shown after completing seller upgrade
 
@@ -79,7 +81,7 @@ class _UpgradeSuccessScreenState extends State<UpgradeSuccessScreen>
                 FadeTransition(
                   opacity: _fadeAnimation,
                   child: Text(
-                    'Tabriklaymiz!',
+                    'seller.upgrade_success_screen.title'.tr(),
                     style: AppTypography.displaySmall(context).copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -91,7 +93,7 @@ class _UpgradeSuccessScreenState extends State<UpgradeSuccessScreen>
                 FadeTransition(
                   opacity: _fadeAnimation,
                   child: Text(
-                    'Siz endi Autogram sotuvchisisiz.\nE\'lonlaringizni joylashni boshlang!',
+                    'seller.upgrade_success_screen.subtitle'.tr(),
                     style: AppTypography.bodyLarge(context).copyWith(
                       color: AppColors.textSecondaryOf(context),
                     ),
@@ -105,13 +107,13 @@ class _UpgradeSuccessScreenState extends State<UpgradeSuccessScreen>
                   child: Column(
                     children: [
                       PrimaryButton(
-                        text: 'Bosh sahifaga',
-                        onPressed: () => context.go('/'),
+                        text: 'seller.upgrade_success_screen.go_home'.tr(),
+                        onPressed: () => context.go(RoutePaths.home),
                       ),
                       AppSpacing.gapVerticalMd,
                       SecondaryButton(
-                        text: 'Profilga qaytish',
-                        onPressed: () => context.go('/profile'),
+                        text: 'seller.upgrade_success_screen.go_profile'.tr(),
+                        onPressed: () => context.go(RoutePaths.profile),
                       ),
                     ],
                   ),

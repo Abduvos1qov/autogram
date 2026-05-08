@@ -1,6 +1,7 @@
 import 'package:get_it/get_it.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../core/config/test_config.dart';
 import '../core/network/api_client.dart';
 import '../core/network/network_info.dart';
 import '../core/services/secure_storage_service.dart';
@@ -13,6 +14,8 @@ import '../features/auth/data/repositories/auth_repository_impl.dart';
 import '../features/auth/domain/repositories/auth_repository.dart';
 import '../features/auth/domain/usecases/get_current_user_usecase.dart';
 import '../features/auth/domain/usecases/logout_usecase.dart';
+import '../features/auth/domain/usecases/resend_signup_otp_usecase.dart';
+import '../features/auth/domain/usecases/send_forgot_password_otp_usecase.dart';
 import '../features/auth/domain/usecases/sign_in_usecase.dart';
 import '../features/auth/domain/usecases/sign_up_usecase.dart';
 import '../features/auth/domain/usecases/reset_password_usecase.dart';
@@ -125,6 +128,19 @@ import '../features/profile/domain/usecases/update_avatar_usecase.dart';
 import '../features/profile/domain/usecases/update_profile_usecase.dart';
 import '../features/profile/presentation/bloc/profile_bloc.dart';
 
+// Payment
+import '../features/payment/data/datasources/payment_remote_datasource.dart';
+import '../features/payment/data/repositories/payment_repository_impl.dart';
+import '../features/payment/data/services/click_payment_gateway_service_impl.dart';
+import '../features/payment/data/services/mock_payment_gateway_service.dart';
+import '../features/payment/domain/repositories/payment_repository.dart';
+import '../features/payment/domain/services/payment_gateway_service.dart';
+import '../features/payment/domain/usecases/cancel_payment_usecase.dart';
+import '../features/payment/domain/usecases/create_payment_usecase.dart';
+import '../features/payment/domain/usecases/get_payment_status_usecase.dart';
+import '../features/payment/domain/usecases/watch_payment_status_usecase.dart';
+import '../features/payment/presentation/bloc/payment_bloc.dart';
+
 final sl = GetIt.instance;
 
 Future<void> initDependencies() async {
@@ -149,6 +165,7 @@ Future<void> initDependencies() async {
   _initTeam();
   _initProfile();
   _initNotifications();
+  _initPayment();
 }
 
 Future<void> _initCore() async {
@@ -196,6 +213,8 @@ void _initAuth() {
   sl.registerLazySingleton(() => VerifyOtpUseCase(sl()));
   sl.registerLazySingleton(() => VerifyForgotPasswordOtpUseCase(sl()));
   sl.registerLazySingleton(() => ResetPasswordWithNewUseCase(sl()));
+  sl.registerLazySingleton(() => ResendSignUpOtpUseCase(sl()));
+  sl.registerLazySingleton(() => SendForgotPasswordOtpUseCase(sl()));
 
   // BLoC
   sl.registerFactory(() => AuthBloc(
@@ -209,7 +228,8 @@ void _initAuth() {
         verifyOtpUseCase: sl(),
         verifyForgotPasswordOtpUseCase: sl(),
         resetPasswordWithNewUseCase: sl(),
-        authRepository: sl(),
+        resendSignUpOtpUseCase: sl(),
+        sendForgotPasswordOtpUseCase: sl(),
       ));
 }
 
@@ -506,4 +526,52 @@ void _initNotifications() {
 
   // BLoC
   sl.registerFactory(() => NotificationsBloc(repository: sl()));
+}
+
+void _initPayment() {
+  // Data sources
+  sl.registerLazySingleton<PaymentRemoteDataSource>(
+    () => PaymentRemoteDataSourceImpl(supabaseClient: sl()),
+  );
+
+  // Repository
+  sl.registerLazySingleton<PaymentRepository>(
+    () => PaymentRepositoryImpl(
+      remoteDataSource: sl(),
+      networkInfo: sl(),
+    ),
+  );
+
+  // Use cases
+  sl.registerLazySingleton(() => CreatePaymentUseCase(sl()));
+  sl.registerLazySingleton(() => GetPaymentStatusUseCase(sl()));
+  sl.registerLazySingleton(() => WatchPaymentStatusUseCase(sl()));
+  sl.registerLazySingleton(() => CancelPaymentUseCase(sl()));
+
+  // Gateway services — mock is always registered (used directly in test mode
+  // and as the development fallback for unimplemented production gateways).
+  sl.registerLazySingleton<MockPaymentGatewayService>(
+    () => MockPaymentGatewayService(),
+  );
+
+  // Production gateway resolves to mock in test mode, otherwise the Click
+  // implementation (which itself falls back to mock until the Edge Functions
+  // ship — see ClickPaymentGatewayServiceImpl).
+  sl.registerLazySingleton<PaymentGatewayService>(
+    () => TestConfig.isTestMode
+        ? sl<MockPaymentGatewayService>()
+        : ClickPaymentGatewayServiceImpl(
+            supabaseClient: sl(),
+            mockFallback: sl<MockPaymentGatewayService>(),
+          ),
+  );
+
+  // BLoC
+  sl.registerFactory(() => PaymentBloc(
+        createPaymentUseCase: sl(),
+        getPaymentStatusUseCase: sl(),
+        watchPaymentStatusUseCase: sl(),
+        cancelPaymentUseCase: sl(),
+        gatewayService: sl(),
+      ));
 }

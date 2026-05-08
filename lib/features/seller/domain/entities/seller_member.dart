@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-import '../../../../core/services/permission_service.dart';
+import 'member_role.dart';
 
 /// Seller team member entity — represents an employee/member within a seller organization
 

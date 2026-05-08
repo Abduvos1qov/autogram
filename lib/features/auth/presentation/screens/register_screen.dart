@@ -1,7 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 
 import '../../../../core/errors/error_handler.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -123,14 +123,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                     // Title
                     Text(
-                      'Ro\'yxatdan o\'tish',
+                      'auth.register_screen.title'.tr(),
                       style: AppTypography.displayMedium(context).copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     AppSpacing.gapVerticalSm,
                     Text(
-                      'Davom etish uchun hisob yarating!',
+                      'auth.register_screen.subtitle'.tr(),
                       style: AppTypography.bodyMedium(context).copyWith(
                         color: AppColors.textSecondaryOf(context),
                       ),
@@ -141,8 +141,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     // Full Name
                     AppTextField(
                       controller: _nameController,
-                      label: 'To\'liq ism',
-                      hint: 'Ismingizni kiriting',
+                      label: 'auth.register_screen.full_name_label'.tr(),
+                      hint: 'auth.register_screen.full_name_hint'.tr(),
                       textCapitalization: TextCapitalization.words,
                       textInputAction: TextInputAction.next,
                       validator: Validators.validateName,
@@ -154,8 +154,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     // Email
                     AppTextField(
                       controller: _emailController,
-                      label: 'Email',
-                      hint: 'email@example.com',
+                      label: 'auth.register_screen.email_label'.tr(),
+                      hint: 'auth.register_screen.email_hint'.tr(),
                       keyboardType: TextInputType.emailAddress,
                       textInputAction: TextInputAction.next,
                       validator: Validators.validateEmailRequired,
@@ -166,8 +166,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     // Date of Birth (optional)
                     AppTextField(
                       controller: _dobController,
-                      label: 'Tug\'ilgan sana (ixtiyoriy)',
-                      hint: 'KK/OO/YYYY',
+                      label: 'auth.register_screen.dob_label'.tr(),
+                      hint: 'auth.register_screen.dob_hint'.tr(),
                       readOnly: true,
                       onTap: _selectDate,
                       suffixIcon: IconButton(
@@ -184,26 +184,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     // Phone Number (optional)
                     AppTextField(
                       controller: _phoneController,
-                      label: 'Telefon raqami (ixtiyoriy)',
-                      hint: '+998 XX XXX XX XX',
+                      label: 'auth.register_screen.phone_label'.tr(),
+                      hint: 'auth.register_screen.phone_hint'.tr(),
                       keyboardType: TextInputType.phone,
                       textInputAction: TextInputAction.next,
-                      prefixIcon: Padding(
-                        padding: const EdgeInsets.only(left: 12, right: 8),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Text(
-                              '🇺🇿',
-                              style: TextStyle(fontSize: 20),
-                            ),
-                            const SizedBox(width: 4),
-                            Icon(
-                              Icons.keyboard_arrow_down,
-                              size: 16,
-                              color: AppColors.grey500,
-                            ),
-                          ],
+                      // Static country flag — Phase 1 only supports Uzbekistan,
+                      // so we deliberately render no chevron / picker affordance.
+                      prefixIcon: const Padding(
+                        padding: EdgeInsets.only(left: 12, right: 8),
+                        child: Text(
+                          '🇺🇿',
+                          style: TextStyle(fontSize: 20),
                         ),
                       ),
                       validator: Validators.validatePhone,
@@ -214,8 +205,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     // Password
                     AppTextField(
                       controller: _passwordController,
-                      label: 'Parol',
-                      hint: 'Kuchli parol kiriting',
+                      label: 'auth.register_screen.password_label'.tr(),
+                      hint: 'auth.register_screen.password_hint'.tr(),
                       obscureText: _obscurePassword,
                       keyboardType: TextInputType.visiblePassword,
                       textInputAction: TextInputAction.next,
@@ -240,8 +231,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     // Confirm Password
                     AppTextField(
                       controller: _confirmPasswordController,
-                      label: 'Parolni tasdiqlash',
-                      hint: 'Parolni qayta kiriting',
+                      label: 'auth.register_screen.confirm_password_label'.tr(),
+                      hint: 'auth.register_screen.confirm_password_hint'.tr(),
                       obscureText: _obscureConfirmPassword,
                       keyboardType: TextInputType.visiblePassword,
                       textInputAction: TextInputAction.done,
@@ -269,7 +260,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                     // Register button
                     PrimaryButton(
-                      text: 'Ro\'yxatdan o\'tish',
+                      text: 'auth.register_screen.submit'.tr(),
                       onPressed: isLoading ? null : _submit,
                       isLoading: isLoading,
                       height: 52,
@@ -283,7 +274,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            'Hisobingiz bormi? ',
+                            'auth.register_screen.have_account'.tr(),
                             style: AppTypography.bodyMedium(context).copyWith(
                               color: AppColors.textSecondaryOf(context),
                             ),
@@ -291,7 +282,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           GestureDetector(
                             onTap: () => context.pop(),
                             child: Text(
-                              'Kirish',
+                              'auth.register_screen.login_link'.tr(),
                               style: AppTypography.bodyMedium(context).copyWith(
                                 color: AppColors.primary,
                                 fontWeight: FontWeight.w600,

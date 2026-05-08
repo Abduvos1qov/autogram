@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -21,26 +22,25 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
 
-  final List<OnboardingPage> _pages = [
-    const OnboardingPage(
-      icon: Icons.video_library_outlined,
-      title: 'Video bilan tanishtiring',
-      description:
-          'Avtomobilingizni video orqali ko\'rsating. Xaridorlar uni Reels formatida ko\'rishadi.',
-    ),
-    const OnboardingPage(
-      icon: Icons.search,
-      title: 'Oson qidiring',
-      description:
-          'Marka, model, narx va boshqa parametrlar bo\'yicha kerakli avtomobilni toping.',
-    ),
-    const OnboardingPage(
-      icon: Icons.chat_bubble_outline,
-      title: 'Bevosita aloqa',
-      description:
-          'Sotuvchi bilan to\'g\'ridan-to\'g\'ri bog\'laning va savdo qiling.',
-    ),
-  ];
+  // Translations are resolved at build time so locale switches take effect
+  // without rebuilding the controller.
+  List<OnboardingPage> get _pages => [
+        OnboardingPage(
+          icon: Icons.video_library_outlined,
+          title: 'auth.onboarding_screen.page1_title'.tr(),
+          description: 'auth.onboarding_screen.page1_description'.tr(),
+        ),
+        OnboardingPage(
+          icon: Icons.search,
+          title: 'auth.onboarding_screen.page2_title'.tr(),
+          description: 'auth.onboarding_screen.page2_description'.tr(),
+        ),
+        OnboardingPage(
+          icon: Icons.chat_bubble_outline,
+          title: 'auth.onboarding_screen.page3_title'.tr(),
+          description: 'auth.onboarding_screen.page3_description'.tr(),
+        ),
+      ];
 
   void _nextPage() {
     if (_currentPage < _pages.length - 1) {
@@ -78,7 +78,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               child: TextButton(
                 onPressed: _completeOnboarding,
                 child: Text(
-                  'O\'tkazib yuborish',
+                  'auth.onboarding_screen.skip'.tr(),
                   style: AppTypography.labelLarge(context).copyWith(
                     color: AppColors.textSecondaryOf(context),
                   ),
@@ -118,8 +118,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               padding: AppSpacing.screenPaddingHorizontal,
               child: PrimaryButton(
                 text: _currentPage == _pages.length - 1
-                    ? 'Boshlash'
-                    : 'Keyingi',
+                    ? 'auth.onboarding_screen.start'.tr()
+                    : 'auth.onboarding_screen.next'.tr(),
                 onPressed: _nextPage,
               ),
             ),

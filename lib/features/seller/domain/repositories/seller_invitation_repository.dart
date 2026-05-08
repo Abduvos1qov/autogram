@@ -1,7 +1,7 @@
 import 'package:dartz/dartz.dart';
 
 import '../../../../core/errors/failures.dart';
-import '../../../../core/services/permission_service.dart';
+import '../entities/member_role.dart';
 import '../entities/seller_invitation.dart';
 
 /// Seller invitation repository interface

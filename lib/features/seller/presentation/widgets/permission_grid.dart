@@ -1,9 +1,11 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/services/permission_service.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../di/injection.dart';
 
 /// Grid display of permissions for a given [MemberRole].
 ///
@@ -26,7 +28,7 @@ class PermissionGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final permissionService = PermissionService();
+    final permissionService = sl<PermissionService>();
     final granted =
         customPermissions ?? permissionService.getPermissionsForRole(role);
 
@@ -69,7 +71,7 @@ class _PermissionItem extends StatelessWidget {
         AppSpacing.gapHorizontalXs,
         Flexible(
           child: Text(
-            permission.label,
+            permission.labelKey.tr(),
             style: AppTypography.bodySmall(context).copyWith(
               color: isGranted ? AppColors.textPrimaryOf(context) : AppColors.grey500,
             ),

@@ -38,7 +38,105 @@
     "full_name": "To'liq ism",
     "full_name_hint": "Ism familiyangiz",
     "continue": "Davom etish",
-    "logout_confirm": "Haqiqatan ham chiqmoqchimisiz?"
+    "logout_confirm": "Haqiqatan ham chiqmoqchimisiz?",
+
+    "login_screen": {
+      "title": "Hisobingizga\nkiring",
+      "subtitle": "Kirish uchun email va parolingizni kiriting",
+      "email_label": "Email",
+      "email_hint": "email@example.com",
+      "password_label": "Parol",
+      "password_hint": "Parolingizni kiriting",
+      "password_required": "Parolni kiriting",
+      "forgot_password": "Parolni unutdingizmi?",
+      "submit": "Kirish",
+      "or_divider": "Yoki",
+      "no_account": "Hisobingiz yo'qmi? ",
+      "register_link": "Ro'yxatdan o'tish"
+    },
+
+    "register_screen": {
+      "title": "Ro'yxatdan o'tish",
+      "subtitle": "Davom etish uchun hisob yarating!",
+      "full_name_label": "To'liq ism",
+      "full_name_hint": "Ismingizni kiriting",
+      "email_label": "Email",
+      "email_hint": "email@example.com",
+      "dob_label": "Tug'ilgan sana (ixtiyoriy)",
+      "dob_hint": "KK/OO/YYYY",
+      "phone_label": "Telefon raqami (ixtiyoriy)",
+      "phone_hint": "+998 XX XXX XX XX",
+      "password_label": "Parol",
+      "password_hint": "Kuchli parol kiriting",
+      "confirm_password_label": "Parolni tasdiqlash",
+      "confirm_password_hint": "Parolni qayta kiriting",
+      "submit": "Ro'yxatdan o'tish",
+      "have_account": "Hisobingiz bormi? ",
+      "login_link": "Kirish"
+    },
+
+    "verification_screen": {
+      "app_bar_title": "Email tasdiqlash",
+      "title": "Tasdiqlash kodi",
+      "subtitle_prefix": "Tasdiqlash kodini ",
+      "subtitle_suffix": " manziliga yubordik",
+      "submit": "Tasdiqlash",
+      "resend_label": "Kodni qayta yuborish",
+      "resend_in": "Qayta yuborish: {seconds}s",
+      "resent_snackbar": "Tasdiqlash kodi qayta yuborildi"
+    },
+
+    "username_screen": {
+      "title": "Username tanlang",
+      "subtitle": "Boshqa foydalanuvchilar sizni shu nom bilan topishi mumkin",
+      "label": "Username",
+      "hint": "username",
+      "helper": "Faqat harflar, raqamlar va pastki chiziq. Kamida 3 belgi.",
+      "submit": "Davom etish",
+      "already_taken": "Bu username allaqachon band"
+    },
+
+    "forgot_password_screen": {
+      "step1_title": "Parolni tiklash",
+      "step1_subtitle": "Email manzilingizni kiriting, biz sizga tasdiqlash kodini yuboramiz",
+      "step1_email_label": "Email",
+      "step1_email_hint": "email@example.com",
+      "step1_submit": "Kodni yuborish",
+      "step1_back_to_login": "Kirishga qaytish",
+      "step2_title": "Tasdiqlash kodi",
+      "step2_subtitle_prefix": "Tasdiqlash kodini ",
+      "step2_subtitle_suffix": " manziliga yubordik",
+      "step2_submit": "Tasdiqlash",
+      "step2_resend_label": "Kodni qayta yuborish",
+      "step2_resend_in": "Qayta yuborish: {seconds}s",
+      "step2_resent_snackbar": "Tasdiqlash kodi qayta yuborildi",
+      "step3_title": "Yangi parol",
+      "step3_subtitle": "Yangi parolingizni kiriting",
+      "step3_new_password_label": "Yangi parol",
+      "step3_new_password_hint": "Kuchli parol kiriting",
+      "step3_confirm_password_label": "Parolni tasdiqlash",
+      "step3_confirm_password_hint": "Parolni qayta kiriting",
+      "step3_submit": "Parolni saqlash",
+      "success_title": "Parol yangilandi!",
+      "success_message": "Parolingiz muvaffaqiyatli yangilandi. Endi yangi parol bilan kirishingiz mumkin.",
+      "success_submit": "Kirishga o'tish"
+    },
+
+    "onboarding_screen": {
+      "skip": "O'tkazib yuborish",
+      "next": "Keyingi",
+      "start": "Boshlash",
+      "page1_title": "Video bilan tanishtiring",
+      "page1_description": "Avtomobilingizni video orqali ko'rsating. Xaridorlar uni Reels formatida ko'rishadi.",
+      "page2_title": "Oson qidiring",
+      "page2_description": "Marka, model, narx va boshqa parametrlar bo'yicha kerakli avtomobilni toping.",
+      "page3_title": "Bevosita aloqa",
+      "page3_description": "Sotuvchi bilan to'g'ridan-to'g'ri bog'laning va savdo qiling."
+    },
+
+    "splash_screen": {
+      "tagline": "Avtomobillar dunyosi"
+    }
   },
 
   "home": {
@@ -122,7 +220,166 @@
     "verified": "Tasdiqlangan",
     "location": "Joylashuv",
     "contact": "Bog'lanish",
-    "working_hours": "Ish vaqti"
+    "working_hours": "Ish vaqti",
+
+    "upgrade_screen": {
+      "app_bar_title": "Sotuvchi bo'lish",
+      "title": "Biznes turini tanlang",
+      "subtitle": "Sizning faoliyat turingizni tanlang"
+    },
+
+    "business_info_screen": {
+      "app_bar_title": "Biznes ma'lumotlari",
+      "title": "Biznes haqida",
+      "subtitle": "Biznesingiz haqida ma'lumot kiriting",
+      "business_name_label": "Biznes nomi",
+      "business_name_hint": "Masalan: Avtosalon Premium",
+      "business_name_required": "Biznes nomini kiriting",
+      "business_name_min_length": "Nom kamida 3 ta belgidan iborat bo'lishi kerak",
+      "description_label": "Tavsif (ixtiyoriy)",
+      "description_hint": "Biznesingiz haqida qisqacha",
+      "city_label": "Shahar (ixtiyoriy)",
+      "city_hint": "Masalan: Toshkent",
+      "address_label": "Manzil (ixtiyoriy)",
+      "address_hint": "Aniq manzil",
+      "phone_label": "Telefon raqami (ixtiyoriy)",
+      "phone_hint": "+998 90 123 45 67",
+      "submit": "Davom etish"
+    },
+
+    "plan_selection": {
+      "app_bar_title": "Tarif tanlash",
+      "title": "Tarifni tanlang",
+      "subtitle": "Keyinroq tarifni o'zgartirishingiz mumkin",
+      "billing_monthly": "Oylik",
+      "billing_yearly": "Yillik (-17%)",
+      "info_text": "Bepul tarifdan boshlang va kerak bo'lganda yangilang",
+      "next_payment_notice": "Keyingi sahifada to'lovni amalga oshirasiz",
+      "free_button": "Bepul boshlash",
+      "enterprise_button": "Bog'lanish",
+      "default_button": "Davom etish",
+      "enterprise_dialog_title": "Enterprise tarifi",
+      "enterprise_dialog_message": "Enterprise tarifi narxi va shartlari kelishiladi. Bizning shaxsiy menejer siz bilan bog'lanadi.",
+      "enterprise_dialog_close": "Yopish",
+      "enterprise_dialog_contact": "Bog'lanish",
+      "enterprise_contact_placeholder": "Bog'lanish link tez orada qo'shiladi"
+    },
+
+    "upgrade_success_screen": {
+      "title": "Tabriklaymiz!",
+      "subtitle": "Siz endi Autogram sotuvchisisiz.\nE'lonlaringizni joylashni boshlang!",
+      "go_home": "Bosh sahifaga",
+      "go_profile": "Profilga qaytish"
+    },
+
+    "team_members_screen": {
+      "app_bar_title": "Jamoa",
+      "empty_title": "Jamoa a'zolari yo'q",
+      "empty_message": "Xodimlarni taklif qiling va jamoangizni boshqaring",
+      "members_section": "A'zolar",
+      "pending_section": "Kutilayotgan taklifnomalar",
+      "load_error": "Xatolik yuz berdi"
+    },
+
+    "add_member_screen": {
+      "app_bar_title": "Xodim qo'shish",
+      "email_label": "Email manzili",
+      "email_hint": "xodim@example.com",
+      "email_required": "Email kiriting",
+      "email_invalid": "Noto'g'ri email format",
+      "role_label": "Rolni tanlang",
+      "submit": "Taklifnoma yuborish",
+      "default_success": "Taklifnoma yuborildi"
+    },
+
+    "member_detail_screen": {
+      "app_bar_title": "Xodim ma'lumotlari",
+      "not_found": "A'zo topilmadi",
+      "role_section": "Rol",
+      "permissions_section": "Ruxsatlar",
+      "info_section": "Ma'lumotlar",
+      "info_joined": "Qo'shilgan sana",
+      "info_invited": "Taklif qilingan",
+      "info_updated": "Yangilangan",
+      "remove_button": "Xodimni o'chirish",
+      "remove_dialog_title": "Xodimni o'chirish",
+      "remove_dialog_message": "{name}ni jamoadan o'chirmoqchimisiz?\nBu amalni bekor qilib bo'lmaydi.",
+      "remove_dialog_cancel": "Bekor qilish",
+      "remove_dialog_confirm": "O'chirish",
+      "default_success": "Muvaffaqiyatli"
+    },
+
+    "activity_log_screen": {
+      "app_bar_title": "Faoliyat tarixi",
+      "filter_all": "Barchasi",
+      "filter_listings": "E'lonlar",
+      "filter_members": "Xodimlar",
+      "filter_settings": "Sozlamalar"
+    },
+
+    "plans": {
+      "free": {
+        "label": "Bepul",
+        "audience": "Shaxsiy sotuvchi",
+        "analytics": "Asosiy"
+      },
+      "pro": {
+        "label": "Pro",
+        "audience": "Kichik-o'rta diler (3-5 xodim)",
+        "analytics": "Kengaytirilgan"
+      },
+      "premium": {
+        "label": "Premium",
+        "audience": "Yirik avtosalon (10-20 xodim)",
+        "analytics": "Premium"
+      },
+      "enterprise": {
+        "label": "Enterprise",
+        "audience": "Tarmoq avtosalonlar (30+ xodim, bir nechta filial)",
+        "analytics": "Premium+"
+      }
+    },
+
+    "business_types": {
+      "individual": {
+        "label": "Jismoniy shaxs",
+        "description": "Shaxsiy avtomobillarni sotish"
+      },
+      "dealer": {
+        "label": "Diler",
+        "description": "Avtomobil savdosi bilan shug'ullanish"
+      },
+      "showroom": {
+        "label": "Avtosalon",
+        "description": "Rasmiy avtosalon yoki ko'rgazma zali"
+      }
+    },
+
+    "permissions": {
+      "create_listing": "E'lon yaratish",
+      "manage_listings": "E'lonlarni boshqarish",
+      "boost_listing": "E'lonlarni targ'ib qilish",
+      "view_analytics": "Analitikani ko'rish",
+      "manage_members": "Xodimlarni boshqarish",
+      "manage_settings": "Sozlamalarni boshqarish",
+      "manage_kpi": "KPI boshqarish",
+      "chat_with_buyers": "Xaridorlar bilan chat"
+    },
+
+    "ui": {
+      "current_badge": "Joriy",
+      "popular_badge": "Tavsiya etiladi",
+      "unlimited_listings": "Cheksiz e'lonlar",
+      "listings_count": "{count} ta e'lon",
+      "negotiable": "Kelishiladi",
+      "free_price": "Bepul",
+      "price_per_month": "/oy",
+      "price_per_year": "/yil",
+      "load_more": "Ko'proq yuklash",
+      "no_activity": "Faoliyat tarixi yo'q",
+      "days_remaining": "{days} kun qoldi",
+      "cancel_invitation_tooltip": "Bekor qilish"
+    }
   },
 
   "chat": {
@@ -188,7 +445,67 @@
     "server": "Server xatosi",
     "unknown": "Noma'lum xato",
     "auth": "Avtorizatsiya xatosi",
-    "not_found": "Topilmadi"
+    "not_found": "Topilmadi",
+    "payment_create_failed": "To'lov yaratib bo'lmadi",
+    "payment_status_failed": "To'lov holatini tekshirib bo'lmadi",
+    "payment_gateway_unavailable": "To'lov tizimi mavjud emas"
+  },
+
+  "payment": {
+    "title": "To'lov",
+    "summary_title": "Sotib olishingiz",
+    "plan_label": "Tarif",
+    "billing_cycle": "To'lov davri",
+    "monthly": "Oylik",
+    "yearly": "Yillik",
+    "additional_seats": "Qo'shimcha xodimlar",
+    "subtotal": "Jami",
+    "total": "Yakuniy summa",
+    "currency_uzs": "so'm",
+    "currency_usd": "$",
+    "gateway_select": "To'lov usuli",
+    "gateway_click": "Click",
+    "gateway_payme": "Payme",
+    "gateway_octobank": "Octobank",
+    "pay_button": "To'lash",
+    "cancel_button": "Bekor qilish",
+    "webview_title": "Click to'lov",
+    "processing": "To'lov tekshirilmoqda...",
+    "success_title": "To'lov muvaffaqiyatli",
+    "success_message": "Tariffingiz faollashtirildi",
+    "failed_title": "To'lov amalga oshmadi",
+    "failed_message": "Iltimos, qaytadan urinib ko'ring",
+    "cancelled_title": "To'lov bekor qilindi",
+    "back_to_plans": "Tariflarga qaytish",
+    "retry": "Qaytadan urinish",
+    "view_subscription": "Obunani ko'rish",
+    "exit_confirm_title": "To'lovdan voz kechmoqchimisiz?",
+    "exit_confirm_message": "Hozirgi to'lov bekor qilinadi.",
+    "exit_confirm_yes": "Ha, bekor qilish",
+    "exit_confirm_no": "Yo'q, davom etish"
+  },
+
+  "seats": {
+    "title": "Xodim joylari",
+    "current_seats": "Joriy joylar",
+    "used": "ishlatilgan",
+    "available": "bo'sh",
+    "unlimited": "Cheksiz joylar",
+    "buy_more": "Qo'shimcha sotib olish",
+    "quantity": "Miqdor",
+    "price_per_seat": "Bir joy uchun (oyiga)",
+    "monthly_total": "Oylik jami",
+    "no_additional_seats": "Qo'shimcha joylar yo'q",
+    "purchase_button": "Sotib olish",
+    "free_locked_title": "Bepul tarif",
+    "free_locked_message": "Bepul tarif'da qo'shimcha joy sotib olish mumkin emas. Pro tarifga yangilang.",
+    "upgrade_to_pro": "Pro'ga yangilash",
+    "enterprise_title": "Enterprise tarif",
+    "enterprise_message": "Qo'shimcha joylar uchun shaxsiy menejeringizga murojaat qiling.",
+    "contact_manager": "Bog'lanish",
+    "contact_placeholder": "Tez orada — menejeringiz siz bilan bog'lanadi.",
+    "unlimited_title": "Cheksiz joylar",
+    "unlimited_message": "Sizning tarifingizda cheksiz xodim joylari mavjud."
   },
 
   "sort_options": {
@@ -262,18 +579,26 @@
     "expires_in": "{days} kun qoldi",
     "expired": "Muddati o'tgan",
     "roles": {
-      "owner": "Egasi",
-      "admin": "Administrator",
-      "manager": "Menejer",
-      "marketing": "Marketing",
-      "viewer": "Ko'ruvchi"
-    },
-    "role_descriptions": {
-      "owner": "Barcha ruxsatlarga ega",
-      "admin": "Jamoa va sozlamalarni boshqaradi",
-      "manager": "E'lonlar va savdoni boshqaradi",
-      "marketing": "E'lonlarni yaratish va tahrirlash",
-      "viewer": "Faqat ko'rish ruxsati"
+      "owner": {
+        "label": "Egasi",
+        "description": "Barcha huquqlarga ega, tizimni to'liq boshqaradi"
+      },
+      "admin": {
+        "label": "Administrator",
+        "description": "Xodimlar va e'lonlarni boshqaradi"
+      },
+      "manager": {
+        "label": "Sotuv menejeri",
+        "description": "E'lonlar yaratadi va xaridorlar bilan muloqot qiladi"
+      },
+      "marketing": {
+        "label": "Marketing",
+        "description": "E'lonlarni targ'ib qiladi va analitikani ko'radi"
+      },
+      "viewer": {
+        "label": "Ko'ruvchi",
+        "description": "Faqat analitika va statistikani ko'radi"
+      }
     }
   },
 

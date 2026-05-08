@@ -2,8 +2,8 @@ import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 
 import '../../../../core/errors/failures.dart';
-import '../../../../core/services/permission_service.dart';
 import '../../../../core/usecases/usecase.dart';
+import '../entities/member_role.dart';
 import '../entities/seller_member.dart';
 import '../repositories/seller_member_repository.dart';
 

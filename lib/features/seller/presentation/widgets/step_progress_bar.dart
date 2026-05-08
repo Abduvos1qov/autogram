@@ -1,39 +1,9 @@
-import 'package:flutter/material.dart';
+/// Re-export of the canonical [StepProgressBar] from the core widgets barrel.
+///
+/// The widget was promoted to `lib/core/widgets/feedback/step_progress_bar.dart`
+/// so it can be shared between the seller upgrade flow and the auth
+/// (forgot-password) flow. This file is preserved as a thin re-export to keep
+/// existing seller imports working while parallel work proceeds elsewhere.
+library;
 
-import '../../../../core/theme/app_colors.dart';
-
-/// Reusable step progress bar for multi-step flows
-
-class StepProgressBar extends StatelessWidget {
-  final int currentStep;
-  final int totalSteps;
-
-  const StepProgressBar({
-    super.key,
-    required this.currentStep,
-    this.totalSteps = 3,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: List.generate(totalSteps, (index) {
-        final isCompleted = index < currentStep;
-        final isCurrent = index == currentStep;
-
-        return Expanded(
-          child: Container(
-            margin: EdgeInsets.only(right: index < totalSteps - 1 ? 8 : 0),
-            height: 4,
-            decoration: BoxDecoration(
-              color: isCompleted || isCurrent
-                  ? AppColors.primary
-                  : AppColors.grey200,
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
-        );
-      }),
-    );
-  }
-}
+export '../../../../core/widgets/feedback/step_progress_bar.dart';

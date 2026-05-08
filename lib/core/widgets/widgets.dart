@@ -16,6 +16,7 @@ export 'feedback/loading_indicator.dart';
 export 'feedback/error_view.dart';
 export 'feedback/empty_view.dart';
 export 'feedback/shimmer_loading.dart';
+export 'feedback/step_progress_bar.dart';
 
 // Media
 export 'media/cached_image.dart';

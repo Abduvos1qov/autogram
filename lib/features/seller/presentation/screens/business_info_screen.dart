@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -8,6 +9,7 @@ import '../../../../core/theme/app_typography.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/buttons/primary_button.dart';
 import '../../../../core/widgets/inputs/app_text_field.dart';
+import '../../../../navigation/route_names.dart';
 import '../bloc/seller_bloc.dart';
 import '../bloc/seller_event.dart';
 import '../bloc/seller_state.dart';
@@ -71,7 +73,7 @@ class _BusinessInfoScreenState extends State<BusinessInfoScreen> {
           previous.currentStep != current.currentStep,
       listener: (context, state) {
         if (state.currentStep == 2) {
-          context.push('/upgrade/plan-selection');
+          context.push(RoutePaths.upgradePlanSelection);
         }
       },
       builder: (context, state) {
@@ -81,7 +83,7 @@ class _BusinessInfoScreenState extends State<BusinessInfoScreen> {
               icon: const Icon(Icons.arrow_back),
               onPressed: () => context.pop(),
             ),
-            title: const Text('Biznes ma\'lumotlari'),
+            title: Text('seller.business_info_screen.app_bar_title'.tr()),
           ),
           body: SafeArea(
             child: Column(
@@ -100,12 +102,12 @@ class _BusinessInfoScreenState extends State<BusinessInfoScreen> {
 
                           // Header
                           Text(
-                            'Biznes haqida',
+                            'seller.business_info_screen.title'.tr(),
                             style: AppTypography.headlineSmall(context),
                           ),
                           AppSpacing.gapVerticalSm,
                           Text(
-                            'Biznesingiz haqida ma\'lumot kiriting',
+                            'seller.business_info_screen.subtitle'.tr(),
                             style: AppTypography.bodyMedium(context).copyWith(
                               color: AppColors.textSecondaryOf(context),
                             ),
@@ -115,17 +117,17 @@ class _BusinessInfoScreenState extends State<BusinessInfoScreen> {
                           // Business name
                           AppTextField(
                             controller: _businessNameController,
-                            label: 'Biznes nomi',
-                            hint: 'Masalan: Avtosalon Premium',
+                            label: 'seller.business_info_screen.business_name_label'.tr(),
+                            hint: 'seller.business_info_screen.business_name_hint'.tr(),
                             textCapitalization: TextCapitalization.words,
                             textInputAction: TextInputAction.next,
                             prefixIcon: const Icon(Icons.business_outlined),
                             validator: (value) {
                               if (value == null || value.trim().isEmpty) {
-                                return 'Biznes nomini kiriting';
+                                return 'seller.business_info_screen.business_name_required'.tr();
                               }
                               if (value.trim().length < 3) {
-                                return 'Nom kamida 3 ta belgidan iborat bo\'lishi kerak';
+                                return 'seller.business_info_screen.business_name_min_length'.tr();
                               }
                               return null;
                             },
@@ -136,8 +138,8 @@ class _BusinessInfoScreenState extends State<BusinessInfoScreen> {
                           // Description
                           AppTextField(
                             controller: _descriptionController,
-                            label: 'Tavsif (ixtiyoriy)',
-                            hint: 'Biznesingiz haqida qisqacha',
+                            label: 'seller.business_info_screen.description_label'.tr(),
+                            hint: 'seller.business_info_screen.description_hint'.tr(),
                             maxLines: 3,
                             textCapitalization: TextCapitalization.sentences,
                             textInputAction: TextInputAction.next,
@@ -148,8 +150,8 @@ class _BusinessInfoScreenState extends State<BusinessInfoScreen> {
                           // City
                           AppTextField(
                             controller: _cityController,
-                            label: 'Shahar (ixtiyoriy)',
-                            hint: 'Masalan: Toshkent',
+                            label: 'seller.business_info_screen.city_label'.tr(),
+                            hint: 'seller.business_info_screen.city_hint'.tr(),
                             textCapitalization: TextCapitalization.words,
                             textInputAction: TextInputAction.next,
                             prefixIcon: const Icon(Icons.location_city_outlined),
@@ -159,8 +161,8 @@ class _BusinessInfoScreenState extends State<BusinessInfoScreen> {
                           // Address
                           AppTextField(
                             controller: _addressController,
-                            label: 'Manzil (ixtiyoriy)',
-                            hint: 'Aniq manzil',
+                            label: 'seller.business_info_screen.address_label'.tr(),
+                            hint: 'seller.business_info_screen.address_hint'.tr(),
                             textCapitalization: TextCapitalization.sentences,
                             textInputAction: TextInputAction.next,
                             prefixIcon: const Icon(Icons.location_on_outlined),
@@ -170,8 +172,8 @@ class _BusinessInfoScreenState extends State<BusinessInfoScreen> {
                           // Phone
                           AppTextField(
                             controller: _phoneController,
-                            label: 'Telefon raqami (ixtiyoriy)',
-                            hint: '+998 90 123 45 67',
+                            label: 'seller.business_info_screen.phone_label'.tr(),
+                            hint: 'seller.business_info_screen.phone_hint'.tr(),
                             keyboardType: TextInputType.phone,
                             textInputAction: TextInputAction.done,
                             prefixIcon: const Icon(Icons.phone_outlined),
@@ -191,7 +193,7 @@ class _BusinessInfoScreenState extends State<BusinessInfoScreen> {
                 Container(
                   padding: AppSpacing.screenPadding,
                   decoration: BoxDecoration(
-                    color: AppColors.surface,
+                    color: AppColors.surfaceOf(context),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withValues(alpha: 0.05),
@@ -201,7 +203,7 @@ class _BusinessInfoScreenState extends State<BusinessInfoScreen> {
                     ],
                   ),
                   child: PrimaryButton(
-                    text: 'Davom etish',
+                    text: 'seller.business_info_screen.submit'.tr(),
                     onPressed: _continue,
                   ),
                 ),

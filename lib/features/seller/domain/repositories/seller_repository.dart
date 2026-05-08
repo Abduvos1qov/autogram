@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:equatable/equatable.dart';
 
 import '../../../../core/errors/failures.dart';
 import '../entities/seller_profile.dart';
@@ -57,13 +58,21 @@ abstract class SellerRepository {
   Future<Either<Failure, bool>> canBecomeASeller();
 }
 
-class SubscriptionPlanDetails {
+class SubscriptionPlanDetails extends Equatable {
   final SubscriptionPlan plan;
   final String name;
   final String description;
   final int monthlyPrice;
   final int yearlyPrice;
   final int maxListings;
+  final int seatsLimit;
+  final int additionalSeatPrice;
+  final bool hasVerifiedBadge;
+  final String analyticsLevel;
+  final bool hasPersonalManager;
+  final bool hasApiAccess;
+  final bool hasMultiBranch;
+  final String audienceLabel;
   final List<String> features;
   final bool isPopular;
 
@@ -74,7 +83,35 @@ class SubscriptionPlanDetails {
     required this.monthlyPrice,
     required this.yearlyPrice,
     required this.maxListings,
+    required this.seatsLimit,
+    required this.additionalSeatPrice,
+    required this.hasVerifiedBadge,
+    required this.analyticsLevel,
+    required this.hasPersonalManager,
+    required this.hasApiAccess,
+    required this.hasMultiBranch,
+    required this.audienceLabel,
     required this.features,
     this.isPopular = false,
   });
+
+  @override
+  List<Object?> get props => [
+        plan,
+        name,
+        description,
+        monthlyPrice,
+        yearlyPrice,
+        maxListings,
+        seatsLimit,
+        additionalSeatPrice,
+        hasVerifiedBadge,
+        analyticsLevel,
+        hasPersonalManager,
+        hasApiAccess,
+        hasMultiBranch,
+        audienceLabel,
+        features,
+        isPopular,
+      ];
 }

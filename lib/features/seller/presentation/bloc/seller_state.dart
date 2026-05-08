@@ -92,9 +92,13 @@ class SellerState extends Equatable {
     );
   }
 
-  SellerState resetUpgradeFlow() {
+  /// Resets the upgrade flow fields (selected business type, business name,
+  /// description, address, contact phones, selected plan, current step).
+  /// Preserves [status], [profile] and [plans] by default — pass [status] to
+  /// override (e.g. when called immediately after a successful upgrade).
+  SellerState resetUpgradeFlow({SellerStatus? status}) {
     return SellerState(
-      status: status,
+      status: status ?? this.status,
       profile: profile,
       plans: plans,
     );

@@ -47,6 +47,11 @@ abstract class RouteNames {
   static const addMember = 'addMember';
   static const memberDetail = 'memberDetail';
   static const activityLog = 'activityLog';
+
+  // Payment routes
+  static const payment = 'payment';
+  static const paymentWebView = 'payment-webview';
+  static const seatManagement = 'seat-management';
 }
 
 abstract class RoutePaths {
@@ -96,4 +101,9 @@ abstract class RoutePaths {
   static const addMember = '/team/add';
   static const memberDetail = '/team/member/:id';
   static const activityLog = '/team/activity';
+
+  // Payment paths
+  static const payment = '/payment';
+  static const paymentWebView = '/payment/webview';
+  static const seatManagement = '/seller/seats';
 }

@@ -61,17 +61,6 @@ abstract class AuthRepository {
   /// Get current authenticated user
   Future<Either<Failure, User?>> getCurrentUser();
 
-  /// Update user profile
-  Future<Either<Failure, User>> updateProfile({
-    String? fullName,
-    String? email,
-    String? avatarUrl,
-    String? language,
-  });
-
-  /// Upgrade to seller role
-  Future<Either<Failure, User>> upgradeToSeller();
-
   /// Logout
   Future<Either<Failure, void>> logout();
 

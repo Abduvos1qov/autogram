@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -104,14 +105,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
                     // Title
                     Text(
-                      'Hisobingizga\nkiring',
+                      'auth.login_screen.title'.tr(),
                       style: AppTypography.displayMedium(context).copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     AppSpacing.gapVerticalSm,
                     Text(
-                      'Kirish uchun email va parolingizni kiriting',
+                      'auth.login_screen.subtitle'.tr(),
                       style: AppTypography.bodyMedium(context).copyWith(
                         color: AppColors.textSecondaryOf(context),
                       ),
@@ -122,8 +123,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     // Email field
                     AppTextField(
                       controller: _emailController,
-                      label: 'Email',
-                      hint: 'email@example.com',
+                      label: 'auth.login_screen.email_label'.tr(),
+                      hint: 'auth.login_screen.email_hint'.tr(),
                       keyboardType: TextInputType.emailAddress,
                       textInputAction: TextInputAction.next,
                       validator: Validators.validateEmailRequired,
@@ -135,8 +136,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     // Password field
                     AppTextField(
                       controller: _passwordController,
-                      label: 'Parol',
-                      hint: 'Parolingizni kiriting',
+                      label: 'auth.login_screen.password_label'.tr(),
+                      hint: 'auth.login_screen.password_hint'.tr(),
                       obscureText: _obscurePassword,
                       keyboardType: TextInputType.visiblePassword,
                       textInputAction: TextInputAction.done,
@@ -155,7 +156,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Parolni kiriting';
+                          return 'auth.login_screen.password_required'.tr();
                         }
                         return null;
                       },
@@ -175,7 +176,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                         ),
                         child: Text(
-                          'Parolni unutdingizmi?',
+                          'auth.login_screen.forgot_password'.tr(),
                           style: AppTypography.bodySmall(context).copyWith(
                             color: AppColors.primary,
                             fontWeight: FontWeight.w600,
@@ -188,7 +189,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                     // Login button
                     PrimaryButton(
-                      text: 'Kirish',
+                      text: 'auth.login_screen.submit'.tr(),
                       onPressed: isLoading ? null : _submit,
                       isLoading: isLoading,
                       height: 52,
@@ -203,7 +204,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: Text(
-                            'Yoki',
+                            'auth.login_screen.or_divider'.tr(),
                             style: AppTypography.bodySmall(context).copyWith(
                               color: AppColors.textSecondaryOf(context),
                             ),
@@ -221,7 +222,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            'Hisobingiz yo\'qmi? ',
+                            'auth.login_screen.no_account'.tr(),
                             style: AppTypography.bodyMedium(context).copyWith(
                               color: AppColors.textSecondaryOf(context),
                             ),
@@ -229,7 +230,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           GestureDetector(
                             onTap: () => context.push(RoutePaths.register),
                             child: Text(
-                              'Ro\'yxatdan o\'tish',
+                              'auth.login_screen.register_link'.tr(),
                               style: AppTypography.bodyMedium(context).copyWith(
                                 color: AppColors.primary,
                                 fontWeight: FontWeight.w600,

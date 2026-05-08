@@ -5,14 +5,15 @@ import '../../../../core/utils/logger.dart';
 import '../../domain/usecases/check_username_usecase.dart';
 import '../../domain/usecases/get_current_user_usecase.dart';
 import '../../domain/usecases/logout_usecase.dart';
+import '../../domain/usecases/resend_signup_otp_usecase.dart';
 import '../../domain/usecases/reset_password_usecase.dart';
 import '../../domain/usecases/reset_password_with_new_usecase.dart';
+import '../../domain/usecases/send_forgot_password_otp_usecase.dart';
 import '../../domain/usecases/set_username_usecase.dart';
 import '../../domain/usecases/sign_in_usecase.dart';
 import '../../domain/usecases/sign_up_usecase.dart';
 import '../../domain/usecases/verify_forgot_password_otp_usecase.dart';
 import '../../domain/usecases/verify_otp_usecase.dart';
-import '../../domain/repositories/auth_repository.dart';
 import 'auth_event.dart';
 import 'auth_state.dart';
 
@@ -29,7 +30,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final VerifyOtpUseCase _verifyOtpUseCase;
   final VerifyForgotPasswordOtpUseCase _verifyForgotPasswordOtpUseCase;
   final ResetPasswordWithNewUseCase _resetPasswordWithNewUseCase;
-  final AuthRepository _authRepository;
+  final ResendSignUpOtpUseCase _resendSignUpOtpUseCase;
+  final SendForgotPasswordOtpUseCase _sendForgotPasswordOtpUseCase;
 
   AuthBloc({
     required SignInUseCase signInUseCase,
@@ -42,7 +44,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     required VerifyOtpUseCase verifyOtpUseCase,
     required VerifyForgotPasswordOtpUseCase verifyForgotPasswordOtpUseCase,
     required ResetPasswordWithNewUseCase resetPasswordWithNewUseCase,
-    required AuthRepository authRepository,
+    required ResendSignUpOtpUseCase resendSignUpOtpUseCase,
+    required SendForgotPasswordOtpUseCase sendForgotPasswordOtpUseCase,
   })  : _signInUseCase = signInUseCase,
         _signUpUseCase = signUpUseCase,
         _resetPasswordUseCase = resetPasswordUseCase,
@@ -53,7 +56,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         _verifyOtpUseCase = verifyOtpUseCase,
         _verifyForgotPasswordOtpUseCase = verifyForgotPasswordOtpUseCase,
         _resetPasswordWithNewUseCase = resetPasswordWithNewUseCase,
-        _authRepository = authRepository,
+        _resendSignUpOtpUseCase = resendSignUpOtpUseCase,
+        _sendForgotPasswordOtpUseCase = sendForgotPasswordOtpUseCase,
         super(const AuthInitial()) {
     on<AuthCheckRequested>(_onCheckRequested);
     on<AuthSignInRequested>(_onSignInRequested);
@@ -104,7 +108,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     AppLogger.info('Signing in: ${event.email}');
-    emit(const AuthLoading(message: 'Kirilmoqda...'));
+    emit(const AuthLoading());
 
     final result = await _signInUseCase(
       SignInParams(email: event.email, password: event.password),
@@ -131,7 +135,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     AppLogger.info('Signing up: ${event.email}');
-    emit(const AuthLoading(message: 'Ro\'yxatdan o\'tilmoqda...'));
+    emit(const AuthLoading());
 
     final result = await _signUpUseCase(
       SignUpParams(
@@ -160,7 +164,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     AppLogger.info('Verifying OTP for: ${event.email}');
-    emit(const AuthLoading(message: 'Tekshirilmoqda...'));
+    emit(const AuthLoading());
 
     final result = await _verifyOtpUseCase(
       VerifyOtpParams(email: event.email, otp: event.otp),
@@ -184,7 +188,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     AppLogger.info('Resending OTP to: ${event.email}');
 
-    final result = await _authRepository.resendSignUpOtp(email: event.email);
+    final result = await _resendSignUpOtpUseCase(
+      ResendSignUpOtpParams(email: event.email),
+    );
 
     result.fold(
       (failure) {
@@ -203,10 +209,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     AppLogger.info('Sending forgot password OTP to: ${event.email}');
-    emit(const AuthLoading(message: 'Yuborilmoqda...'));
+    emit(const AuthLoading());
 
-    final result =
-        await _authRepository.sendForgotPasswordOtp(email: event.email);
+    final result = await _sendForgotPasswordOtpUseCase(
+      SendForgotPasswordOtpParams(email: event.email),
+    );
 
     result.fold(
       (failure) {
@@ -225,7 +232,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     AppLogger.info('Verifying forgot password OTP for: ${event.email}');
-    emit(const AuthLoading(message: 'Tekshirilmoqda...'));
+    emit(const AuthLoading());
 
     final result = await _verifyForgotPasswordOtpUseCase(
       VerifyForgotPasswordOtpParams(email: event.email, otp: event.otp),
@@ -249,7 +256,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     AppLogger.info('Setting new password for: ${event.email}');
-    emit(const AuthLoading(message: 'Saqlanmoqda...'));
+    emit(const AuthLoading());
 
     final result = await _resetPasswordWithNewUseCase(
       ResetPasswordWithNewParams(
@@ -275,7 +282,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     AppLogger.info('Resetting password for: ${event.email}');
-    emit(const AuthLoading(message: 'Yuborilmoqda...'));
+    emit(const AuthLoading());
 
     final result = await _resetPasswordUseCase(
       ResetPasswordParams(email: event.email),
@@ -298,7 +305,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     AppLogger.info('Setting username: ${event.username}');
-    emit(const AuthLoading(message: 'Saqlanmoqda...'));
+    emit(const AuthLoading());
 
     // First check availability
     final checkResult = await _checkUsernameUseCase(
@@ -312,9 +319,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     if (!isAvailable) {
       AppLogger.warning('Username not available: ${event.username}');
+      // Failure message is a translation key — UI resolves via .tr().
       emit(const AuthError(
         failure: ServerFailure(
-          message: 'Bu username allaqachon band',
+          message: 'auth.username_screen.already_taken',
         ),
       ));
       return;
@@ -341,7 +349,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     AppLogger.info('Logging out');
-    emit(const AuthLoading(message: 'Chiqilmoqda...'));
+    emit(const AuthLoading());
 
     final result = await _logoutUseCase();
 

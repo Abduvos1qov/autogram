@@ -38,7 +38,105 @@
     "full_name": "Полное имя",
     "full_name_hint": "Ваше имя и фамилия",
     "continue": "Продолжить",
-    "logout_confirm": "Вы действительно хотите выйти?"
+    "logout_confirm": "Вы действительно хотите выйти?",
+
+    "login_screen": {
+      "title": "Войдите в\nаккаунт",
+      "subtitle": "Введите email и пароль для входа",
+      "email_label": "Email",
+      "email_hint": "email@example.com",
+      "password_label": "Пароль",
+      "password_hint": "Введите пароль",
+      "password_required": "Введите пароль",
+      "forgot_password": "Забыли пароль?",
+      "submit": "Войти",
+      "or_divider": "Или",
+      "no_account": "Нет аккаунта? ",
+      "register_link": "Регистрация"
+    },
+
+    "register_screen": {
+      "title": "Регистрация",
+      "subtitle": "Создайте аккаунт, чтобы продолжить!",
+      "full_name_label": "Полное имя",
+      "full_name_hint": "Введите ваше имя",
+      "email_label": "Email",
+      "email_hint": "email@example.com",
+      "dob_label": "Дата рождения (необязательно)",
+      "dob_hint": "ДД/ММ/ГГГГ",
+      "phone_label": "Номер телефона (необязательно)",
+      "phone_hint": "+998 XX XXX XX XX",
+      "password_label": "Пароль",
+      "password_hint": "Введите надёжный пароль",
+      "confirm_password_label": "Подтвердить пароль",
+      "confirm_password_hint": "Повторите пароль",
+      "submit": "Регистрация",
+      "have_account": "Есть аккаунт? ",
+      "login_link": "Войти"
+    },
+
+    "verification_screen": {
+      "app_bar_title": "Подтверждение email",
+      "title": "Код подтверждения",
+      "subtitle_prefix": "Мы отправили код подтверждения на ",
+      "subtitle_suffix": "",
+      "submit": "Подтвердить",
+      "resend_label": "Отправить код повторно",
+      "resend_in": "Повторная отправка: {seconds}с",
+      "resent_snackbar": "Код подтверждения отправлен повторно"
+    },
+
+    "username_screen": {
+      "title": "Выберите username",
+      "subtitle": "Другие пользователи смогут найти вас по этому имени",
+      "label": "Username",
+      "hint": "username",
+      "helper": "Только буквы, цифры и нижнее подчёркивание. Минимум 3 символа.",
+      "submit": "Продолжить",
+      "already_taken": "Этот username уже занят"
+    },
+
+    "forgot_password_screen": {
+      "step1_title": "Восстановление пароля",
+      "step1_subtitle": "Введите ваш email, мы отправим вам код подтверждения",
+      "step1_email_label": "Email",
+      "step1_email_hint": "email@example.com",
+      "step1_submit": "Отправить код",
+      "step1_back_to_login": "Вернуться ко входу",
+      "step2_title": "Код подтверждения",
+      "step2_subtitle_prefix": "Мы отправили код подтверждения на ",
+      "step2_subtitle_suffix": "",
+      "step2_submit": "Подтвердить",
+      "step2_resend_label": "Отправить код повторно",
+      "step2_resend_in": "Повторная отправка: {seconds}с",
+      "step2_resent_snackbar": "Код подтверждения отправлен повторно",
+      "step3_title": "Новый пароль",
+      "step3_subtitle": "Введите ваш новый пароль",
+      "step3_new_password_label": "Новый пароль",
+      "step3_new_password_hint": "Введите надёжный пароль",
+      "step3_confirm_password_label": "Подтвердить пароль",
+      "step3_confirm_password_hint": "Повторите пароль",
+      "step3_submit": "Сохранить пароль",
+      "success_title": "Пароль обновлён!",
+      "success_message": "Ваш пароль успешно обновлён. Теперь вы можете войти с новым паролем.",
+      "success_submit": "Перейти ко входу"
+    },
+
+    "onboarding_screen": {
+      "skip": "Пропустить",
+      "next": "Далее",
+      "start": "Начать",
+      "page1_title": "Покажите видео",
+      "page1_description": "Покажите свой автомобиль через видео. Покупатели увидят его в формате Reels.",
+      "page2_title": "Простой поиск",
+      "page2_description": "Найдите нужный автомобиль по марке, модели, цене и другим параметрам.",
+      "page3_title": "Прямая связь",
+      "page3_description": "Связывайтесь с продавцом напрямую и совершайте сделки."
+    },
+
+    "splash_screen": {
+      "tagline": "Мир автомобилей"
+    }
   },
 
   "home": {
@@ -122,7 +220,166 @@
     "verified": "Проверен",
     "location": "Местоположение",
     "contact": "Контакты",
-    "working_hours": "Время работы"
+    "working_hours": "Время работы",
+
+    "upgrade_screen": {
+      "app_bar_title": "Стать продавцом",
+      "title": "Выберите тип бизнеса",
+      "subtitle": "Выберите тип вашей деятельности"
+    },
+
+    "business_info_screen": {
+      "app_bar_title": "Информация о бизнесе",
+      "title": "О бизнесе",
+      "subtitle": "Введите информацию о вашем бизнесе",
+      "business_name_label": "Название бизнеса",
+      "business_name_hint": "Например: Автосалон Premium",
+      "business_name_required": "Введите название бизнеса",
+      "business_name_min_length": "Название должно содержать не менее 3 символов",
+      "description_label": "Описание (необязательно)",
+      "description_hint": "Кратко о вашем бизнесе",
+      "city_label": "Город (необязательно)",
+      "city_hint": "Например: Ташкент",
+      "address_label": "Адрес (необязательно)",
+      "address_hint": "Точный адрес",
+      "phone_label": "Номер телефона (необязательно)",
+      "phone_hint": "+998 90 123 45 67",
+      "submit": "Продолжить"
+    },
+
+    "plan_selection": {
+      "app_bar_title": "Выбор тарифа",
+      "title": "Выберите тариф",
+      "subtitle": "Тариф можно изменить позже",
+      "billing_monthly": "Месячный",
+      "billing_yearly": "Годовой (-17%)",
+      "info_text": "Начните с бесплатного тарифа и обновите при необходимости",
+      "next_payment_notice": "На следующей странице вы произведёте оплату",
+      "free_button": "Начать бесплатно",
+      "enterprise_button": "Связаться",
+      "default_button": "Продолжить",
+      "enterprise_dialog_title": "Тариф Enterprise",
+      "enterprise_dialog_message": "Цена и условия тарифа Enterprise обсуждаются индивидуально. Наш персональный менеджер свяжется с вами.",
+      "enterprise_dialog_close": "Закрыть",
+      "enterprise_dialog_contact": "Связаться",
+      "enterprise_contact_placeholder": "Ссылка для связи будет добавлена в ближайшее время"
+    },
+
+    "upgrade_success_screen": {
+      "title": "Поздравляем!",
+      "subtitle": "Теперь вы продавец Autogram.\nНачните размещать ваши объявления!",
+      "go_home": "На главную",
+      "go_profile": "Вернуться в профиль"
+    },
+
+    "team_members_screen": {
+      "app_bar_title": "Команда",
+      "empty_title": "Участников команды нет",
+      "empty_message": "Пригласите сотрудников и управляйте командой",
+      "members_section": "Участники",
+      "pending_section": "Ожидающие приглашения",
+      "load_error": "Произошла ошибка"
+    },
+
+    "add_member_screen": {
+      "app_bar_title": "Добавить сотрудника",
+      "email_label": "Email адрес",
+      "email_hint": "сотрудник@example.com",
+      "email_required": "Введите email",
+      "email_invalid": "Неверный формат email",
+      "role_label": "Выберите роль",
+      "submit": "Отправить приглашение",
+      "default_success": "Приглашение отправлено"
+    },
+
+    "member_detail_screen": {
+      "app_bar_title": "Информация о сотруднике",
+      "not_found": "Участник не найден",
+      "role_section": "Роль",
+      "permissions_section": "Разрешения",
+      "info_section": "Информация",
+      "info_joined": "Дата присоединения",
+      "info_invited": "Приглашён",
+      "info_updated": "Обновлён",
+      "remove_button": "Удалить сотрудника",
+      "remove_dialog_title": "Удалить сотрудника",
+      "remove_dialog_message": "Удалить {name} из команды?\nЭто действие нельзя отменить.",
+      "remove_dialog_cancel": "Отмена",
+      "remove_dialog_confirm": "Удалить",
+      "default_success": "Успешно"
+    },
+
+    "activity_log_screen": {
+      "app_bar_title": "История активности",
+      "filter_all": "Все",
+      "filter_listings": "Объявления",
+      "filter_members": "Сотрудники",
+      "filter_settings": "Настройки"
+    },
+
+    "plans": {
+      "free": {
+        "label": "Бесплатный",
+        "audience": "Частный продавец",
+        "analytics": "Базовая"
+      },
+      "pro": {
+        "label": "Pro",
+        "audience": "Малый-средний дилер (3-5 сотрудников)",
+        "analytics": "Расширенная"
+      },
+      "premium": {
+        "label": "Premium",
+        "audience": "Крупный автосалон (10-20 сотрудников)",
+        "analytics": "Premium"
+      },
+      "enterprise": {
+        "label": "Enterprise",
+        "audience": "Сетевые автосалоны (30+ сотрудников, несколько филиалов)",
+        "analytics": "Premium+"
+      }
+    },
+
+    "business_types": {
+      "individual": {
+        "label": "Физическое лицо",
+        "description": "Продажа личных автомобилей"
+      },
+      "dealer": {
+        "label": "Дилер",
+        "description": "Деятельность по продаже автомобилей"
+      },
+      "showroom": {
+        "label": "Автосалон",
+        "description": "Официальный автосалон или выставочный зал"
+      }
+    },
+
+    "permissions": {
+      "create_listing": "Создание объявления",
+      "manage_listings": "Управление объявлениями",
+      "boost_listing": "Продвижение объявлений",
+      "view_analytics": "Просмотр аналитики",
+      "manage_members": "Управление сотрудниками",
+      "manage_settings": "Управление настройками",
+      "manage_kpi": "Управление KPI",
+      "chat_with_buyers": "Чат с покупателями"
+    },
+
+    "ui": {
+      "current_badge": "Текущий",
+      "popular_badge": "Рекомендуем",
+      "unlimited_listings": "Безлимитные объявления",
+      "listings_count": "{count} объявлений",
+      "negotiable": "По договорённости",
+      "free_price": "Бесплатно",
+      "price_per_month": "/мес",
+      "price_per_year": "/год",
+      "load_more": "Загрузить ещё",
+      "no_activity": "Нет истории активности",
+      "days_remaining": "Осталось {days} дн.",
+      "cancel_invitation_tooltip": "Отменить"
+    }
   },
 
   "chat": {
@@ -188,7 +445,67 @@
     "server": "Ошибка сервера",
     "unknown": "Неизвестная ошибка",
     "auth": "Ошибка авторизации",
-    "not_found": "Не найдено"
+    "not_found": "Не найдено",
+    "payment_create_failed": "Не удалось создать платёж",
+    "payment_status_failed": "Не удалось проверить статус платежа",
+    "payment_gateway_unavailable": "Платёжная система недоступна"
+  },
+
+  "payment": {
+    "title": "Оплата",
+    "summary_title": "Ваша покупка",
+    "plan_label": "Тариф",
+    "billing_cycle": "Период оплаты",
+    "monthly": "Месячный",
+    "yearly": "Годовой",
+    "additional_seats": "Дополнительные сотрудники",
+    "subtotal": "Промежуточный итог",
+    "total": "Итоговая сумма",
+    "currency_uzs": "сум",
+    "currency_usd": "$",
+    "gateway_select": "Способ оплаты",
+    "gateway_click": "Click",
+    "gateway_payme": "Payme",
+    "gateway_octobank": "Octobank",
+    "pay_button": "Оплатить",
+    "cancel_button": "Отменить",
+    "webview_title": "Оплата Click",
+    "processing": "Проверка оплаты...",
+    "success_title": "Оплата успешно",
+    "success_message": "Ваш тариф активирован",
+    "failed_title": "Оплата не удалась",
+    "failed_message": "Пожалуйста, попробуйте снова",
+    "cancelled_title": "Оплата отменена",
+    "back_to_plans": "Назад к тарифам",
+    "retry": "Повторить",
+    "view_subscription": "Посмотреть подписку",
+    "exit_confirm_title": "Отменить оплату?",
+    "exit_confirm_message": "Текущая оплата будет отменена.",
+    "exit_confirm_yes": "Да, отменить",
+    "exit_confirm_no": "Нет, продолжить"
+  },
+
+  "seats": {
+    "title": "Места сотрудников",
+    "current_seats": "Текущие места",
+    "used": "использовано",
+    "available": "свободно",
+    "unlimited": "Неограниченные места",
+    "buy_more": "Купить дополнительно",
+    "quantity": "Количество",
+    "price_per_seat": "За одно место (в месяц)",
+    "monthly_total": "Месячный итог",
+    "no_additional_seats": "Дополнительных мест нет",
+    "purchase_button": "Купить",
+    "free_locked_title": "Бесплатный тариф",
+    "free_locked_message": "На бесплатном тарифе нельзя добавлять места. Перейдите на Pro.",
+    "upgrade_to_pro": "Перейти на Pro",
+    "enterprise_title": "Тариф Enterprise",
+    "enterprise_message": "Для дополнительных мест обратитесь к вашему персональному менеджеру.",
+    "contact_manager": "Связаться",
+    "contact_placeholder": "Скоро — ваш менеджер свяжется с вами.",
+    "unlimited_title": "Неограниченные места",
+    "unlimited_message": "Ваш тариф включает неограниченное количество мест."
   },
 
   "sort_options": {
@@ -262,18 +579,26 @@
     "expires_in": "Осталось {days} дней",
     "expired": "Истёк",
     "roles": {
-      "owner": "Владелец",
-      "admin": "Администратор",
-      "manager": "Менеджер",
-      "marketing": "Маркетинг",
-      "viewer": "Наблюдатель"
-    },
-    "role_descriptions": {
-      "owner": "Полный доступ ко всему",
-      "admin": "Управление командой и настройками",
-      "manager": "Управление объявлениями и продажами",
-      "marketing": "Создание и редактирование объявлений",
-      "viewer": "Только просмотр"
+      "owner": {
+        "label": "Владелец",
+        "description": "Полный доступ ко всем функциям, полное управление системой"
+      },
+      "admin": {
+        "label": "Администратор",
+        "description": "Управление сотрудниками и объявлениями"
+      },
+      "manager": {
+        "label": "Менеджер по продажам",
+        "description": "Создаёт объявления и общается с покупателями"
+      },
+      "marketing": {
+        "label": "Маркетинг",
+        "description": "Продвигает объявления и просматривает аналитику"
+      },
+      "viewer": {
+        "label": "Наблюдатель",
+        "description": "Только просмотр аналитики и статистики"
+      }
     }
   },
 

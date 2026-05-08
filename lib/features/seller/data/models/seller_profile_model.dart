@@ -26,6 +26,8 @@ class SellerProfileModel extends SellerProfile {
     required super.subscriptionPlan,
     super.subscriptionExpiresAt,
     required super.stats,
+    super.seatsUsed,
+    super.additionalSeats,
     required super.createdAt,
     required super.updatedAt,
   });
@@ -61,6 +63,8 @@ class SellerProfileModel extends SellerProfile {
           ? DateTime.parse(json['subscription_expires_at'] as String)
           : null,
       stats: SellerStatsModel.fromJson(json),
+      seatsUsed: json['seats_used'] as int? ?? 0,
+      additionalSeats: json['additional_seats'] as int? ?? 0,
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
     );
@@ -112,6 +116,8 @@ class SellerProfileModel extends SellerProfile {
       'verified_at': verifiedAt?.toIso8601String(),
       'subscription_type': subscriptionPlan.name,
       'subscription_expires_at': subscriptionExpiresAt?.toIso8601String(),
+      'seats_used': seatsUsed,
+      'additional_seats': additionalSeats,
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
     };
@@ -141,6 +147,8 @@ class SellerProfileModel extends SellerProfile {
       subscriptionPlan: entity.subscriptionPlan,
       subscriptionExpiresAt: entity.subscriptionExpiresAt,
       stats: entity.stats,
+      seatsUsed: entity.seatsUsed,
+      additionalSeats: entity.additionalSeats,
       createdAt: entity.createdAt,
       updatedAt: entity.updatedAt,
     );

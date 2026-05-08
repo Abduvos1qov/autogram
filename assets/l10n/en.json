@@ -38,7 +38,105 @@
     "full_name": "Full name",
     "full_name_hint": "Your name",
     "continue": "Continue",
-    "logout_confirm": "Are you sure you want to logout?"
+    "logout_confirm": "Are you sure you want to logout?",
+
+    "login_screen": {
+      "title": "Sign in to\nyour account",
+      "subtitle": "Enter your email and password to sign in",
+      "email_label": "Email",
+      "email_hint": "email@example.com",
+      "password_label": "Password",
+      "password_hint": "Enter your password",
+      "password_required": "Enter your password",
+      "forgot_password": "Forgot password?",
+      "submit": "Sign in",
+      "or_divider": "Or",
+      "no_account": "Don't have an account? ",
+      "register_link": "Register"
+    },
+
+    "register_screen": {
+      "title": "Register",
+      "subtitle": "Create an account to continue!",
+      "full_name_label": "Full name",
+      "full_name_hint": "Enter your name",
+      "email_label": "Email",
+      "email_hint": "email@example.com",
+      "dob_label": "Date of birth (optional)",
+      "dob_hint": "DD/MM/YYYY",
+      "phone_label": "Phone number (optional)",
+      "phone_hint": "+998 XX XXX XX XX",
+      "password_label": "Password",
+      "password_hint": "Enter a strong password",
+      "confirm_password_label": "Confirm password",
+      "confirm_password_hint": "Re-enter your password",
+      "submit": "Register",
+      "have_account": "Already have an account? ",
+      "login_link": "Sign in"
+    },
+
+    "verification_screen": {
+      "app_bar_title": "Email verification",
+      "title": "Verification code",
+      "subtitle_prefix": "We sent a verification code to ",
+      "subtitle_suffix": "",
+      "submit": "Verify",
+      "resend_label": "Resend code",
+      "resend_in": "Resend in: {seconds}s",
+      "resent_snackbar": "Verification code resent"
+    },
+
+    "username_screen": {
+      "title": "Choose a username",
+      "subtitle": "Other users will be able to find you with this name",
+      "label": "Username",
+      "hint": "username",
+      "helper": "Only letters, numbers and underscore. Minimum 3 characters.",
+      "submit": "Continue",
+      "already_taken": "This username is already taken"
+    },
+
+    "forgot_password_screen": {
+      "step1_title": "Reset password",
+      "step1_subtitle": "Enter your email and we'll send you a verification code",
+      "step1_email_label": "Email",
+      "step1_email_hint": "email@example.com",
+      "step1_submit": "Send code",
+      "step1_back_to_login": "Back to sign in",
+      "step2_title": "Verification code",
+      "step2_subtitle_prefix": "We sent a verification code to ",
+      "step2_subtitle_suffix": "",
+      "step2_submit": "Verify",
+      "step2_resend_label": "Resend code",
+      "step2_resend_in": "Resend in: {seconds}s",
+      "step2_resent_snackbar": "Verification code resent",
+      "step3_title": "New password",
+      "step3_subtitle": "Enter your new password",
+      "step3_new_password_label": "New password",
+      "step3_new_password_hint": "Enter a strong password",
+      "step3_confirm_password_label": "Confirm password",
+      "step3_confirm_password_hint": "Re-enter your password",
+      "step3_submit": "Save password",
+      "success_title": "Password updated!",
+      "success_message": "Your password has been updated successfully. You can now sign in with your new password.",
+      "success_submit": "Go to sign in"
+    },
+
+    "onboarding_screen": {
+      "skip": "Skip",
+      "next": "Next",
+      "start": "Get started",
+      "page1_title": "Show with video",
+      "page1_description": "Showcase your car through video. Buyers will see it in Reels format.",
+      "page2_title": "Easy search",
+      "page2_description": "Find the right car by brand, model, price and other parameters.",
+      "page3_title": "Direct contact",
+      "page3_description": "Connect with sellers directly and make deals."
+    },
+
+    "splash_screen": {
+      "tagline": "World of cars"
+    }
   },
 
   "home": {
@@ -122,7 +220,166 @@
     "verified": "Verified",
     "location": "Location",
     "contact": "Contact",
-    "working_hours": "Working hours"
+    "working_hours": "Working hours",
+
+    "upgrade_screen": {
+      "app_bar_title": "Become a seller",
+      "title": "Choose business type",
+      "subtitle": "Select your activity type"
+    },
+
+    "business_info_screen": {
+      "app_bar_title": "Business details",
+      "title": "About business",
+      "subtitle": "Enter information about your business",
+      "business_name_label": "Business name",
+      "business_name_hint": "e.g., Premium Auto",
+      "business_name_required": "Enter business name",
+      "business_name_min_length": "Name must be at least 3 characters",
+      "description_label": "Description (optional)",
+      "description_hint": "A short description of your business",
+      "city_label": "City (optional)",
+      "city_hint": "e.g., Tashkent",
+      "address_label": "Address (optional)",
+      "address_hint": "Exact address",
+      "phone_label": "Phone number (optional)",
+      "phone_hint": "+998 90 123 45 67",
+      "submit": "Continue"
+    },
+
+    "plan_selection": {
+      "app_bar_title": "Choose plan",
+      "title": "Select your plan",
+      "subtitle": "You can change your plan later",
+      "billing_monthly": "Monthly",
+      "billing_yearly": "Yearly (-17%)",
+      "info_text": "Start with the free plan and upgrade when needed",
+      "next_payment_notice": "You will complete payment on the next page",
+      "free_button": "Start free",
+      "enterprise_button": "Contact us",
+      "default_button": "Continue",
+      "enterprise_dialog_title": "Enterprise plan",
+      "enterprise_dialog_message": "Enterprise pricing and terms are negotiable. Our personal manager will contact you.",
+      "enterprise_dialog_close": "Close",
+      "enterprise_dialog_contact": "Contact",
+      "enterprise_contact_placeholder": "Contact link will be added soon"
+    },
+
+    "upgrade_success_screen": {
+      "title": "Congratulations!",
+      "subtitle": "You are now an Autogram seller.\nStart posting your listings!",
+      "go_home": "Go to home",
+      "go_profile": "Back to profile"
+    },
+
+    "team_members_screen": {
+      "app_bar_title": "Team",
+      "empty_title": "No team members yet",
+      "empty_message": "Invite employees and manage your team",
+      "members_section": "Members",
+      "pending_section": "Pending invitations",
+      "load_error": "An error occurred"
+    },
+
+    "add_member_screen": {
+      "app_bar_title": "Add member",
+      "email_label": "Email address",
+      "email_hint": "member@example.com",
+      "email_required": "Enter email",
+      "email_invalid": "Invalid email format",
+      "role_label": "Select role",
+      "submit": "Send invitation",
+      "default_success": "Invitation sent"
+    },
+
+    "member_detail_screen": {
+      "app_bar_title": "Member details",
+      "not_found": "Member not found",
+      "role_section": "Role",
+      "permissions_section": "Permissions",
+      "info_section": "Information",
+      "info_joined": "Joined date",
+      "info_invited": "Invited on",
+      "info_updated": "Last updated",
+      "remove_button": "Remove member",
+      "remove_dialog_title": "Remove member",
+      "remove_dialog_message": "Remove {name} from the team?\nThis action cannot be undone.",
+      "remove_dialog_cancel": "Cancel",
+      "remove_dialog_confirm": "Remove",
+      "default_success": "Success"
+    },
+
+    "activity_log_screen": {
+      "app_bar_title": "Activity history",
+      "filter_all": "All",
+      "filter_listings": "Listings",
+      "filter_members": "Members",
+      "filter_settings": "Settings"
+    },
+
+    "plans": {
+      "free": {
+        "label": "Free",
+        "audience": "Individual seller",
+        "analytics": "Basic"
+      },
+      "pro": {
+        "label": "Pro",
+        "audience": "Small to mid-size dealer (3-5 staff)",
+        "analytics": "Extended"
+      },
+      "premium": {
+        "label": "Premium",
+        "audience": "Large showroom (10-20 staff)",
+        "analytics": "Premium"
+      },
+      "enterprise": {
+        "label": "Enterprise",
+        "audience": "Network showrooms (30+ staff, multiple branches)",
+        "analytics": "Premium+"
+      }
+    },
+
+    "business_types": {
+      "individual": {
+        "label": "Individual",
+        "description": "Selling personal vehicles"
+      },
+      "dealer": {
+        "label": "Dealer",
+        "description": "Vehicle trading business"
+      },
+      "showroom": {
+        "label": "Showroom",
+        "description": "Official dealership or exhibition hall"
+      }
+    },
+
+    "permissions": {
+      "create_listing": "Create listing",
+      "manage_listings": "Manage listings",
+      "boost_listing": "Boost listings",
+      "view_analytics": "View analytics",
+      "manage_members": "Manage members",
+      "manage_settings": "Manage settings",
+      "manage_kpi": "Manage KPI",
+      "chat_with_buyers": "Chat with buyers"
+    },
+
+    "ui": {
+      "current_badge": "Current",
+      "popular_badge": "Recommended",
+      "unlimited_listings": "Unlimited listings",
+      "listings_count": "{count} listings",
+      "negotiable": "Custom",
+      "free_price": "Free",
+      "price_per_month": "/mo",
+      "price_per_year": "/yr",
+      "load_more": "Load more",
+      "no_activity": "No activity history",
+      "days_remaining": "{days} days remaining",
+      "cancel_invitation_tooltip": "Cancel"
+    }
   },
 
   "chat": {
@@ -188,7 +445,67 @@
     "server": "Server error",
     "unknown": "Unknown error",
     "auth": "Authentication error",
-    "not_found": "Not found"
+    "not_found": "Not found",
+    "payment_create_failed": "Could not create payment",
+    "payment_status_failed": "Could not check payment status",
+    "payment_gateway_unavailable": "Payment gateway unavailable"
+  },
+
+  "payment": {
+    "title": "Payment",
+    "summary_title": "Your purchase",
+    "plan_label": "Plan",
+    "billing_cycle": "Billing cycle",
+    "monthly": "Monthly",
+    "yearly": "Yearly",
+    "additional_seats": "Additional seats",
+    "subtotal": "Subtotal",
+    "total": "Total",
+    "currency_uzs": "UZS",
+    "currency_usd": "$",
+    "gateway_select": "Payment method",
+    "gateway_click": "Click",
+    "gateway_payme": "Payme",
+    "gateway_octobank": "Octobank",
+    "pay_button": "Pay",
+    "cancel_button": "Cancel",
+    "webview_title": "Click Payment",
+    "processing": "Verifying payment...",
+    "success_title": "Payment successful",
+    "success_message": "Your plan has been activated",
+    "failed_title": "Payment failed",
+    "failed_message": "Please try again",
+    "cancelled_title": "Payment cancelled",
+    "back_to_plans": "Back to plans",
+    "retry": "Retry",
+    "view_subscription": "View subscription",
+    "exit_confirm_title": "Cancel payment?",
+    "exit_confirm_message": "Your current payment will be cancelled.",
+    "exit_confirm_yes": "Yes, cancel",
+    "exit_confirm_no": "No, continue"
+  },
+
+  "seats": {
+    "title": "Team seats",
+    "current_seats": "Current seats",
+    "used": "used",
+    "available": "available",
+    "unlimited": "Unlimited seats",
+    "buy_more": "Buy more",
+    "quantity": "Quantity",
+    "price_per_seat": "Per seat (monthly)",
+    "monthly_total": "Monthly total",
+    "no_additional_seats": "No additional seats",
+    "purchase_button": "Purchase",
+    "free_locked_title": "Free plan",
+    "free_locked_message": "Additional seats are not available on the Free plan. Upgrade to Pro to add team members.",
+    "upgrade_to_pro": "Upgrade to Pro",
+    "enterprise_title": "Enterprise plan",
+    "enterprise_message": "For additional seats, please contact your dedicated account manager.",
+    "contact_manager": "Contact manager",
+    "contact_placeholder": "Coming soon — your manager will reach out shortly.",
+    "unlimited_title": "Unlimited seats",
+    "unlimited_message": "Your plan includes an unlimited number of team seats."
   },
 
   "sort_options": {
@@ -262,18 +579,26 @@
     "expires_in": "{days} days remaining",
     "expired": "Expired",
     "roles": {
-      "owner": "Owner",
-      "admin": "Administrator",
-      "manager": "Manager",
-      "marketing": "Marketing",
-      "viewer": "Viewer"
-    },
-    "role_descriptions": {
-      "owner": "Full access to everything",
-      "admin": "Manage team and settings",
-      "manager": "Manage listings and sales",
-      "marketing": "Create and edit listings",
-      "viewer": "View only access"
+      "owner": {
+        "label": "Owner",
+        "description": "Full access to all features, complete system control"
+      },
+      "admin": {
+        "label": "Administrator",
+        "description": "Manages team members and listings"
+      },
+      "manager": {
+        "label": "Sales manager",
+        "description": "Creates listings and communicates with buyers"
+      },
+      "marketing": {
+        "label": "Marketing",
+        "description": "Promotes listings and views analytics"
+      },
+      "viewer": {
+        "label": "Viewer",
+        "description": "Views analytics and statistics only"
+      }
     }
   },
 

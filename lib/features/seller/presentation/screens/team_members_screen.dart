@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -9,6 +10,7 @@ import '../../../../core/theme/app_typography.dart';
 import '../../../../core/widgets/feedback/empty_view.dart';
 import '../../../../core/widgets/feedback/error_view.dart';
 import '../../../../core/widgets/feedback/loading_indicator.dart';
+import '../../../../di/injection.dart';
 import '../bloc/team/team_bloc.dart';
 import '../bloc/team/team_event.dart';
 import '../bloc/team/team_state.dart';
@@ -46,7 +48,7 @@ class _TeamMembersScreenState extends State<TeamMembersScreen> {
             state.successMessage != null) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.successMessage!),
+              content: Text(state.successMessage!.tr()),
               backgroundColor: AppColors.success,
             ),
           );
@@ -69,7 +71,7 @@ class _TeamMembersScreenState extends State<TeamMembersScreen> {
               icon: const Icon(Icons.arrow_back),
               onPressed: () => context.pop(),
             ),
-            title: const Text('Jamoa'),
+            title: Text('seller.team_members_screen.app_bar_title'.tr()),
             actions: [
               if (canManage)
                 IconButton(
@@ -92,7 +94,7 @@ class _TeamMembersScreenState extends State<TeamMembersScreen> {
 
     if (state.hasError && state.members.isEmpty) {
       return ErrorView(
-        message: state.failure?.message ?? 'Xatolik yuz berdi',
+        message: state.failure?.message ?? 'seller.team_members_screen.load_error'.tr(),
         onRetry: () => context
             .read<TeamBloc>()
             .add(TeamLoadRequested(widget.sellerProfileId)),
@@ -102,8 +104,8 @@ class _TeamMembersScreenState extends State<TeamMembersScreen> {
     if (state.members.isEmpty && state.pendingInvitations.isEmpty) {
       return EmptyView(
         icon: Icons.people_outline,
-        title: 'Jamoa a\'zolari yo\'q',
-        message: 'Xodimlarni taklif qiling va jamoangizni boshqaring',
+        title: 'seller.team_members_screen.empty_title'.tr(),
+        message: 'seller.team_members_screen.empty_message'.tr(),
       );
     }
 
@@ -119,7 +121,7 @@ class _TeamMembersScreenState extends State<TeamMembersScreen> {
           // Members section
           if (state.members.isNotEmpty) ...[
             _buildSectionHeader(
-              'A\'zolar',
+              'seller.team_members_screen.members_section'.tr(),
               '${state.memberCount}',
             ),
             AppSpacing.gapVerticalSm,
@@ -138,7 +140,7 @@ class _TeamMembersScreenState extends State<TeamMembersScreen> {
           if (state.pendingInvitations.isNotEmpty && canManage) ...[
             AppSpacing.gapVerticalLg,
             _buildSectionHeader(
-              'Kutilayotgan taklifnomalar',
+              'seller.team_members_screen.pending_section'.tr(),
               '${state.invitationCount}',
             ),
             AppSpacing.gapVerticalSm,
@@ -187,7 +189,7 @@ class _TeamMembersScreenState extends State<TeamMembersScreen> {
   bool _canManageMembers(TeamState state) {
     final membership = state.currentMembership;
     if (membership == null) return false;
-    final permissionService = PermissionService();
+    final permissionService = sl<PermissionService>();
     return permissionService.hasPermission(
       membership.role,
       Permission.manageMembers,

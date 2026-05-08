@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -43,9 +44,11 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
     return BlocConsumer<TeamBloc, TeamState>(
       listener: (context, state) {
         if (state.status == TeamStatus.actionSuccess) {
+          final messageKey = state.successMessage ??
+              'seller.add_member_screen.default_success';
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.successMessage ?? 'Taklifnoma yuborildi'),
+              content: Text(messageKey.tr()),
               backgroundColor: AppColors.success,
             ),
           );
@@ -67,7 +70,7 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
               icon: const Icon(Icons.arrow_back),
               onPressed: () => context.pop(),
             ),
-            title: const Text('Xodim qo\'shish'),
+            title: Text('seller.add_member_screen.app_bar_title'.tr()),
           ),
           body: SafeArea(
             child: Padding(
@@ -79,22 +82,22 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
                   children: [
                     // Email input
                     Text(
-                      'Email manzili',
+                      'seller.add_member_screen.email_label'.tr(),
                       style: AppTypography.titleSmall(context),
                     ),
                     AppSpacing.gapVerticalSm,
                     AppTextField(
                       controller: _emailController,
-                      hint: 'xodim@example.com',
+                      hint: 'seller.add_member_screen.email_hint'.tr(),
                       keyboardType: TextInputType.emailAddress,
                       prefixIcon: const Icon(Icons.email_outlined),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Email kiriting';
+                          return 'seller.add_member_screen.email_required'.tr();
                         }
                         if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
                             .hasMatch(value)) {
-                          return 'Noto\'g\'ri email format';
+                          return 'seller.add_member_screen.email_invalid'.tr();
                         }
                         return null;
                       },
@@ -103,7 +106,7 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
 
                     // Role selection
                     Text(
-                      'Rolni tanlang',
+                      'seller.add_member_screen.role_label'.tr(),
                       style: AppTypography.titleSmall(context),
                     ),
                     AppSpacing.gapVerticalSm,
@@ -122,7 +125,7 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
                     // Submit button
                     AppSpacing.gapVerticalMd,
                     PrimaryButton(
-                      text: 'Taklifnoma yuborish',
+                      text: 'seller.add_member_screen.submit'.tr(),
                       onPressed: _canSubmit()
                           ? () => _onSubmit(context)
                           : null,

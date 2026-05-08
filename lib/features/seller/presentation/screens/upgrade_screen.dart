@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -5,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../navigation/route_names.dart';
 import '../../domain/entities/seller_profile.dart';
 import '../bloc/seller_bloc.dart';
 import '../bloc/seller_event.dart';
@@ -24,7 +26,7 @@ class UpgradeScreen extends StatelessWidget {
           previous.currentStep != current.currentStep,
       listener: (context, state) {
         if (state.currentStep == 1 && state.selectedBusinessType != null) {
-          context.push('/upgrade/business-info');
+          context.push(RoutePaths.upgradeBusinessInfo);
         }
       },
       builder: (context, state) {
@@ -37,7 +39,7 @@ class UpgradeScreen extends StatelessWidget {
                 context.pop();
               },
             ),
-            title: const Text('Sotuvchi bo\'lish'),
+            title: Text('seller.upgrade_screen.app_bar_title'.tr()),
           ),
           body: SafeArea(
             child: Padding(
@@ -51,12 +53,12 @@ class UpgradeScreen extends StatelessWidget {
 
                   // Header
                   Text(
-                    'Biznes turini tanlang',
+                    'seller.upgrade_screen.title'.tr(),
                     style: AppTypography.headlineSmall(context),
                   ),
                   AppSpacing.gapVerticalSm,
                   Text(
-                    'Sizning faoliyat turingizni tanlang',
+                    'seller.upgrade_screen.subtitle'.tr(),
                     style: AppTypography.bodyMedium(context).copyWith(
                       color: AppColors.textSecondaryOf(context),
                     ),

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -117,7 +118,7 @@ class _SplashScreenState extends State<SplashScreen>
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Avtomobillar dunyosi',
+                        'auth.splash_screen.tagline'.tr(),
                         style: AppTypography.bodyMedium(context).copyWith(
                           color: AppColors.white.withValues(alpha: 0.8),
                         ),

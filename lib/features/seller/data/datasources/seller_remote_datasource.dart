@@ -216,17 +216,32 @@ class SellerRemoteDataSourceImpl implements SellerRemoteDataSource {
           .order('price_monthly');
 
       return (response as List).map((json) {
+        final plan = SubscriptionPlan.fromString(json['type'] as String);
         return SubscriptionPlanDetails(
-          plan: SubscriptionPlan.fromString(json['type'] as String),
-          name: json['name'] as String,
-          description: json['description'] as String? ?? '',
-          monthlyPrice: json['price_monthly'] as int,
-          yearlyPrice: json['price_yearly'] as int,
-          maxListings: json['max_listings'] as int,
+          plan: plan,
+          name: json['name'] as String? ?? plan.label,
+          description: json['description'] as String? ?? plan.audienceLabel,
+          monthlyPrice: json['price_monthly'] as int? ?? plan.monthlyPrice,
+          yearlyPrice: json['price_yearly'] as int? ?? plan.yearlyPrice,
+          maxListings: json['max_listings'] as int? ?? plan.maxListings,
+          seatsLimit: json['seats_limit'] as int? ?? plan.seatsLimit,
+          additionalSeatPrice:
+              json['additional_seat_price'] as int? ?? plan.additionalSeatPrice,
+          hasVerifiedBadge:
+              json['has_verified_badge'] as bool? ?? plan.hasVerifiedBadge,
+          analyticsLevel:
+              json['analytics_level'] as String? ?? plan.analyticsLevel,
+          hasPersonalManager:
+              json['has_personal_manager'] as bool? ?? plan.hasPersonalManager,
+          hasApiAccess: json['has_api_access'] as bool? ?? plan.hasApiAccess,
+          hasMultiBranch:
+              json['has_multi_branch'] as bool? ?? plan.hasMultiBranch,
+          audienceLabel:
+              json['audience_label'] as String? ?? plan.audienceLabel,
           features: (json['features'] as List<dynamic>?)
                   ?.map((e) => e as String)
                   .toList() ??
-              [],
+              plan.features,
           isPopular: json['is_popular'] as bool? ?? false,
         );
       }).toList();
@@ -236,46 +251,29 @@ class SellerRemoteDataSourceImpl implements SellerRemoteDataSource {
     }
   }
 
+  /// Single source of truth — every detail is derived from [SubscriptionPlan].
+  /// Pro plan is flagged as popular ("Tavsiya etiladi") for conversion UX.
   List<SubscriptionPlanDetails> _getDefaultPlans() {
-    return [
-      SubscriptionPlanDetails(
-        plan: SubscriptionPlan.free,
-        name: 'Bepul',
-        description: 'Boshlash uchun ideal',
-        monthlyPrice: 0,
-        yearlyPrice: 0,
-        maxListings: 3,
-        features: SubscriptionPlan.free.features,
-      ),
-      SubscriptionPlanDetails(
-        plan: SubscriptionPlan.basic,
-        name: 'Boshlang\'ich',
-        description: 'Kichik biznes uchun',
-        monthlyPrice: 99000,
-        yearlyPrice: 999000,
-        maxListings: 10,
-        features: SubscriptionPlan.basic.features,
-      ),
-      SubscriptionPlanDetails(
-        plan: SubscriptionPlan.professional,
-        name: 'Professional',
-        description: 'Ko\'proq e\'lonlar va imkoniyatlar',
-        monthlyPrice: 299000,
-        yearlyPrice: 2999000,
-        maxListings: 50,
-        features: SubscriptionPlan.professional.features,
-        isPopular: true,
-      ),
-      SubscriptionPlanDetails(
-        plan: SubscriptionPlan.premium,
-        name: 'Premium',
-        description: 'Maksimal imkoniyatlar',
-        monthlyPrice: 599000,
-        yearlyPrice: 5999000,
-        maxListings: 999,
-        features: SubscriptionPlan.premium.features,
-      ),
-    ];
+    return SubscriptionPlan.values
+        .map((plan) => SubscriptionPlanDetails(
+              plan: plan,
+              name: plan.label,
+              description: plan.audienceLabel,
+              monthlyPrice: plan.monthlyPrice,
+              yearlyPrice: plan.yearlyPrice,
+              maxListings: plan.maxListings,
+              seatsLimit: plan.seatsLimit,
+              additionalSeatPrice: plan.additionalSeatPrice,
+              hasVerifiedBadge: plan.hasVerifiedBadge,
+              analyticsLevel: plan.analyticsLevel,
+              hasPersonalManager: plan.hasPersonalManager,
+              hasApiAccess: plan.hasApiAccess,
+              hasMultiBranch: plan.hasMultiBranch,
+              audienceLabel: plan.audienceLabel,
+              features: plan.features,
+              isPopular: plan == SubscriptionPlan.pro,
+            ))
+        .toList();
   }
 
   @override

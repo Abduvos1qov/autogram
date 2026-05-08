@@ -1,8 +1,10 @@
 import 'package:autogram/core/errors/failures.dart';
 import 'package:autogram/features/auth/domain/entities/user.dart';
 import 'package:autogram/features/auth/domain/usecases/check_username_usecase.dart';
+import 'package:autogram/features/auth/domain/usecases/resend_signup_otp_usecase.dart';
 import 'package:autogram/features/auth/domain/usecases/reset_password_usecase.dart';
 import 'package:autogram/features/auth/domain/usecases/reset_password_with_new_usecase.dart';
+import 'package:autogram/features/auth/domain/usecases/send_forgot_password_otp_usecase.dart';
 import 'package:autogram/features/auth/domain/usecases/set_username_usecase.dart';
 import 'package:autogram/features/auth/domain/usecases/sign_in_usecase.dart';
 import 'package:autogram/features/auth/domain/usecases/sign_up_usecase.dart';
@@ -31,7 +33,8 @@ void main() {
   late MockVerifyOtpUseCase mockVerifyOtp;
   late MockVerifyForgotPasswordOtpUseCase mockVerifyForgotPasswordOtp;
   late MockResetPasswordWithNewUseCase mockResetPasswordWithNew;
-  late MockAuthRepository mockAuthRepository;
+  late MockResendSignUpOtpUseCase mockResendSignUpOtp;
+  late MockSendForgotPasswordOtpUseCase mockSendForgotPasswordOtp;
 
   setUp(() {
     mockSignIn = MockSignInUseCase();
@@ -44,7 +47,8 @@ void main() {
     mockVerifyOtp = MockVerifyOtpUseCase();
     mockVerifyForgotPasswordOtp = MockVerifyForgotPasswordOtpUseCase();
     mockResetPasswordWithNew = MockResetPasswordWithNewUseCase();
-    mockAuthRepository = MockAuthRepository();
+    mockResendSignUpOtp = MockResendSignUpOtpUseCase();
+    mockSendForgotPasswordOtp = MockSendForgotPasswordOtpUseCase();
 
     authBloc = AuthBloc(
       signInUseCase: mockSignIn,
@@ -57,7 +61,8 @@ void main() {
       verifyOtpUseCase: mockVerifyOtp,
       verifyForgotPasswordOtpUseCase: mockVerifyForgotPasswordOtp,
       resetPasswordWithNewUseCase: mockResetPasswordWithNew,
-      authRepository: mockAuthRepository,
+      resendSignUpOtpUseCase: mockResendSignUpOtp,
+      sendForgotPasswordOtpUseCase: mockSendForgotPasswordOtp,
     );
   });
 
@@ -73,6 +78,8 @@ void main() {
         const VerifyForgotPasswordOtpParams(email: '', otp: ''));
     registerFallbackValue(
         const ResetPasswordWithNewParams(email: '', newPassword: ''));
+    registerFallbackValue(const ResendSignUpOtpParams(email: ''));
+    registerFallbackValue(const SendForgotPasswordOtpParams(email: ''));
   });
 
   tearDown(() {
@@ -305,9 +312,8 @@ void main() {
     blocTest<AuthBloc, AuthState>(
       'emits [AuthSignUpSuccess] on success',
       build: () {
-        when(() => mockAuthRepository.resendSignUpOtp(
-              email: any(named: 'email'),
-            )).thenAnswer((_) async => const Right(null));
+        when(() => mockResendSignUpOtp(any()))
+            .thenAnswer((_) async => const Right(null));
         return authBloc;
       },
       act: (bloc) => bloc.add(const AuthResendOtpRequested('test@test.com')),
@@ -319,10 +325,8 @@ void main() {
     blocTest<AuthBloc, AuthState>(
       'emits [AuthError] on failure',
       build: () {
-        when(() => mockAuthRepository.resendSignUpOtp(
-              email: any(named: 'email'),
-            )).thenAnswer(
-                (_) async => const Left(ServerFailure(message: 'error')));
+        when(() => mockResendSignUpOtp(any()))
+            .thenAnswer((_) async => const Left(ServerFailure(message: 'error')));
         return authBloc;
       },
       act: (bloc) => bloc.add(const AuthResendOtpRequested('test@test.com')),
@@ -338,9 +342,8 @@ void main() {
     blocTest<AuthBloc, AuthState>(
       'emits [AuthLoading, AuthForgotPasswordOtpSent] on success',
       build: () {
-        when(() => mockAuthRepository.sendForgotPasswordOtp(
-              email: any(named: 'email'),
-            )).thenAnswer((_) async => const Right(null));
+        when(() => mockSendForgotPasswordOtp(any()))
+            .thenAnswer((_) async => const Right(null));
         return authBloc;
       },
       act: (bloc) =>
@@ -354,10 +357,8 @@ void main() {
     blocTest<AuthBloc, AuthState>(
       'emits [AuthLoading, AuthError] on failure',
       build: () {
-        when(() => mockAuthRepository.sendForgotPasswordOtp(
-              email: any(named: 'email'),
-            )).thenAnswer(
-                (_) async => const Left(ServerFailure(message: 'error')));
+        when(() => mockSendForgotPasswordOtp(any()))
+            .thenAnswer((_) async => const Left(ServerFailure(message: 'error')));
         return authBloc;
       },
       act: (bloc) =>

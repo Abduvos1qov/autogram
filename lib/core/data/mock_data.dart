@@ -279,7 +279,7 @@ class MockData {
       workingHours: {},
       isVerified: true,
       verifiedAt: DateTime.now().subtract(const Duration(days: 90)),
-      subscriptionType: 'basic',
+      subscriptionType: 'pro',
       subscriptionExpiresAt: DateTime.now().add(const Duration(days: 30)),
       totalListings: 18,
       activeListings: 15,

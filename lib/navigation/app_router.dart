@@ -37,6 +37,7 @@ import '../features/seller/presentation/screens/activity_log_screen.dart';
 import '../features/seller/domain/entities/activity_log.dart';
 import '../features/settings/presentation/screens/about_screen.dart';
 import '../features/settings/presentation/screens/help_screen.dart';
+import '../features/payment/payment.dart';
 import 'navigation_shell.dart';
 import 'route_names.dart';
 
@@ -348,6 +349,32 @@ GoRouter createRouter(AuthBloc authBloc) {
             activities: activities,
           );
         },
+      ),
+
+      // Payment routes
+      GoRoute(
+        path: RoutePaths.payment,
+        name: RouteNames.payment,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) {
+          final request = state.extra as PaymentRequest;
+          return PaymentScreen(request: request);
+        },
+      ),
+      GoRoute(
+        path: RoutePaths.paymentWebView,
+        name: RouteNames.paymentWebView,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) {
+          final extra = state.extra as PaymentWebViewReady;
+          return PaymentWebViewScreen(state: extra);
+        },
+      ),
+      GoRoute(
+        path: RoutePaths.seatManagement,
+        name: RouteNames.seatManagement,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const SeatManagementScreen(),
       ),
     ],
   );

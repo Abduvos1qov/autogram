@@ -149,7 +149,7 @@ class TeamBloc extends Bloc<TeamEvent, TeamState> {
       },
       (updatedMember) {
         AppLogger.info(
-            'Member role updated: ${updatedMember.memberName} → ${event.role.label}');
+            'Member role updated: ${updatedMember.memberName} → ${event.role.value}');
         final updatedMembers = state.members.map((m) {
           return m.id == event.memberId ? updatedMember : m;
         }).toList();
@@ -157,13 +157,15 @@ class TeamBloc extends Bloc<TeamEvent, TeamState> {
         emit(state.copyWith(
           status: TeamStatus.actionSuccess,
           members: updatedMembers,
-          successMessage: 'Rol yangilandi',
+          successMessage: 'team.role_updated',
         ));
 
-        // Auto-log activity
+        // Auto-log activity. Description is plain English here so the activity
+        // log works regardless of the active locale; UI displays
+        // `activity.actionType.icon` + the plain description as a fallback.
         _logActivity(
           ActivityType.memberRoleChanged,
-          '${updatedMember.memberName} roli ${event.role.label} ga o\'zgartirildi',
+          'Member ${updatedMember.memberName} role changed to ${event.role.value}',
           metadata: {'member_id': event.memberId, 'new_role': event.role.value},
         );
       },
@@ -197,13 +199,13 @@ class TeamBloc extends Bloc<TeamEvent, TeamState> {
         emit(state.copyWith(
           status: TeamStatus.actionSuccess,
           members: updatedMembers,
-          successMessage: 'Xodim o\'chirildi',
+          successMessage: 'team.member_removed',
         ));
 
-        // Auto-log activity
+        // Auto-log activity (English description, see comment above).
         _logActivity(
           ActivityType.memberRemoved,
-          '${removedMember?.memberName ?? 'Xodim'} jamoadan o\'chirildi',
+          'Member ${removedMember?.memberName ?? 'Unknown'} removed from team',
           metadata: {'member_id': event.memberId},
         );
       },
@@ -243,13 +245,13 @@ class TeamBloc extends Bloc<TeamEvent, TeamState> {
         emit(state.copyWith(
           status: TeamStatus.actionSuccess,
           pendingInvitations: updatedInvitations,
-          successMessage: 'Taklifnoma yuborildi',
+          successMessage: 'team.invitation_sent',
         ));
 
-        // Auto-log activity
+        // Auto-log activity (English description).
         _logActivity(
           ActivityType.memberInvited,
-          '${event.email} ga taklifnoma yuborildi (${event.role.label})',
+          'Invitation sent to ${event.email} (${event.role.value})',
           metadata: {'email': event.email, 'role': event.role.value},
         );
       },
@@ -286,13 +288,13 @@ class TeamBloc extends Bloc<TeamEvent, TeamState> {
         emit(state.copyWith(
           status: TeamStatus.actionSuccess,
           pendingInvitations: updatedInvitations,
-          successMessage: 'Taklifnoma bekor qilindi',
+          successMessage: 'team.invitation_cancelled',
         ));
 
-        // Auto-log activity
+        // Auto-log activity (English description).
         _logActivity(
           ActivityType.invitationCancelled,
-          '${cancelledInvitation?.email ?? ''} ga taklifnoma bekor qilindi',
+          'Invitation to ${cancelledInvitation?.email ?? 'unknown'} cancelled',
           metadata: {'invitation_id': event.invitationId},
         );
       },
@@ -326,7 +328,7 @@ class TeamBloc extends Bloc<TeamEvent, TeamState> {
         emit(state.copyWith(
           status: TeamStatus.actionSuccess,
           myInvitations: updatedMyInvitations,
-          successMessage: 'Taklifnoma qabul qilindi',
+          successMessage: 'team.invitation_accepted',
         ));
       },
     );
@@ -359,7 +361,7 @@ class TeamBloc extends Bloc<TeamEvent, TeamState> {
         emit(state.copyWith(
           status: TeamStatus.actionSuccess,
           myInvitations: updatedMyInvitations,
-          successMessage: 'Taklifnoma rad etildi',
+          successMessage: 'team.invitation_rejected',
         ));
       },
     );

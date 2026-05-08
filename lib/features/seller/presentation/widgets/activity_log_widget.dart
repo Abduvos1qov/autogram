@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
@@ -47,7 +48,7 @@ class ActivityLogWidget extends StatelessWidget {
               ),
               AppSpacing.gapVerticalSm,
               Text(
-                'Faoliyat tarixi yo\'q',
+                'seller.ui.no_activity'.tr(),
                 style: AppTypography.bodyMedium(context).copyWith(
                   color: AppColors.textSecondaryOf(context),
                 ),
@@ -78,7 +79,7 @@ class ActivityLogWidget extends StatelessWidget {
                   )
                 : TextButton(
                     onPressed: onLoadMore,
-                    child: const Text('Ko\'proq yuklash'),
+                    child: Text('seller.ui.load_more'.tr()),
                   ),
           ),
       ],

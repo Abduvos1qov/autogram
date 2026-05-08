@@ -4,6 +4,7 @@
 export 'domain/entities/seller_profile.dart';
 export 'domain/entities/seller_member.dart';
 export 'domain/entities/seller_invitation.dart';
+export 'domain/entities/seat.dart';
 export 'domain/repositories/seller_repository.dart';
 export 'domain/repositories/seller_member_repository.dart';
 export 'domain/repositories/seller_invitation_repository.dart';

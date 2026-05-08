@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
@@ -84,7 +85,7 @@ class TypeCard extends StatelessWidget {
             ),
             AppSpacing.gapVerticalMd,
             Text(
-              type.label,
+              type.labelKey.tr(),
               style: AppTypography.titleMedium(context).copyWith(
                 color: isSelected ? AppColors.primary : AppColors.textPrimaryOf(context),
                 fontWeight: FontWeight.w600,
@@ -92,7 +93,7 @@ class TypeCard extends StatelessWidget {
             ),
             AppSpacing.gapVerticalXs,
             Text(
-              type.description,
+              type.descriptionKey.tr(),
               style: AppTypography.bodySmall(context).copyWith(
                 color: AppColors.textSecondaryOf(context),
               ),

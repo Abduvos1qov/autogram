@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/services/permission_service.dart';
@@ -142,7 +143,7 @@ class _RoleCard extends StatelessWidget {
             ),
             AppSpacing.gapVerticalMd,
             Text(
-              role.label,
+              role.labelKey.tr(),
               style: AppTypography.titleMedium(context).copyWith(
                 color: isSelected ? AppColors.primary : AppColors.textPrimaryOf(context),
                 fontWeight: FontWeight.w600,
@@ -150,7 +151,7 @@ class _RoleCard extends StatelessWidget {
             ),
             AppSpacing.gapVerticalXs,
             Text(
-              role.description,
+              role.descriptionKey.tr(),
               style: AppTypography.bodySmall(context).copyWith(
                 color: AppColors.textSecondaryOf(context),
               ),

@@ -10,6 +10,7 @@ import 'features/chat/presentation/bloc/conversations_bloc.dart';
 import 'features/home/presentation/bloc/home_bloc.dart';
 import 'features/listing/presentation/bloc/listing_bloc.dart';
 import 'features/notifications/presentation/bloc/notifications_bloc.dart';
+import 'features/payment/presentation/bloc/payment_bloc.dart';
 import 'features/reels/presentation/bloc/reels_bloc.dart';
 import 'features/saved/presentation/bloc/saved_bloc.dart';
 import 'features/search/presentation/bloc/search_bloc.dart';
@@ -57,6 +58,7 @@ class _AppState extends State<App> {
         BlocProvider<SellerBloc>(create: (_) => sl<SellerBloc>()),
         BlocProvider<TeamBloc>(create: (_) => sl<TeamBloc>()),
         BlocProvider<NotificationsBloc>(create: (_) => sl<NotificationsBloc>()),
+        BlocProvider<PaymentBloc>(create: (_) => sl<PaymentBloc>()),
       ],
       child: _buildMaterialApp(),
     );

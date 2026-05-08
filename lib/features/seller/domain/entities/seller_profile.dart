@@ -25,6 +25,8 @@ class SellerProfile extends Equatable {
   final SubscriptionPlan subscriptionPlan;
   final DateTime? subscriptionExpiresAt;
   final SellerStats stats;
+  final int seatsUsed;
+  final int additionalSeats;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -51,6 +53,8 @@ class SellerProfile extends Equatable {
     required this.subscriptionPlan,
     this.subscriptionExpiresAt,
     required this.stats,
+    this.seatsUsed = 0,
+    this.additionalSeats = 0,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -62,7 +66,10 @@ class SellerProfile extends Equatable {
   }
 
   bool get canPostListings {
-    return hasActiveSubscription && stats.activeListings < subscriptionPlan.maxListings;
+    if (!hasActiveSubscription) return false;
+    final limit = subscriptionPlan.maxListings;
+    if (limit == -1) return true;
+    return stats.activeListings < limit;
   }
 
   SellerProfile copyWith({
@@ -88,6 +95,8 @@ class SellerProfile extends Equatable {
     SubscriptionPlan? subscriptionPlan,
     DateTime? subscriptionExpiresAt,
     SellerStats? stats,
+    int? seatsUsed,
+    int? additionalSeats,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -114,6 +123,8 @@ class SellerProfile extends Equatable {
       subscriptionPlan: subscriptionPlan ?? this.subscriptionPlan,
       subscriptionExpiresAt: subscriptionExpiresAt ?? this.subscriptionExpiresAt,
       stats: stats ?? this.stats,
+      seatsUsed: seatsUsed ?? this.seatsUsed,
+      additionalSeats: additionalSeats ?? this.additionalSeats,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
@@ -143,6 +154,8 @@ class SellerProfile extends Equatable {
         subscriptionPlan,
         subscriptionExpiresAt,
         stats,
+        seatsUsed,
+        additionalSeats,
         createdAt,
         updatedAt,
       ];
@@ -153,6 +166,17 @@ enum BusinessType {
   dealer,
   showroom;
 
+  /// Translation key for the localized type label.
+  /// Use as `type.labelKey.tr()` in UI code.
+  String get labelKey => 'seller.business_types.$name.label';
+
+  /// Translation key for the localized type description.
+  /// Use as `type.descriptionKey.tr()` in UI code.
+  String get descriptionKey => 'seller.business_types.$name.description';
+
+  /// Legacy raw label (Uzbek). Kept for backward compatibility with the data
+  /// layer fallback (when backend doesn't return a localized name) and for any
+  /// non-UI consumer. UI must use [labelKey] + `.tr()`.
   String get label {
     switch (this) {
       case BusinessType.individual:
@@ -164,6 +188,7 @@ enum BusinessType {
     }
   }
 
+  /// Legacy raw description (Uzbek). UI must use [descriptionKey] + `.tr()`.
   String get description {
     switch (this) {
       case BusinessType.individual:
@@ -199,94 +224,221 @@ enum BusinessType {
   }
 }
 
+/// Subscription tier — sentinel `-1` means "unlimited" (for limits) or
+/// "negotiable / contract-based" (for prices).
 enum SubscriptionPlan {
   free,
-  basic,
-  professional,
-  premium;
+  pro,
+  premium,
+  enterprise;
 
+  /// Translation key for the localized plan name.
+  /// Use as `plan.labelKey.tr()` in UI code.
+  String get labelKey => 'seller.plans.$name.label';
+
+  /// Translation key for the localized audience description.
+  /// Use as `plan.audienceLabelKey.tr()` in UI code.
+  String get audienceLabelKey => 'seller.plans.$name.audience';
+
+  /// Translation key for the localized analytics level.
+  /// Use as `plan.analyticsLevelKey.tr()` in UI code.
+  String get analyticsLevelKey => 'seller.plans.$name.analytics';
+
+  /// Legacy raw plan label (Uzbek). Kept for backward compatibility with the
+  /// data layer fallback and the payment summary card. UI must use [labelKey]
+  /// + `.tr()`.
   String get label {
     switch (this) {
       case SubscriptionPlan.free:
         return 'Bepul';
-      case SubscriptionPlan.basic:
-        return 'Boshlang\'ich';
-      case SubscriptionPlan.professional:
-        return 'Professional';
+      case SubscriptionPlan.pro:
+        return 'Pro';
       case SubscriptionPlan.premium:
         return 'Premium';
+      case SubscriptionPlan.enterprise:
+        return 'Enterprise';
     }
   }
 
+  /// Legacy raw audience label (Uzbek). UI must use [audienceLabelKey] +
+  /// `.tr()`.
+  String get audienceLabel {
+    switch (this) {
+      case SubscriptionPlan.free:
+        return 'Shaxsiy sotuvchi';
+      case SubscriptionPlan.pro:
+        return 'Kichik-o\'rta diler (3-5 xodim)';
+      case SubscriptionPlan.premium:
+        return 'Yirik avtosalon (10-20 xodim)';
+      case SubscriptionPlan.enterprise:
+        return 'Tarmoq avtosalonlar (30+ xodim, bir nechta filial)';
+    }
+  }
+
+  /// Maximum active listings allowed on this plan.
+  /// Returns `-1` for unlimited.
   int get maxListings {
     switch (this) {
       case SubscriptionPlan.free:
         return 3;
-      case SubscriptionPlan.basic:
-        return 10;
-      case SubscriptionPlan.professional:
-        return 50;
+      case SubscriptionPlan.pro:
+        return 100;
       case SubscriptionPlan.premium:
-        return 999;
+      case SubscriptionPlan.enterprise:
+        return -1;
     }
   }
 
+  /// Monthly price in UZS. Returns `-1` for "negotiable / contract-based".
   int get monthlyPrice {
     switch (this) {
       case SubscriptionPlan.free:
         return 0;
-      case SubscriptionPlan.basic:
-        return 99000;
-      case SubscriptionPlan.professional:
-        return 299000;
+      case SubscriptionPlan.pro:
+        return 999000;
       case SubscriptionPlan.premium:
-        return 599000;
+        return 1999000;
+      case SubscriptionPlan.enterprise:
+        return -1;
     }
   }
+
+  /// Yearly price in UZS. Returns `-1` for "negotiable / contract-based".
+  int get yearlyPrice {
+    switch (this) {
+      case SubscriptionPlan.free:
+        return 0;
+      case SubscriptionPlan.pro:
+        return 9990000;
+      case SubscriptionPlan.premium:
+        return 19990000;
+      case SubscriptionPlan.enterprise:
+        return -1;
+    }
+  }
+
+  /// Bundled seats included with the plan. Returns `-1` for unlimited.
+  int get seatsLimit {
+    switch (this) {
+      case SubscriptionPlan.free:
+        return 1;
+      case SubscriptionPlan.pro:
+        return 3;
+      case SubscriptionPlan.premium:
+        return 10;
+      case SubscriptionPlan.enterprise:
+        return -1;
+    }
+  }
+
+  /// Per-seat add-on price in UZS / month.
+  /// Returns `0` when add-on is not applicable (Free) and `-1` for negotiable (Enterprise).
+  int get additionalSeatPrice {
+    switch (this) {
+      case SubscriptionPlan.free:
+        return 0;
+      case SubscriptionPlan.pro:
+        return 149000;
+      case SubscriptionPlan.premium:
+        return 249000;
+      case SubscriptionPlan.enterprise:
+        return -1;
+    }
+  }
+
+  bool get hasVerifiedBadge {
+    switch (this) {
+      case SubscriptionPlan.free:
+        return false;
+      case SubscriptionPlan.pro:
+      case SubscriptionPlan.premium:
+      case SubscriptionPlan.enterprise:
+        return true;
+    }
+  }
+
+  /// Legacy raw analytics level label (Uzbek). UI must use
+  /// [analyticsLevelKey] + `.tr()`.
+  String get analyticsLevel {
+    switch (this) {
+      case SubscriptionPlan.free:
+        return 'Asosiy';
+      case SubscriptionPlan.pro:
+        return 'Kengaytirilgan';
+      case SubscriptionPlan.premium:
+        return 'Premium';
+      case SubscriptionPlan.enterprise:
+        return 'Premium+';
+    }
+  }
+
+  bool get hasPersonalManager {
+    switch (this) {
+      case SubscriptionPlan.free:
+      case SubscriptionPlan.pro:
+        return false;
+      case SubscriptionPlan.premium:
+      case SubscriptionPlan.enterprise:
+        return true;
+    }
+  }
+
+  bool get hasApiAccess => this == SubscriptionPlan.enterprise;
+
+  bool get hasMultiBranch => this == SubscriptionPlan.enterprise;
 
   List<String> get features {
     switch (this) {
       case SubscriptionPlan.free:
-        return [
+        return const [
           '3 ta e\'lon',
-          'Standart ko\'rinish',
-          'Asosiy statistika',
+          '1 seat',
+          'Asosiy analitika',
         ];
-      case SubscriptionPlan.basic:
-        return [
-          '10 ta e\'lon',
-          'Standart ko\'rinish',
-          'To\'liq statistika',
-          'Chat qo\'llab-quvvatlash',
-        ];
-      case SubscriptionPlan.professional:
-        return [
-          '50 ta e\'lon',
-          'Yuqori ko\'rinish',
-          'Kengaytirilgan statistika',
-          'Ustuvor qo\'llab-quvvatlash',
-          'Tasdiqlangan badge',
+      case SubscriptionPlan.pro:
+        return const [
+          '100 ta e\'lon',
+          '3 seat (qo\'shimcha 149k UZS/oy)',
+          'Verified badge',
+          'Kengaytirilgan analitika',
         ];
       case SubscriptionPlan.premium:
-        return [
-          'Cheksiz e\'lonlar',
-          'Maksimal ko\'rinish',
-          'Premium statistika',
+        return const [
+          'Cheksiz e\'lon',
+          '10 seat (qo\'shimcha 249k UZS/oy)',
+          'Verified badge',
+          'Premium analitika',
           'Shaxsiy menejer',
-          'Tasdiqlangan badge',
-          'Maxsus reklamalar',
+        ];
+      case SubscriptionPlan.enterprise:
+        return const [
+          'Cheksiz e\'lon',
+          'Cheksiz seat',
+          'Verified badge',
+          'Premium+ analitika',
+          'Shaxsiy menejer',
+          'API kirish',
+          'Multi-filial',
         ];
     }
   }
 
+  /// Defensive parser. Supports legacy values written before Phase 2 refactor:
+  /// - 'basic' → pro (legacy first paid tier)
+  /// - 'professional' → premium (legacy second paid tier)
+  /// Note: legacy 'premium' (top tier in old enum) maps to new 'premium' (middle
+  /// tier). This is intentional — auto-upgrading users to enterprise on parse
+  /// would be unsafe.
   static SubscriptionPlan fromString(String value) {
     switch (value.toLowerCase()) {
+      case 'pro':
       case 'basic':
-        return SubscriptionPlan.basic;
-      case 'professional':
-        return SubscriptionPlan.professional;
+        return SubscriptionPlan.pro;
       case 'premium':
+      case 'professional':
         return SubscriptionPlan.premium;
+      case 'enterprise':
+        return SubscriptionPlan.enterprise;
       case 'free':
       default:
         return SubscriptionPlan.free;

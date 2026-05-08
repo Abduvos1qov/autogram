@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
@@ -61,7 +62,8 @@ class InvitationListTile extends StatelessWidget {
                     RoleBadge(role: invitation.role, compact: true),
                     AppSpacing.gapHorizontalSm,
                     Text(
-                      '$daysRemaining kun qoldi',
+                      'seller.ui.days_remaining'
+                          .tr(namedArgs: {'days': '$daysRemaining'}),
                       style: AppTypography.caption(context).copyWith(
                         color: daysRemaining <= 1
                             ? AppColors.error
@@ -81,7 +83,7 @@ class InvitationListTile extends StatelessWidget {
               icon: const Icon(Icons.close),
               iconSize: AppSpacing.iconSm,
               color: AppColors.error,
-              tooltip: 'Bekor qilish',
+              tooltip: 'seller.ui.cancel_invitation_tooltip'.tr(),
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(
                 minWidth: 36,

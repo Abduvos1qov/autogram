@@ -47,6 +47,9 @@ dependencies:
   video_player: ^2.9.2
   chewie: ^1.8.5
 
+  # WebView (payment checkout)
+  webview_flutter: ^4.10.0
+
   # Forms
   flutter_form_builder: ^10.3.0+1
   form_builder_validators: ^11.0.0

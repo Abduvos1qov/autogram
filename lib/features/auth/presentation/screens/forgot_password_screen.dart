@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,6 +12,7 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/buttons/primary_button.dart';
+import '../../../../core/widgets/feedback/step_progress_bar.dart';
 import '../../../../core/widgets/inputs/app_text_field.dart';
 import '../../../../navigation/route_names.dart';
 import '../bloc/auth_bloc.dart';
@@ -122,8 +124,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       context.read<AuthBloc>().add(AuthForgotPasswordOtpRequested(_email!));
       _startTimer();
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Tasdiqlash kodi qayta yuborildi'),
+        SnackBar(
+          content: Text(
+            'auth.forgot_password_screen.step2_resent_snackbar'.tr(),
+          ),
           backgroundColor: AppColors.success,
         ),
       );
@@ -154,10 +158,16 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             _otpFocusNodes[0].requestFocus();
           });
         } else if (state is AuthForgotPasswordOtpVerified) {
+          // Stop the OTP resend timer — we've left the OTP step.
+          _timer?.cancel();
+          _canResend = false;
           setState(() {
             _currentStep = 2;
           });
         } else if (state is AuthPasswordResetSuccess) {
+          // Make absolutely sure no timer keeps ticking on the success screen.
+          _timer?.cancel();
+          _canResend = false;
           setState(() {
             _currentStep = 3;
           });
@@ -181,19 +191,80 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         final isLoading = state is AuthLoading;
 
         return Scaffold(
+          backgroundColor: AppColors.backgroundOf(context),
+          appBar: _currentStep == 3
+              ? null
+              : AppBar(
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                  scrolledUnderElevation: 0,
+                  leading: IconButton(
+                    icon: Icon(
+                      Icons.arrow_back_ios_new_rounded,
+                      color: AppColors.textPrimaryOf(context),
+                      size: 20,
+                    ),
+                    onPressed: isLoading ? null : _handleBack,
+                  ),
+                  centerTitle: true,
+                ),
           body: GestureDetector(
             onTap: () => FocusScope.of(context).unfocus(),
             behavior: HitTestBehavior.opaque,
             child: SafeArea(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: _buildCurrentStep(isLoading),
+                child: Column(
+                  children: [
+                    if (_currentStep < 3) ...[
+                      const SizedBox(height: 8),
+                      StepProgressBar(
+                        currentStep: _currentStep,
+                        totalSteps: 3,
+                      ),
+                      AppSpacing.gapVerticalMd,
+                    ],
+                    Expanded(child: _buildCurrentStep(isLoading)),
+                  ],
+                ),
               ),
             ),
           ),
         );
       },
     );
+  }
+
+  void _handleBack() {
+    // Step-aware back navigation:
+    //  - On the email step we just close the screen.
+    //  - On the OTP step we drop back to the email step (cancelling the timer)
+    //    so the user can correct a mistyped email.
+    //  - On the new-password step we drop back to the OTP step.
+    if (_currentStep == 0) {
+      context.pop();
+      return;
+    }
+    if (_currentStep == 1) {
+      _timer?.cancel();
+      _canResend = false;
+      for (final c in _otpControllers) {
+        c.clear();
+      }
+      setState(() {
+        _currentStep = 0;
+      });
+      return;
+    }
+    if (_currentStep == 2) {
+      _newPasswordController.clear();
+      _confirmPasswordController.clear();
+      setState(() {
+        _currentStep = 1;
+      });
+      return;
+    }
+    context.pop();
   }
 
   Widget _buildCurrentStep(bool isLoading) {
@@ -214,13 +285,14 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   Widget _buildEmailStep(bool isLoading) {
     return Form(
       key: _emailFormKey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
           const SizedBox(height: 16),
 
           Text(
-            'Parolni tiklash',
+            'auth.forgot_password_screen.step1_title'.tr(),
             style: AppTypography.displayMedium(context).copyWith(
               fontWeight: FontWeight.bold,
             ),
@@ -229,7 +301,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           AppSpacing.gapVerticalSm,
 
           Text(
-            'Email manzilingizni kiriting, biz sizga tasdiqlash kodini yuboramiz',
+            'auth.forgot_password_screen.step1_subtitle'.tr(),
             style: AppTypography.bodyMedium(context).copyWith(
               color: AppColors.textSecondaryOf(context),
             ),
@@ -239,8 +311,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
           AppTextField(
             controller: _emailController,
-            label: 'Email',
-            hint: 'email@example.com',
+            label: 'auth.forgot_password_screen.step1_email_label'.tr(),
+            hint: 'auth.forgot_password_screen.step1_email_hint'.tr(),
             keyboardType: TextInputType.emailAddress,
             textInputAction: TextInputAction.done,
             validator: Validators.validateEmailRequired,
@@ -251,7 +323,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           const SizedBox(height: 32),
 
           PrimaryButton(
-            text: 'Kodni yuborish',
+            text: 'auth.forgot_password_screen.step1_submit'.tr(),
             onPressed: isLoading ? null : _submitEmail,
             isLoading: isLoading,
             height: 52,
@@ -263,7 +335,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             child: TextButton(
               onPressed: () => context.pop(),
               child: Text(
-                'Kirishga qaytish',
+                'auth.forgot_password_screen.step1_back_to_login'.tr(),
                 style: AppTypography.bodyMedium(context).copyWith(
                   color: AppColors.primary,
                   fontWeight: FontWeight.w600,
@@ -271,7 +343,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               ),
             ),
           ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -298,7 +371,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         const SizedBox(height: 32),
 
         Text(
-          'Tasdiqlash kodi',
+          'auth.forgot_password_screen.step2_title'.tr(),
           style: AppTypography.displaySmall(context).copyWith(
             fontWeight: FontWeight.bold,
           ),
@@ -314,7 +387,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               color: AppColors.textSecondaryOf(context),
             ),
             children: [
-              const TextSpan(text: 'Tasdiqlash kodini '),
+              TextSpan(
+                text:
+                    'auth.forgot_password_screen.step2_subtitle_prefix'.tr(),
+              ),
               TextSpan(
                 text: _email ?? '',
                 style: TextStyle(
@@ -322,7 +398,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   color: AppColors.textPrimaryOf(context),
                 ),
               ),
-              const TextSpan(text: ' manziliga yubordik'),
+              TextSpan(
+                text:
+                    'auth.forgot_password_screen.step2_subtitle_suffix'.tr(),
+              ),
             ],
           ),
         ),
@@ -378,7 +457,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         const SizedBox(height: 32),
 
         PrimaryButton(
-          text: 'Tasdiqlash',
+          text: 'auth.forgot_password_screen.step2_submit'.tr(),
           onPressed: isLoading || _otpCode.length < 6 ? null : _submitOtp,
           isLoading: isLoading,
           height: 52,
@@ -390,7 +469,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             ? TextButton(
                 onPressed: _resendOtp,
                 child: Text(
-                  'Kodni qayta yuborish',
+                  'auth.forgot_password_screen.step2_resend_label'.tr(),
                   style: AppTypography.bodyMedium(context).copyWith(
                     color: AppColors.primary,
                     fontWeight: FontWeight.w600,
@@ -398,7 +477,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 ),
               )
             : Text(
-                'Qayta yuborish: ${_remainingSeconds}s',
+                'auth.forgot_password_screen.step2_resend_in'.tr(
+                  namedArgs: {
+                    'seconds': '$_remainingSeconds',
+                  },
+                ),
                 style: AppTypography.bodyMedium(context).copyWith(
                   color: AppColors.textSecondaryOf(context),
                 ),
@@ -412,13 +495,14 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   Widget _buildNewPasswordStep(bool isLoading) {
     return Form(
       key: _passwordFormKey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
           const SizedBox(height: 16),
 
           Text(
-            'Yangi parol',
+            'auth.forgot_password_screen.step3_title'.tr(),
             style: AppTypography.displayMedium(context).copyWith(
               fontWeight: FontWeight.bold,
             ),
@@ -427,7 +511,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           AppSpacing.gapVerticalSm,
 
           Text(
-            'Yangi parolingizni kiriting',
+            'auth.forgot_password_screen.step3_subtitle'.tr(),
             style: AppTypography.bodyMedium(context).copyWith(
               color: AppColors.textSecondaryOf(context),
             ),
@@ -437,8 +521,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
           AppTextField(
             controller: _newPasswordController,
-            label: 'Yangi parol',
-            hint: 'Kuchli parol kiriting',
+            label: 'auth.forgot_password_screen.step3_new_password_label'.tr(),
+            hint: 'auth.forgot_password_screen.step3_new_password_hint'.tr(),
             obscureText: _obscureNewPassword,
             keyboardType: TextInputType.visiblePassword,
             textInputAction: TextInputAction.next,
@@ -463,8 +547,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
           AppTextField(
             controller: _confirmPasswordController,
-            label: 'Parolni tasdiqlash',
-            hint: 'Parolni qayta kiriting',
+            label:
+                'auth.forgot_password_screen.step3_confirm_password_label'.tr(),
+            hint:
+                'auth.forgot_password_screen.step3_confirm_password_hint'.tr(),
             obscureText: _obscureConfirmPassword,
             keyboardType: TextInputType.visiblePassword,
             textInputAction: TextInputAction.done,
@@ -490,12 +576,13 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           const SizedBox(height: 32),
 
           PrimaryButton(
-            text: 'Parolni saqlash',
+            text: 'auth.forgot_password_screen.step3_submit'.tr(),
             onPressed: isLoading ? null : _submitNewPassword,
             isLoading: isLoading,
             height: 52,
           ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -522,7 +609,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         const SizedBox(height: 32),
 
         Text(
-          'Parol yangilandi!',
+          'auth.forgot_password_screen.success_title'.tr(),
           style: AppTypography.displaySmall(context).copyWith(
             fontWeight: FontWeight.bold,
           ),
@@ -532,7 +619,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         AppSpacing.gapVerticalMd,
 
         Text(
-          'Parolingiz muvaffaqiyatli yangilandi. Endi yangi parol bilan kirishingiz mumkin.',
+          'auth.forgot_password_screen.success_message'.tr(),
           style: AppTypography.bodyMedium(context).copyWith(
             color: AppColors.textSecondaryOf(context),
           ),
@@ -542,7 +629,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         const SizedBox(height: 40),
 
         PrimaryButton(
-          text: 'Kirishga o\'tish',
+          text: 'auth.forgot_password_screen.success_submit'.tr(),
           onPressed: () => context.go(RoutePaths.login),
           height: 52,
         ),

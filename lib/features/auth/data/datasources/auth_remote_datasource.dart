@@ -35,13 +35,6 @@ abstract class AuthRemoteDataSource {
   Future<UserModel> setUsername({required String username});
   Future<bool> checkUsernameAvailability({required String username});
   Future<UserModel?> getCurrentUser();
-  Future<UserModel> updateProfile({
-    String? fullName,
-    String? email,
-    String? avatarUrl,
-    String? language,
-  });
-  Future<UserModel> upgradeToSeller();
   Future<void> logout();
   Stream<UserModel?> get authStateChanges;
 }
@@ -224,9 +217,15 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           );
         }
 
+        final mockUser = MockData.getUserByEmail(email);
+        if (mockUser != null) {
+          return UserModel.fromEntity(mockUser).copyWith(isVerified: true);
+        }
+
+        // Newly registered email — synthesize a fresh user awaiting username.
         final now = DateTime.now();
         return UserModel(
-          id: 'test_user_id',
+          id: 'mock_${email.hashCode.abs()}',
           email: email,
           fullName: 'Test User',
           username: null,
@@ -409,18 +408,12 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         AppLogger.info('TEST MODE: Setting username to $username');
         await Future.delayed(const Duration(milliseconds: 500));
 
-        final now = DateTime.now();
-        return UserModel(
-          id: 'test_user_id',
-          email: 'test@autogram.uz',
-          fullName: 'Test User',
+        // Mirror the canonical mock user so downstream profile lookups match.
+        final mockUser = MockData.mockUsers.first;
+        return UserModel.fromEntity(mockUser).copyWith(
           username: username,
-          role: UserRole.buyer,
           isVerified: true,
-          isActive: true,
-          language: 'uz',
-          createdAt: now,
-          updatedAt: now,
+          updatedAt: DateTime.now(),
         );
       }
 
@@ -502,72 +495,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     } catch (e) {
       AppLogger.error('Error getting current user', e);
       return null;
-    }
-  }
-
-  @override
-  Future<UserModel> updateProfile({
-    String? fullName,
-    String? email,
-    String? avatarUrl,
-    String? language,
-  }) async {
-    try {
-      final currentUser = _supabase.auth.currentUser;
-      if (currentUser == null) {
-        throw const AuthException(message: 'Tizimga kirilmagan');
-      }
-
-      final updates = <String, dynamic>{};
-
-      if (fullName != null) updates['full_name'] = fullName;
-      if (email != null) updates['email'] = email;
-      if (avatarUrl != null) updates['avatar_url'] = avatarUrl;
-      if (language != null) updates['language'] = language;
-
-      final response = await _supabase
-          .from(ApiEndpoints.profiles)
-          .update(updates)
-          .eq('id', currentUser.id)
-          .select()
-          .single();
-
-      return UserModel.fromJson(response);
-    } on supabase.PostgrestException catch (e) {
-      AppLogger.error('Database error updating profile', e);
-      ErrorHandler.throwFromPostgrest(e);
-    } catch (e) {
-      if (e is AuthException) rethrow;
-      AppLogger.error('Error updating profile', e);
-      throw ServerException(message: e.toString());
-    }
-  }
-
-  @override
-  Future<UserModel> upgradeToSeller() async {
-    try {
-      final currentUser = _supabase.auth.currentUser;
-      if (currentUser == null) {
-        throw const AuthException(message: 'Tizimga kirilmagan');
-      }
-
-      final response = await _supabase
-          .from(ApiEndpoints.profiles)
-          .update({
-            'role': 'seller',
-          })
-          .eq('id', currentUser.id)
-          .select()
-          .single();
-
-      return UserModel.fromJson(response);
-    } on supabase.PostgrestException catch (e) {
-      AppLogger.error('Database error upgrading to seller', e);
-      ErrorHandler.throwFromPostgrest(e);
-    } catch (e) {
-      if (e is AuthException) rethrow;
-      AppLogger.error('Error upgrading to seller', e);
-      throw ServerException(message: e.toString());
     }
   }
 

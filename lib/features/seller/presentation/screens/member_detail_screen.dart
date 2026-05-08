@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -7,6 +8,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/utils/formatters.dart';
+import '../../../../di/injection.dart';
 import '../../domain/entities/seller_member.dart';
 import '../bloc/team/team_bloc.dart';
 import '../bloc/team/team_event.dart';
@@ -29,9 +31,11 @@ class MemberDetailScreen extends StatelessWidget {
     return BlocConsumer<TeamBloc, TeamState>(
       listener: (context, state) {
         if (state.status == TeamStatus.actionSuccess) {
+          final messageKey = state.successMessage ??
+              'seller.member_detail_screen.default_success';
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.successMessage ?? 'Muvaffaqiyatli'),
+              content: Text(messageKey.tr()),
               backgroundColor: AppColors.success,
             ),
           );
@@ -59,7 +63,7 @@ class MemberDetailScreen extends StatelessWidget {
                 onPressed: () => context.pop(),
               ),
             ),
-            body: const Center(child: Text('A\'zo topilmadi')),
+            body: Center(child: Text('seller.member_detail_screen.not_found'.tr())),
           );
         }
 
@@ -71,7 +75,7 @@ class MemberDetailScreen extends StatelessWidget {
               icon: const Icon(Icons.arrow_back),
               onPressed: () => context.pop(),
             ),
-            title: const Text('Xodim ma\'lumotlari'),
+            title: Text('seller.member_detail_screen.app_bar_title'.tr()),
           ),
           body: SingleChildScrollView(
             padding: AppSpacing.screenPadding,
@@ -157,7 +161,7 @@ class MemberDetailScreen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Rol',
+          'seller.member_detail_screen.role_section'.tr(),
           style: AppTypography.titleSmall(context),
         ),
         AppSpacing.gapVerticalSm,
@@ -174,12 +178,12 @@ class MemberDetailScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      member.role.label,
+                      member.role.labelKey.tr(),
                       style: AppTypography.titleSmall(context),
                     ),
                     AppSpacing.gapVerticalXs,
                     Text(
-                      member.role.description,
+                      member.role.descriptionKey.tr(),
                       style: AppTypography.bodySmall(context).copyWith(
                         color: AppColors.textSecondaryOf(context),
                       ),
@@ -209,7 +213,7 @@ class MemberDetailScreen extends StatelessWidget {
                         .map((role) {
                       return PopupMenuItem<MemberRole>(
                         value: role,
-                        child: Text(role.label),
+                        child: Text(role.labelKey.tr()),
                       );
                     }).toList();
                   },
@@ -226,7 +230,7 @@ class MemberDetailScreen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Ruxsatlar',
+          'seller.member_detail_screen.permissions_section'.tr(),
           style: AppTypography.titleSmall(context),
         ),
         AppSpacing.gapVerticalSm,
@@ -243,7 +247,7 @@ class MemberDetailScreen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Ma\'lumotlar',
+          'seller.member_detail_screen.info_section'.tr(),
           style: AppTypography.titleSmall(context),
         ),
         AppSpacing.gapVerticalSm,
@@ -251,20 +255,20 @@ class MemberDetailScreen extends StatelessWidget {
           _buildInfoRow(
             context,
             Icons.calendar_today_outlined,
-            'Qo\'shilgan sana',
+            'seller.member_detail_screen.info_joined'.tr(),
             Formatters.formatDate(member.joinedAt!),
           ),
         if (member.invitedAt != null)
           _buildInfoRow(
             context,
             Icons.send_outlined,
-            'Taklif qilingan',
+            'seller.member_detail_screen.info_invited'.tr(),
             Formatters.formatDate(member.invitedAt!),
           ),
         _buildInfoRow(
           context,
           Icons.access_time_outlined,
-          'Yangilangan',
+          'seller.member_detail_screen.info_updated'.tr(),
           Formatters.formatRelativeTime(member.updatedAt),
         ),
       ],
@@ -301,7 +305,7 @@ class MemberDetailScreen extends StatelessWidget {
       child: OutlinedButton.icon(
         onPressed: () => _showRemoveConfirmation(context, member),
         icon: const Icon(Icons.person_remove_outlined),
-        label: const Text('Xodimni o\'chirish'),
+        label: Text('seller.member_detail_screen.remove_button'.tr()),
         style: OutlinedButton.styleFrom(
           foregroundColor: AppColors.error,
           side: const BorderSide(color: AppColors.error),
@@ -316,14 +320,15 @@ class MemberDetailScreen extends StatelessWidget {
       context: context,
       builder: (dialogContext) {
         return AlertDialog(
-          title: const Text('Xodimni o\'chirish'),
+          title: Text('seller.member_detail_screen.remove_dialog_title'.tr()),
           content: Text(
-            '${member.memberName}ni jamoadan o\'chirmoqchimisiz?\nBu amalni bekor qilib bo\'lmaydi.',
+            'seller.member_detail_screen.remove_dialog_message'
+                .tr(namedArgs: {'name': member.memberName}),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(dialogContext),
-              child: const Text('Bekor qilish'),
+              child: Text('seller.member_detail_screen.remove_dialog_cancel'.tr()),
             ),
             ElevatedButton(
               onPressed: () {
@@ -336,7 +341,7 @@ class MemberDetailScreen extends StatelessWidget {
                 backgroundColor: AppColors.error,
                 foregroundColor: Colors.white,
               ),
-              child: const Text('O\'chirish'),
+              child: Text('seller.member_detail_screen.remove_dialog_confirm'.tr()),
             ),
           ],
         );
@@ -356,7 +361,7 @@ class MemberDetailScreen extends StatelessWidget {
     final currentMembership = state.currentMembership;
     if (currentMembership == null) return false;
     if (currentMembership.id == member.id) return false; // Can't manage self
-    final permissionService = PermissionService();
+    final permissionService = sl<PermissionService>();
     if (!permissionService.hasPermission(
         currentMembership.role, Permission.manageMembers)) {
       return false;

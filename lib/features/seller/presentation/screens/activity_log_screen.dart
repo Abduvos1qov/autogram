@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
@@ -38,7 +39,7 @@ class _ActivityLogScreenState extends State<ActivityLogScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Faoliyat tarixi'),
+        title: Text('seller.activity_log_screen.app_bar_title'.tr()),
       ),
       body: Column(
         children: [
@@ -48,13 +49,13 @@ class _ActivityLogScreenState extends State<ActivityLogScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Row(
               children: [
-                _buildFilterChip(null, 'Barchasi'),
+                _buildFilterChip(null, 'seller.activity_log_screen.filter_all'.tr()),
                 AppSpacing.gapHorizontalSm,
-                _buildFilterChip('listings', 'E\'lonlar'),
+                _buildFilterChip('listings', 'seller.activity_log_screen.filter_listings'.tr()),
                 AppSpacing.gapHorizontalSm,
-                _buildFilterChip('members', 'Xodimlar'),
+                _buildFilterChip('members', 'seller.activity_log_screen.filter_members'.tr()),
                 AppSpacing.gapHorizontalSm,
-                _buildFilterChip('settings', 'Sozlamalar'),
+                _buildFilterChip('settings', 'seller.activity_log_screen.filter_settings'.tr()),
               ],
             ),
           ),

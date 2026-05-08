@@ -10,6 +10,8 @@ import 'package:autogram/features/auth/domain/usecases/logout_usecase.dart';
 import 'package:autogram/features/auth/domain/usecases/verify_otp_usecase.dart';
 import 'package:autogram/features/auth/domain/usecases/verify_forgot_password_otp_usecase.dart';
 import 'package:autogram/features/auth/domain/usecases/reset_password_with_new_usecase.dart';
+import 'package:autogram/features/auth/domain/usecases/resend_signup_otp_usecase.dart';
+import 'package:autogram/features/auth/domain/usecases/send_forgot_password_otp_usecase.dart';
 import 'package:autogram/features/home/domain/usecases/get_feed_usecase.dart';
 import 'package:autogram/features/search/domain/usecases/search_listings_usecase.dart';
 import 'package:autogram/features/search/domain/usecases/get_brands_usecase.dart';
@@ -38,6 +40,12 @@ class MockVerifyForgotPasswordOtpUseCase extends Mock
 
 class MockResetPasswordWithNewUseCase extends Mock
     implements ResetPasswordWithNewUseCase {}
+
+class MockResendSignUpOtpUseCase extends Mock
+    implements ResendSignUpOtpUseCase {}
+
+class MockSendForgotPasswordOtpUseCase extends Mock
+    implements SendForgotPasswordOtpUseCase {}
 
 /// Mock Home Use Cases
 class MockGetFeedUseCase extends Mock implements GetFeedUseCase {}

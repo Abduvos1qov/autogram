@@ -18,13 +18,12 @@ class AuthInitial extends AuthState {
 }
 
 /// Loading state
+///
+/// Loading messages are no longer carried on the state — the UI decides which
+/// `auth.loading.*` translation key to render based on its own context. Keeps
+/// the bloc free of user-facing strings.
 class AuthLoading extends AuthState {
-  final String? message;
-
-  const AuthLoading({this.message});
-
-  @override
-  List<Object?> get props => [message];
+  const AuthLoading();
 }
 
 /// Unauthenticated state

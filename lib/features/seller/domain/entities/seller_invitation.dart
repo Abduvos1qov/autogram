@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-import '../../../../core/services/permission_service.dart';
+import 'member_role.dart';
 
 /// Invitation status enum
 
