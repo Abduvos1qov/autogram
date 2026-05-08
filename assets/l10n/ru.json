@@ -222,16 +222,11 @@
     "contact": "Контакты",
     "working_hours": "Время работы",
 
-    "upgrade_screen": {
-      "app_bar_title": "Стать продавцом",
-      "title": "Выберите тип бизнеса",
-      "subtitle": "Выберите тип вашей деятельности"
-    },
-
     "business_info_screen": {
       "app_bar_title": "Информация о бизнесе",
       "title": "О бизнесе",
       "subtitle": "Введите информацию о вашем бизнесе",
+      "business_type_label": "Тип бизнеса",
       "business_name_label": "Название бизнеса",
       "business_name_hint": "Например: Автосалон Premium",
       "business_name_required": "Введите название бизнеса",
@@ -249,13 +244,29 @@
 
     "plan_selection": {
       "app_bar_title": "Выбор тарифа",
-      "title": "Выберите тариф",
-      "subtitle": "Тариф можно изменить позже",
+      "headlines": {
+        "free": "Бесплатный старт",
+        "pro": "Для небольших дилеров",
+        "premium": "Для крупных автосалонов",
+        "enterprise": "Для сети автосалонов"
+      },
+      "taglines": {
+        "free": "Продайте свой первый автомобиль",
+        "pro": "Идеальное решение для дилера 3-5 человек",
+        "premium": "Полные возможности для команды 10-20 человек",
+        "enterprise": "Безграничный масштаб и персональный менеджер"
+      },
+      "tabs": {
+        "pro": "Pro",
+        "premium": "Premium",
+        "enterprise": "Enterprise"
+      },
+      "stay_on_free": "Продолжить с тарифом Free",
+      "save_percent": "Экономия {percent}%",
       "billing_monthly": "Месячный",
       "billing_yearly": "Годовой (-17%)",
       "info_text": "Начните с бесплатного тарифа и обновите при необходимости",
       "next_payment_notice": "На следующей странице вы произведёте оплату",
-      "free_button": "Начать бесплатно",
       "enterprise_button": "Связаться",
       "default_button": "Продолжить",
       "enterprise_dialog_title": "Тариф Enterprise",

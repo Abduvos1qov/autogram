@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 
+import '../../../payment/domain/entities/billing_cycle.dart';
 import '../../domain/entities/seller_profile.dart';
 
 /// Seller BLoC events
@@ -16,18 +17,12 @@ class SellerProfileLoadRequested extends SellerEvent {
   const SellerProfileLoadRequested();
 }
 
-/// Select business type
-class SellerBusinessTypeSelected extends SellerEvent {
-  final BusinessType type;
-
-  const SellerBusinessTypeSelected(this.type);
-
-  @override
-  List<Object?> get props => [type];
-}
-
-/// Update business info
+/// Update business info — collected on the BusinessInfoScreen.
+///
+/// [businessType] is now part of the form rather than a dedicated step, so it
+/// arrives bundled with the rest of the business fields.
 class SellerBusinessInfoUpdated extends SellerEvent {
+  final BusinessType businessType;
   final String businessName;
   final String? description;
   final String? address;
@@ -35,6 +30,7 @@ class SellerBusinessInfoUpdated extends SellerEvent {
   final List<String>? contactPhones;
 
   const SellerBusinessInfoUpdated({
+    required this.businessType,
     required this.businessName,
     this.description,
     this.address,
@@ -44,22 +40,27 @@ class SellerBusinessInfoUpdated extends SellerEvent {
 
   @override
   List<Object?> get props => [
-        businessName,
-        description,
-        address,
-        city,
-        contactPhones,
-      ];
+    businessType,
+    businessName,
+    description,
+    address,
+    city,
+    contactPhones,
+  ];
 }
 
-/// Select subscription plan
+/// Select subscription plan + billing cycle from the upgrade plan-picker.
+///
+/// The billing cycle is bundled here so the bloc can replay it later when
+/// returning from the payment round-trip without the picker being on stack.
 class SellerPlanSelected extends SellerEvent {
   final SubscriptionPlan plan;
+  final BillingCycle billingCycle;
 
-  const SellerPlanSelected(this.plan);
+  const SellerPlanSelected(this.plan, this.billingCycle);
 
   @override
-  List<Object?> get props => [plan];
+  List<Object?> get props => [plan, billingCycle];
 }
 
 /// Complete upgrade to seller

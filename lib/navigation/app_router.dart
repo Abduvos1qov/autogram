@@ -28,7 +28,6 @@ import '../features/search/presentation/screens/filter_screen.dart';
 import '../features/search/presentation/screens/search_screen.dart';
 import '../features/seller/presentation/screens/upgrade_screen.dart';
 import '../features/seller/presentation/screens/business_info_screen.dart';
-import '../features/seller/presentation/screens/plan_selection_screen.dart';
 import '../features/seller/presentation/screens/upgrade_success_screen.dart';
 import '../features/seller/presentation/screens/team_members_screen.dart';
 import '../features/seller/presentation/screens/add_member_screen.dart';
@@ -54,7 +53,8 @@ GoRouter createRouter(AuthBloc authBloc) {
     errorBuilder: (context, state) => ErrorScreen(error: state.error),
     redirect: (context, state) {
       final authState = authBloc.state;
-      final isAuthRoute = state.matchedLocation == RoutePaths.splash ||
+      final isAuthRoute =
+          state.matchedLocation == RoutePaths.splash ||
           state.matchedLocation == RoutePaths.onboarding ||
           state.matchedLocation == RoutePaths.login ||
           state.matchedLocation == RoutePaths.register ||
@@ -293,12 +293,6 @@ GoRouter createRouter(AuthBloc authBloc) {
         name: RouteNames.upgradeBusinessInfo,
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const BusinessInfoScreen(),
-      ),
-      GoRoute(
-        path: RoutePaths.upgradePlanSelection,
-        name: RouteNames.upgradePlanSelection,
-        parentNavigatorKey: _rootNavigatorKey,
-        builder: (context, state) => const PlanSelectionScreen(),
       ),
       GoRoute(
         path: RoutePaths.upgradeSuccess,

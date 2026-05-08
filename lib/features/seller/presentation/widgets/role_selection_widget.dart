@@ -6,7 +6,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 
-/// Visual role selection cards following the [TypeCard] pattern.
+/// Visual role selection cards.
 ///
 /// Displays selectable cards for each [MemberRole] that is below the
 /// [currentUserRole] level. The owner role is never shown — it cannot
@@ -145,16 +145,18 @@ class _RoleCard extends StatelessWidget {
             Text(
               role.labelKey.tr(),
               style: AppTypography.titleMedium(context).copyWith(
-                color: isSelected ? AppColors.primary : AppColors.textPrimaryOf(context),
+                color: isSelected
+                    ? AppColors.primary
+                    : AppColors.textPrimaryOf(context),
                 fontWeight: FontWeight.w600,
               ),
             ),
             AppSpacing.gapVerticalXs,
             Text(
               role.descriptionKey.tr(),
-              style: AppTypography.bodySmall(context).copyWith(
-                color: AppColors.textSecondaryOf(context),
-              ),
+              style: AppTypography.bodySmall(
+                context,
+              ).copyWith(color: AppColors.textSecondaryOf(context)),
             ),
           ],
         ),

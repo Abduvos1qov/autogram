@@ -1,19 +1,13 @@
 import 'package:equatable/equatable.dart';
 
 import '../../../../core/errors/failures.dart';
+import '../../../payment/domain/entities/billing_cycle.dart';
 import '../../domain/entities/seller_profile.dart';
 import '../../domain/repositories/seller_repository.dart';
 
 /// Seller BLoC state
 
-enum SellerStatus {
-  initial,
-  loading,
-  loaded,
-  upgrading,
-  upgraded,
-  error,
-}
+enum SellerStatus { initial, loading, loaded, upgrading, upgraded, error }
 
 class SellerState extends Equatable {
   final SellerStatus status;
@@ -21,14 +15,16 @@ class SellerState extends Equatable {
   final List<SubscriptionPlanDetails> plans;
   final Failure? failure;
 
-  // Upgrade flow state
+  // Upgrade flow state.
+  // Step ordering: 0 = plan picker, 1 = business info (terminal step).
+  final SubscriptionPlan? selectedPlan;
+  final BillingCycle selectedBillingCycle;
   final BusinessType? selectedBusinessType;
   final String? businessName;
   final String? description;
   final String? address;
   final String? city;
   final List<String> contactPhones;
-  final SubscriptionPlan? selectedPlan;
   final int currentStep;
 
   const SellerState({
@@ -36,13 +32,14 @@ class SellerState extends Equatable {
     this.profile,
     this.plans = const [],
     this.failure,
+    this.selectedPlan,
+    this.selectedBillingCycle = BillingCycle.monthly,
     this.selectedBusinessType,
     this.businessName,
     this.description,
     this.address,
     this.city,
     this.contactPhones = const [],
-    this.selectedPlan,
     this.currentStep = 0,
   });
 
@@ -52,10 +49,9 @@ class SellerState extends Equatable {
   bool get isUpgraded => status == SellerStatus.upgraded;
   bool get isSeller => profile != null;
 
-  bool get canProceedToBusinessInfo => selectedBusinessType != null;
-  bool get canProceedToPlanSelection =>
-      businessName != null && businessName!.isNotEmpty;
+  bool get canProceedToBusinessInfo => selectedPlan != null;
   bool get canCompleteUpgrade =>
+      selectedPlan != null &&
       selectedBusinessType != null &&
       businessName != null &&
       businessName!.isNotEmpty;
@@ -65,13 +61,14 @@ class SellerState extends Equatable {
     SellerProfile? profile,
     List<SubscriptionPlanDetails>? plans,
     Failure? failure,
+    SubscriptionPlan? selectedPlan,
+    BillingCycle? selectedBillingCycle,
     BusinessType? selectedBusinessType,
     String? businessName,
     String? description,
     String? address,
     String? city,
     List<String>? contactPhones,
-    SubscriptionPlan? selectedPlan,
     int? currentStep,
     bool clearFailure = false,
     bool clearProfile = false,
@@ -81,21 +78,21 @@ class SellerState extends Equatable {
       profile: clearProfile ? null : (profile ?? this.profile),
       plans: plans ?? this.plans,
       failure: clearFailure ? null : (failure ?? this.failure),
+      selectedPlan: selectedPlan ?? this.selectedPlan,
+      selectedBillingCycle: selectedBillingCycle ?? this.selectedBillingCycle,
       selectedBusinessType: selectedBusinessType ?? this.selectedBusinessType,
       businessName: businessName ?? this.businessName,
       description: description ?? this.description,
       address: address ?? this.address,
       city: city ?? this.city,
       contactPhones: contactPhones ?? this.contactPhones,
-      selectedPlan: selectedPlan ?? this.selectedPlan,
       currentStep: currentStep ?? this.currentStep,
     );
   }
 
-  /// Resets the upgrade flow fields (selected business type, business name,
-  /// description, address, contact phones, selected plan, current step).
-  /// Preserves [status], [profile] and [plans] by default — pass [status] to
-  /// override (e.g. when called immediately after a successful upgrade).
+  /// Resets the upgrade flow fields. Preserves [status], [profile] and [plans]
+  /// by default — pass [status] to override (e.g. when called immediately
+  /// after a successful upgrade).
   SellerState resetUpgradeFlow({SellerStatus? status}) {
     return SellerState(
       status: status ?? this.status,
@@ -106,17 +103,18 @@ class SellerState extends Equatable {
 
   @override
   List<Object?> get props => [
-        status,
-        profile,
-        plans,
-        failure,
-        selectedBusinessType,
-        businessName,
-        description,
-        address,
-        city,
-        contactPhones,
-        selectedPlan,
-        currentStep,
-      ];
+    status,
+    profile,
+    plans,
+    failure,
+    selectedPlan,
+    selectedBillingCycle,
+    selectedBusinessType,
+    businessName,
+    description,
+    address,
+    city,
+    contactPhones,
+    currentStep,
+  ];
 }

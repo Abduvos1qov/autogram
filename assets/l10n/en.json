@@ -222,16 +222,11 @@
     "contact": "Contact",
     "working_hours": "Working hours",
 
-    "upgrade_screen": {
-      "app_bar_title": "Become a seller",
-      "title": "Choose business type",
-      "subtitle": "Select your activity type"
-    },
-
     "business_info_screen": {
       "app_bar_title": "Business details",
       "title": "About business",
       "subtitle": "Enter information about your business",
+      "business_type_label": "Business type",
       "business_name_label": "Business name",
       "business_name_hint": "e.g., Premium Auto",
       "business_name_required": "Enter business name",
@@ -249,13 +244,29 @@
 
     "plan_selection": {
       "app_bar_title": "Choose plan",
-      "title": "Select your plan",
-      "subtitle": "You can change your plan later",
+      "headlines": {
+        "free": "Free starter",
+        "pro": "For small dealers",
+        "premium": "For large showrooms",
+        "enterprise": "For dealership networks"
+      },
+      "taglines": {
+        "free": "Sell your first car",
+        "pro": "Ideal for a 3-5 person dealer",
+        "premium": "Full power for a 10-20 person team",
+        "enterprise": "Unlimited scale and a dedicated manager"
+      },
+      "tabs": {
+        "pro": "Pro",
+        "premium": "Premium",
+        "enterprise": "Enterprise"
+      },
+      "stay_on_free": "Continue with the Free plan",
+      "save_percent": "Save {percent}%",
       "billing_monthly": "Monthly",
       "billing_yearly": "Yearly (-17%)",
       "info_text": "Start with the free plan and upgrade when needed",
       "next_payment_notice": "You will complete payment on the next page",
-      "free_button": "Start free",
       "enterprise_button": "Contact us",
       "default_button": "Continue",
       "enterprise_dialog_title": "Enterprise plan",

@@ -133,11 +133,12 @@ class _PaymentWebViewScreenState extends State<PaymentWebViewScreen> {
         }
         if (state is PaymentFailed || state is PaymentCancelled) {
           // Pop back to PaymentScreen, which renders the failed / cancelled
-          // UI from the same bloc state.
+          // UI from the same bloc state. If the back-stack is empty (e.g.
+          // deep-linked into webview), bounce back to the upgrade entry.
           if (context.canPop()) {
             context.pop();
           } else {
-            context.go(RoutePaths.upgradePlanSelection);
+            context.go(RoutePaths.upgrade);
           }
         }
       },
@@ -165,9 +166,9 @@ class _PaymentWebViewScreenState extends State<PaymentWebViewScreen> {
             ),
             title: Text(
               'payment.webview_title'.tr(),
-              style: AppTypography.titleLarge(context).copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+              style: AppTypography.titleLarge(
+                context,
+              ).copyWith(fontWeight: FontWeight.w600),
             ),
             centerTitle: true,
           ),
@@ -190,17 +191,17 @@ class _PaymentWebViewScreenState extends State<PaymentWebViewScreen> {
             AppSpacing.gapVerticalLg,
             Text(
               '${'payment.processing'.tr()} (mock)',
-              style: AppTypography.titleMedium(context).copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+              style: AppTypography.titleMedium(
+                context,
+              ).copyWith(fontWeight: FontWeight.w600),
               textAlign: TextAlign.center,
             ),
             AppSpacing.gapVerticalSm,
             Text(
               'Payment ID: ${widget.state.payment.id}',
-              style: AppTypography.bodySmall(context).copyWith(
-                color: AppColors.textSecondaryOf(context),
-              ),
+              style: AppTypography.bodySmall(
+                context,
+              ).copyWith(color: AppColors.textSecondaryOf(context)),
               textAlign: TextAlign.center,
             ),
           ],

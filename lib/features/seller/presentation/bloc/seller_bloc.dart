@@ -15,11 +15,10 @@ class SellerBloc extends Bloc<SellerEvent, SellerState> {
   SellerBloc({
     required SellerRepository repository,
     required UpgradeToSellerUseCase upgradeToSellerUseCase,
-  })  : _repository = repository,
-        _upgradeToSellerUseCase = upgradeToSellerUseCase,
-        super(const SellerState()) {
+  }) : _repository = repository,
+       _upgradeToSellerUseCase = upgradeToSellerUseCase,
+       super(const SellerState()) {
     on<SellerProfileLoadRequested>(_onProfileLoadRequested);
-    on<SellerBusinessTypeSelected>(_onBusinessTypeSelected);
     on<SellerBusinessInfoUpdated>(_onBusinessInfoUpdated);
     on<SellerPlanSelected>(_onPlanSelected);
     on<SellerUpgradeRequested>(_onUpgradeRequested);
@@ -42,50 +41,44 @@ class SellerBloc extends Bloc<SellerEvent, SellerState> {
     result.fold(
       (failure) {
         AppLogger.error('Failed to load seller profile: ${failure.message}');
-        emit(state.copyWith(
-          status: SellerStatus.error,
-          failure: failure,
-        ));
+        emit(state.copyWith(status: SellerStatus.error, failure: failure));
       },
       (profile) {
-        emit(state.copyWith(
-          status: SellerStatus.loaded,
-          profile: profile,
-          clearProfile: profile == null,
-        ));
+        emit(
+          state.copyWith(
+            status: SellerStatus.loaded,
+            profile: profile,
+            clearProfile: profile == null,
+          ),
+        );
       },
     );
-  }
-
-  void _onBusinessTypeSelected(
-    SellerBusinessTypeSelected event,
-    Emitter<SellerState> emit,
-  ) {
-    emit(state.copyWith(
-      selectedBusinessType: event.type,
-      currentStep: 1,
-    ));
   }
 
   void _onBusinessInfoUpdated(
     SellerBusinessInfoUpdated event,
     Emitter<SellerState> emit,
   ) {
-    emit(state.copyWith(
-      businessName: event.businessName,
-      description: event.description,
-      address: event.address,
-      city: event.city,
-      contactPhones: event.contactPhones ?? [],
-      currentStep: 2,
-    ));
+    emit(
+      state.copyWith(
+        selectedBusinessType: event.businessType,
+        businessName: event.businessName,
+        description: event.description,
+        address: event.address,
+        city: event.city,
+        contactPhones: event.contactPhones ?? [],
+      ),
+    );
   }
 
-  void _onPlanSelected(
-    SellerPlanSelected event,
-    Emitter<SellerState> emit,
-  ) {
-    emit(state.copyWith(selectedPlan: event.plan));
+  void _onPlanSelected(SellerPlanSelected event, Emitter<SellerState> emit) {
+    emit(
+      state.copyWith(
+        selectedPlan: event.plan,
+        selectedBillingCycle: event.billingCycle,
+        currentStep: 1,
+      ),
+    );
   }
 
   Future<void> _onUpgradeRequested(
@@ -106,28 +99,26 @@ class SellerBloc extends Bloc<SellerEvent, SellerState> {
         description: state.description,
         address: state.address,
         city: state.city,
-        contactPhones: state.contactPhones.isNotEmpty ? state.contactPhones : null,
+        contactPhones: state.contactPhones.isNotEmpty
+            ? state.contactPhones
+            : null,
       ),
     );
 
     result.fold(
       (failure) {
         AppLogger.error('Failed to upgrade to seller: ${failure.message}');
-        emit(state.copyWith(
-          status: SellerStatus.error,
-          failure: failure,
-        ));
+        emit(state.copyWith(status: SellerStatus.error, failure: failure));
       },
       (profile) {
         AppLogger.info('Successfully upgraded to seller');
         // Drop transient upgrade-flow fields so a future re-entry to the
         // upgrade flow starts from a clean state.
-        emit(state
-            .copyWith(
-              status: SellerStatus.upgraded,
-              profile: profile,
-            )
-            .resetUpgradeFlow(status: SellerStatus.upgraded));
+        emit(
+          state
+              .copyWith(status: SellerStatus.upgraded, profile: profile)
+              .resetUpgradeFlow(status: SellerStatus.upgraded),
+        );
       },
     );
   }
@@ -143,17 +134,11 @@ class SellerBloc extends Bloc<SellerEvent, SellerState> {
     result.fold(
       (failure) {
         AppLogger.error('Failed to subscribe: ${failure.message}');
-        emit(state.copyWith(
-          status: SellerStatus.error,
-          failure: failure,
-        ));
+        emit(state.copyWith(status: SellerStatus.error, failure: failure));
       },
       (profile) {
         AppLogger.info('Successfully subscribed to ${event.plan.name}');
-        emit(state.copyWith(
-          status: SellerStatus.loaded,
-          profile: profile,
-        ));
+        emit(state.copyWith(status: SellerStatus.loaded, profile: profile));
       },
     );
   }
@@ -169,17 +154,11 @@ class SellerBloc extends Bloc<SellerEvent, SellerState> {
     result.fold(
       (failure) {
         AppLogger.error('Failed to cancel subscription: ${failure.message}');
-        emit(state.copyWith(
-          status: SellerStatus.error,
-          failure: failure,
-        ));
+        emit(state.copyWith(status: SellerStatus.error, failure: failure));
       },
       (profile) {
         AppLogger.info('Successfully cancelled subscription');
-        emit(state.copyWith(
-          status: SellerStatus.loaded,
-          profile: profile,
-        ));
+        emit(state.copyWith(status: SellerStatus.loaded, profile: profile));
       },
     );
   }
@@ -193,10 +172,7 @@ class SellerBloc extends Bloc<SellerEvent, SellerState> {
     result.fold(
       (failure) {
         AppLogger.error('Failed to load plans: ${failure.message}');
-        emit(state.copyWith(
-          status: SellerStatus.error,
-          failure: failure,
-        ));
+        emit(state.copyWith(status: SellerStatus.error, failure: failure));
       },
       (plans) {
         emit(state.copyWith(plans: plans));
@@ -215,10 +191,7 @@ class SellerBloc extends Bloc<SellerEvent, SellerState> {
     await uploadResult.fold(
       (failure) async {
         AppLogger.error('Failed to upload logo: ${failure.message}');
-        emit(state.copyWith(
-          status: SellerStatus.error,
-          failure: failure,
-        ));
+        emit(state.copyWith(status: SellerStatus.error, failure: failure));
       },
       (logoUrl) async {
         final updateResult = await _repository.updateSellerProfile(
@@ -227,16 +200,10 @@ class SellerBloc extends Bloc<SellerEvent, SellerState> {
 
         updateResult.fold(
           (failure) {
-            emit(state.copyWith(
-              status: SellerStatus.error,
-              failure: failure,
-            ));
+            emit(state.copyWith(status: SellerStatus.error, failure: failure));
           },
           (profile) {
-            emit(state.copyWith(
-              status: SellerStatus.loaded,
-              profile: profile,
-            ));
+            emit(state.copyWith(status: SellerStatus.loaded, profile: profile));
           },
         );
       },
@@ -254,10 +221,7 @@ class SellerBloc extends Bloc<SellerEvent, SellerState> {
     await uploadResult.fold(
       (failure) async {
         AppLogger.error('Failed to upload cover: ${failure.message}');
-        emit(state.copyWith(
-          status: SellerStatus.error,
-          failure: failure,
-        ));
+        emit(state.copyWith(status: SellerStatus.error, failure: failure));
       },
       (coverUrl) async {
         final updateResult = await _repository.updateSellerProfile(
@@ -266,16 +230,10 @@ class SellerBloc extends Bloc<SellerEvent, SellerState> {
 
         updateResult.fold(
           (failure) {
-            emit(state.copyWith(
-              status: SellerStatus.error,
-              failure: failure,
-            ));
+            emit(state.copyWith(status: SellerStatus.error, failure: failure));
           },
           (profile) {
-            emit(state.copyWith(
-              status: SellerStatus.loaded,
-              profile: profile,
-            ));
+            emit(state.copyWith(status: SellerStatus.loaded, profile: profile));
           },
         );
       },

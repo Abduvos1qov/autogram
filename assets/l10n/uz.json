@@ -222,16 +222,11 @@
     "contact": "Bog'lanish",
     "working_hours": "Ish vaqti",
 
-    "upgrade_screen": {
-      "app_bar_title": "Sotuvchi bo'lish",
-      "title": "Biznes turini tanlang",
-      "subtitle": "Sizning faoliyat turingizni tanlang"
-    },
-
     "business_info_screen": {
       "app_bar_title": "Biznes ma'lumotlari",
       "title": "Biznes haqida",
       "subtitle": "Biznesingiz haqida ma'lumot kiriting",
+      "business_type_label": "Biznes turi",
       "business_name_label": "Biznes nomi",
       "business_name_hint": "Masalan: Avtosalon Premium",
       "business_name_required": "Biznes nomini kiriting",
@@ -249,13 +244,29 @@
 
     "plan_selection": {
       "app_bar_title": "Tarif tanlash",
-      "title": "Tarifni tanlang",
-      "subtitle": "Keyinroq tarifni o'zgartirishingiz mumkin",
+      "headlines": {
+        "free": "Bepul boshlang'ich",
+        "pro": "Kichik dilerlar uchun",
+        "premium": "Yirik avtosalonlar uchun",
+        "enterprise": "Tarmoq biznes uchun"
+      },
+      "taglines": {
+        "free": "Birinchi mashinangizni soting",
+        "pro": "Kichik-o'rta diler uchun ideal yechim",
+        "premium": "10-20 xodim uchun to'liq imkoniyat",
+        "enterprise": "Cheksiz miqyos va shaxsiy menejer"
+      },
+      "tabs": {
+        "pro": "Pro",
+        "premium": "Premium",
+        "enterprise": "Enterprise"
+      },
+      "stay_on_free": "Free tarif bilan davom etish",
+      "save_percent": "{percent}% tejash",
       "billing_monthly": "Oylik",
       "billing_yearly": "Yillik (-17%)",
       "info_text": "Bepul tarifdan boshlang va kerak bo'lganda yangilang",
       "next_payment_notice": "Keyingi sahifada to'lovni amalga oshirasiz",
-      "free_button": "Bepul boshlash",
       "enterprise_button": "Bog'lanish",
       "default_button": "Davom etish",
       "enterprise_dialog_title": "Enterprise tarifi",
