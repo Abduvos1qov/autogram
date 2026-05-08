@@ -127,6 +127,12 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
   @override
   Future<void> likeListing(String listingId) async {
     try {
+      if (TestConfig.isTestMode) {
+        AppLogger.info('TEST MODE: Simulating likeListing $listingId');
+        await Future.delayed(const Duration(milliseconds: 200));
+        return;
+      }
+
       final userId = _supabase.auth.currentUser?.id;
       if (userId == null) throw const AuthException(message: 'Tizimga kirilmagan');
 
@@ -154,6 +160,12 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
   @override
   Future<void> unlikeListing(String listingId) async {
     try {
+      if (TestConfig.isTestMode) {
+        AppLogger.info('TEST MODE: Simulating unlikeListing $listingId');
+        await Future.delayed(const Duration(milliseconds: 200));
+        return;
+      }
+
       final userId = _supabase.auth.currentUser?.id;
       if (userId == null) throw const AuthException(message: 'Tizimga kirilmagan');
 
@@ -182,6 +194,12 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
   @override
   Future<void> saveListing(String listingId) async {
     try {
+      if (TestConfig.isTestMode) {
+        AppLogger.info('TEST MODE: Simulating saveListing $listingId');
+        await Future.delayed(const Duration(milliseconds: 200));
+        return;
+      }
+
       final userId = _supabase.auth.currentUser?.id;
       if (userId == null) throw const AuthException(message: 'Tizimga kirilmagan');
 
@@ -209,6 +227,12 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
   @override
   Future<void> unsaveListing(String listingId) async {
     try {
+      if (TestConfig.isTestMode) {
+        AppLogger.info('TEST MODE: Simulating unsaveListing $listingId');
+        await Future.delayed(const Duration(milliseconds: 200));
+        return;
+      }
+
       final userId = _supabase.auth.currentUser?.id;
       if (userId == null) throw const AuthException(message: 'Tizimga kirilmagan');
 
@@ -240,6 +264,11 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
     int? duration,
   }) async {
     try {
+      if (TestConfig.isTestMode) {
+        // Silent: views are fire-and-forget; no log noise.
+        return;
+      }
+
       final userId = _supabase.auth.currentUser?.id;
 
       await _supabase.from(ApiEndpoints.views).insert({

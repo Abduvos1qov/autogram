@@ -123,6 +123,42 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ],
                     ),
 
+                    // BUSINESS
+                    ProfileMenuSection(
+                      title: 'profile.business_section'.tr(),
+                      tiles: profile.isSeller
+                          ? [
+                              ProfileMenuTile(
+                                icon: Icons.storefront_outlined,
+                                title: 'profile.my_business'.tr(),
+                                onTap: () =>
+                                    context.push(RoutePaths.upgrade),
+                              ),
+                              ProfileMenuTile(
+                                icon: Icons.groups_outlined,
+                                title: 'profile.team_management'.tr(),
+                                onTap: () =>
+                                    context.push(RoutePaths.teamMembers),
+                              ),
+                              ProfileMenuTile(
+                                icon: Icons.event_seat_outlined,
+                                title: 'profile.seat_management'.tr(),
+                                onTap: () =>
+                                    context.push(RoutePaths.seatManagement),
+                              ),
+                            ]
+                          : [
+                              ProfileMenuTile(
+                                icon: Icons.storefront_outlined,
+                                title: 'profile.become_seller'.tr(),
+                                subtitle:
+                                    'profile.become_seller_subtitle'.tr(),
+                                onTap: () =>
+                                    context.push(RoutePaths.upgrade),
+                              ),
+                            ],
+                    ),
+
                     // ACTIVITY
                     ProfileMenuSection(
                       title: 'profile.activity_section'.tr(),

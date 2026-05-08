@@ -1,8 +1,11 @@
 import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
 
+import '../../../../core/config/test_config.dart';
 import '../../../../core/constants/api_endpoints.dart';
+import '../../../../core/data/mock_data.dart';
 import '../../../../core/errors/error_handler.dart';
 import '../../../../core/errors/exceptions.dart' as app_exceptions;
+import '../../../../core/utils/logger.dart';
 import '../../domain/entities/activity_log.dart';
 import '../models/activity_log_model.dart';
 
@@ -54,6 +57,13 @@ class ActivityLogRemoteDataSourceImpl implements ActivityLogRemoteDataSource {
     Map<String, dynamic>? metadata,
   }) async {
     try {
+      if (TestConfig.isTestMode) {
+        AppLogger.info(
+            'TEST MODE: Simulating logActivity ${actionType.value}');
+        await Future.delayed(const Duration(milliseconds: 200));
+        return;
+      }
+
       final currentUser = _supabase.auth.currentUser;
       if (currentUser == null) {
         throw app_exceptions.AuthException(
@@ -87,6 +97,35 @@ class ActivityLogRemoteDataSourceImpl implements ActivityLogRemoteDataSource {
     int pageSize = 20,
   }) async {
     try {
+      if (TestConfig.isTestMode) {
+        AppLogger.info(
+            'TEST MODE: Returning mock activity logs for $sellerProfileId');
+        await Future.delayed(const Duration(milliseconds: 300));
+        var logs = userId != null
+            ? MockData.getActivityLogsByUserId(sellerProfileId, userId)
+            : MockData.getActivityLogsBySellerProfileId(
+                sellerProfileId,
+                filterCategory: filterCategory,
+              );
+        // Pagination
+        final offset = (page - 1) * pageSize;
+        if (offset >= logs.length) return [];
+        final paginated = logs.skip(offset).take(pageSize).toList();
+        return paginated
+            .map((a) => ActivityLogModel(
+                  id: a.id,
+                  sellerProfileId: a.sellerProfileId,
+                  userId: a.userId,
+                  actionType: a.actionType,
+                  description: a.description,
+                  metadata: a.metadata,
+                  createdAt: a.createdAt,
+                  actorName: a.actorName,
+                  actorAvatarUrl: a.actorAvatarUrl,
+                ))
+            .toList();
+      }
+
       var query = _supabase
           .from(ApiEndpoints.memberActivityLog)
           .select(_selectWithJoins)

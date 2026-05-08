@@ -1,18 +1,18 @@
 /// Test configuration for the app
 /// Toggle test mode via the `TEST_MODE` dart-define.
 ///
-/// Default is `false` (production). For local development with mock data:
-///   flutter run --dart-define=TEST_MODE=true
+/// Default is `true` (mock backend). For production builds with real Supabase:
+///   flutter build apk --dart-define=TEST_MODE=false
 library;
 
 class TestConfig {
   /// Enable test mode to bypass real auth and use mock data.
   ///
-  /// Provided via `--dart-define=TEST_MODE=true` for development. Production
-  /// builds default to `false` so they exercise the real Supabase backend.
+  /// Defaults to `true` while the Supabase backend is still being wired up.
+  /// Production builds opt out explicitly via `--dart-define=TEST_MODE=false`.
   static const bool isTestMode = bool.fromEnvironment(
     'TEST_MODE',
-    defaultValue: false,
+    defaultValue: true,
   );
 
   /// Test email credentials: email -> password

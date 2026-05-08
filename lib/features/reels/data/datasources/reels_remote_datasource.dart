@@ -140,6 +140,12 @@ class ReelsRemoteDataSourceImpl implements ReelsRemoteDataSource {
   @override
   Future<void> likeReel(String reelId) async {
     try {
+      if (TestConfig.isTestMode) {
+        AppLogger.info('TEST MODE: Simulating likeReel $reelId');
+        await Future.delayed(const Duration(milliseconds: 200));
+        return;
+      }
+
       final userId = _supabase.auth.currentUser?.id;
       if (userId == null) {
         throw const AuthException(message: 'Tizimga kirilmagan');
@@ -168,6 +174,12 @@ class ReelsRemoteDataSourceImpl implements ReelsRemoteDataSource {
   @override
   Future<void> unlikeReel(String reelId) async {
     try {
+      if (TestConfig.isTestMode) {
+        AppLogger.info('TEST MODE: Simulating unlikeReel $reelId');
+        await Future.delayed(const Duration(milliseconds: 200));
+        return;
+      }
+
       final userId = _supabase.auth.currentUser?.id;
       if (userId == null) {
         throw const AuthException(message: 'Tizimga kirilmagan');
@@ -197,6 +209,12 @@ class ReelsRemoteDataSourceImpl implements ReelsRemoteDataSource {
   @override
   Future<void> saveReel(String reelId) async {
     try {
+      if (TestConfig.isTestMode) {
+        AppLogger.info('TEST MODE: Simulating saveReel $reelId');
+        await Future.delayed(const Duration(milliseconds: 200));
+        return;
+      }
+
       final userId = _supabase.auth.currentUser?.id;
       if (userId == null) {
         throw const AuthException(message: 'Tizimga kirilmagan');
@@ -225,6 +243,12 @@ class ReelsRemoteDataSourceImpl implements ReelsRemoteDataSource {
   @override
   Future<void> unsaveReel(String reelId) async {
     try {
+      if (TestConfig.isTestMode) {
+        AppLogger.info('TEST MODE: Simulating unsaveReel $reelId');
+        await Future.delayed(const Duration(milliseconds: 200));
+        return;
+      }
+
       final userId = _supabase.auth.currentUser?.id;
       if (userId == null) {
         throw const AuthException(message: 'Tizimga kirilmagan');
@@ -257,6 +281,11 @@ class ReelsRemoteDataSourceImpl implements ReelsRemoteDataSource {
     required int duration,
   }) async {
     try {
+      if (TestConfig.isTestMode) {
+        // Silent: views are fire-and-forget; no log noise.
+        return;
+      }
+
       final userId = _supabase.auth.currentUser?.id;
 
       await _supabase.from(ApiEndpoints.views).insert({
@@ -277,6 +306,11 @@ class ReelsRemoteDataSourceImpl implements ReelsRemoteDataSource {
   @override
   Future<void> shareReel(String reelId) async {
     try {
+      if (TestConfig.isTestMode) {
+        // Silent: shares are fire-and-forget; no log noise.
+        return;
+      }
+
       await _supabase.rpc('increment_shares_count', params: {
         'listing_id': reelId,
       });

@@ -1,9 +1,12 @@
 import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
 
+import '../../../../core/config/test_config.dart';
 import '../../../../core/constants/api_endpoints.dart';
+import '../../../../core/data/mock_data.dart';
 import '../../../../core/errors/error_handler.dart';
 import '../../../../core/errors/exceptions.dart' as app_exceptions;
 import '../../../../core/services/permission_service.dart';
+import '../../../../core/utils/logger.dart';
 import '../models/seller_member_model.dart';
 
 /// Remote data source interface for seller members
@@ -50,6 +53,30 @@ class SellerMemberRemoteDataSourceImpl implements SellerMemberRemoteDataSource {
   Future<List<SellerMemberModel>> getTeamMembers(
       String sellerProfileId) async {
     try {
+      if (TestConfig.isTestMode) {
+        AppLogger.info(
+            'TEST MODE: Returning mock team members for $sellerProfileId');
+        await Future.delayed(const Duration(milliseconds: 300));
+        return MockData.getMembersBySellerProfileId(sellerProfileId)
+            .map((m) => SellerMemberModel(
+                  id: m.id,
+                  sellerProfileId: m.sellerProfileId,
+                  userId: m.userId,
+                  role: m.role,
+                  customPermissions: m.customPermissions,
+                  invitedBy: m.invitedBy,
+                  invitedAt: m.invitedAt,
+                  joinedAt: m.joinedAt,
+                  isActive: m.isActive,
+                  memberName: m.memberName,
+                  memberEmail: m.memberEmail,
+                  memberAvatarUrl: m.memberAvatarUrl,
+                  createdAt: m.createdAt,
+                  updatedAt: m.updatedAt,
+                ))
+            .toList();
+      }
+
       final response = await _supabase
           .from(ApiEndpoints.sellerMembers)
           .select('*, profiles:user_id(full_name, email, avatar_url)')
@@ -74,6 +101,29 @@ class SellerMemberRemoteDataSourceImpl implements SellerMemberRemoteDataSource {
     String userId,
   ) async {
     try {
+      if (TestConfig.isTestMode) {
+        AppLogger.info('TEST MODE: Looking up member by userId');
+        await Future.delayed(const Duration(milliseconds: 200));
+        final m = MockData.getMemberByUserId(sellerProfileId, userId);
+        if (m == null) return null;
+        return SellerMemberModel(
+          id: m.id,
+          sellerProfileId: m.sellerProfileId,
+          userId: m.userId,
+          role: m.role,
+          customPermissions: m.customPermissions,
+          invitedBy: m.invitedBy,
+          invitedAt: m.invitedAt,
+          joinedAt: m.joinedAt,
+          isActive: m.isActive,
+          memberName: m.memberName,
+          memberEmail: m.memberEmail,
+          memberAvatarUrl: m.memberAvatarUrl,
+          createdAt: m.createdAt,
+          updatedAt: m.updatedAt,
+        );
+      }
+
       final response = await _supabase
           .from(ApiEndpoints.sellerMembers)
           .select('*, profiles:user_id(full_name, email, avatar_url)')
@@ -99,6 +149,27 @@ class SellerMemberRemoteDataSourceImpl implements SellerMemberRemoteDataSource {
     required MemberRole role,
   }) async {
     try {
+      if (TestConfig.isTestMode) {
+        AppLogger.info(
+            'TEST MODE: Simulating addMember $email role=${role.value}');
+        await Future.delayed(const Duration(milliseconds: 400));
+        final now = DateTime.now();
+        return SellerMemberModel(
+          id: 'mock_member_${now.millisecondsSinceEpoch}',
+          sellerProfileId: sellerProfileId,
+          userId: 'mock_user_${email.hashCode.abs()}',
+          role: role,
+          invitedBy: 'mock_inviter',
+          invitedAt: now,
+          joinedAt: now,
+          isActive: true,
+          memberName: email.split('@').first,
+          memberEmail: email,
+          createdAt: now,
+          updatedAt: now,
+        );
+      }
+
       final currentUser = _supabase.auth.currentUser;
       if (currentUser == null) {
         throw app_exceptions.AuthException(
@@ -177,6 +248,46 @@ class SellerMemberRemoteDataSourceImpl implements SellerMemberRemoteDataSource {
     required MemberRole role,
   }) async {
     try {
+      if (TestConfig.isTestMode) {
+        AppLogger.info(
+            'TEST MODE: Simulating updateMemberRole $memberId -> ${role.value}');
+        await Future.delayed(const Duration(milliseconds: 300));
+        final now = DateTime.now();
+        // Find existing mock member if available
+        final existing = MockData.mockSellerMembers
+            .where((m) => m.id == memberId)
+            .toList();
+        if (existing.isNotEmpty) {
+          final m = existing.first;
+          return SellerMemberModel(
+            id: m.id,
+            sellerProfileId: m.sellerProfileId,
+            userId: m.userId,
+            role: role,
+            customPermissions: m.customPermissions,
+            invitedBy: m.invitedBy,
+            invitedAt: m.invitedAt,
+            joinedAt: m.joinedAt,
+            isActive: m.isActive,
+            memberName: m.memberName,
+            memberEmail: m.memberEmail,
+            memberAvatarUrl: m.memberAvatarUrl,
+            createdAt: m.createdAt,
+            updatedAt: now,
+          );
+        }
+        return SellerMemberModel(
+          id: memberId,
+          sellerProfileId: 'seller1',
+          userId: 'mock_user',
+          role: role,
+          isActive: true,
+          memberName: 'Mock Member',
+          createdAt: now,
+          updatedAt: now,
+        );
+      }
+
       final response = await _supabase
           .from(ApiEndpoints.sellerMembers)
           .update({
@@ -199,6 +310,12 @@ class SellerMemberRemoteDataSourceImpl implements SellerMemberRemoteDataSource {
   @override
   Future<void> removeMember(String memberId) async {
     try {
+      if (TestConfig.isTestMode) {
+        AppLogger.info('TEST MODE: Simulating removeMember $memberId');
+        await Future.delayed(const Duration(milliseconds: 300));
+        return;
+      }
+
       // Soft delete — set is_active to false
       await _supabase
           .from(ApiEndpoints.sellerMembers)
@@ -218,6 +335,12 @@ class SellerMemberRemoteDataSourceImpl implements SellerMemberRemoteDataSource {
   @override
   Future<SellerMemberModel?> getCurrentMembership() async {
     try {
+      if (TestConfig.isTestMode) {
+        AppLogger.info('TEST MODE: getCurrentMembership returning null');
+        await Future.delayed(const Duration(milliseconds: 200));
+        return null;
+      }
+
       final currentUser = _supabase.auth.currentUser;
       if (currentUser == null) return null;
 

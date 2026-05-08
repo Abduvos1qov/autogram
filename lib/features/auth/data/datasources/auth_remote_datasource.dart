@@ -116,24 +116,39 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     try {
       AppLogger.info('Signing in user: $email');
 
-      // Test mode
-      if (TestConfig.isTestMode && TestConfig.isTestEmail(email)) {
+      // Test mode — mock all emails (no Supabase required)
+      if (TestConfig.isTestMode) {
         AppLogger.info('TEST MODE: Simulating sign in for $email');
         await Future.delayed(const Duration(milliseconds: 500));
 
-        final testPassword = TestConfig.getTestPassword(email);
-        if (password != testPassword) {
-          throw const AuthException(
-            message: 'Noto\'g\'ri email yoki parol',
-          );
+        // Predefined test credentials still validate password
+        if (TestConfig.isTestEmail(email)) {
+          final testPassword = TestConfig.getTestPassword(email);
+          if (password != testPassword) {
+            throw const AuthException(
+              message: 'Noto\'g\'ri email yoki parol',
+            );
+          }
+          final mockUser = MockData.getUserByEmail(email);
+          if (mockUser != null) {
+            return UserModel.fromEntity(mockUser);
+          }
         }
 
-        final mockUser = MockData.getUserByEmail(email);
-        if (mockUser == null) {
-          throw const NotFoundException(message: 'Foydalanuvchi topilmadi');
-        }
-
-        return UserModel.fromEntity(mockUser);
+        // Newly signed-up email — synthesize a user (mirrors verifyOtp).
+        final now = DateTime.now();
+        return UserModel(
+          id: 'mock_${email.hashCode.abs()}',
+          email: email,
+          fullName: 'Test User',
+          username: email.split('@').first,
+          role: UserRole.buyer,
+          isVerified: true,
+          isActive: true,
+          language: 'uz',
+          createdAt: now,
+          updatedAt: now,
+        );
       }
 
       final response = await _supabase.auth.signInWithPassword(
@@ -476,6 +491,11 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<UserModel?> getCurrentUser() async {
     try {
+      // Test mode — repository falls back to local cache.
+      if (TestConfig.isTestMode) {
+        return null;
+      }
+
       final currentUser = _supabase.auth.currentUser;
       if (currentUser == null) {
         return null;
@@ -501,6 +521,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<void> logout() async {
     try {
+      if (TestConfig.isTestMode) {
+        AppLogger.info('TEST MODE: Simulating logout');
+        return;
+      }
       await _supabase.auth.signOut();
       AppLogger.info('User logged out');
     } on supabase.AuthException catch (e) {
@@ -514,6 +538,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   @override
   Stream<UserModel?> get authStateChanges {
+    // Test mode — no Supabase listener, repository drives state via cache.
+    if (TestConfig.isTestMode) {
+      return const Stream<UserModel?>.empty();
+    }
     return _supabase.auth.onAuthStateChange.asyncMap((event) async {
       if (event.session?.user == null) {
         return null;

@@ -1,10 +1,14 @@
 import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
 import 'package:uuid/uuid.dart';
 
+import '../../../../core/config/test_config.dart';
 import '../../../../core/constants/api_endpoints.dart';
+import '../../../../core/data/mock_data.dart';
 import '../../../../core/errors/error_handler.dart';
 import '../../../../core/errors/exceptions.dart' as app_exceptions;
 import '../../../../core/services/permission_service.dart';
+import '../../../../core/utils/logger.dart';
+import '../../domain/entities/seller_invitation.dart';
 import '../models/seller_invitation_model.dart';
 
 /// Remote data source interface for seller invitations
@@ -53,6 +57,25 @@ class SellerInvitationRemoteDataSourceImpl
     required MemberRole role,
   }) async {
     try {
+      if (TestConfig.isTestMode) {
+        AppLogger.info(
+            'TEST MODE: Simulating sendInvitation $email role=${role.value}');
+        await Future.delayed(const Duration(milliseconds: 400));
+        final now = DateTime.now();
+        return SellerInvitationModel(
+          id: 'mock_inv_${now.millisecondsSinceEpoch}',
+          sellerProfileId: sellerProfileId,
+          email: email,
+          role: role,
+          invitedBy: 'mock_inviter',
+          status: InvitationStatus.pending,
+          token: const Uuid().v4(),
+          expiresAt: now.add(const Duration(days: 7)),
+          createdAt: now,
+          updatedAt: now,
+        );
+      }
+
       final currentUser = _supabase.auth.currentUser;
       if (currentUser == null) {
         throw app_exceptions.AuthException(
@@ -128,6 +151,29 @@ class SellerInvitationRemoteDataSourceImpl
   Future<List<SellerInvitationModel>> getPendingInvitations(
       String sellerProfileId) async {
     try {
+      if (TestConfig.isTestMode) {
+        AppLogger.info(
+            'TEST MODE: Returning mock pending invitations for $sellerProfileId');
+        await Future.delayed(const Duration(milliseconds: 300));
+        return MockData.getPendingInvitationsBySellerProfileId(sellerProfileId)
+            .map((i) => SellerInvitationModel(
+                  id: i.id,
+                  sellerProfileId: i.sellerProfileId,
+                  email: i.email,
+                  role: i.role,
+                  invitedBy: i.invitedBy,
+                  status: i.status,
+                  token: i.token,
+                  expiresAt: i.expiresAt,
+                  inviterName: i.inviterName,
+                  inviterAvatarUrl: i.inviterAvatarUrl,
+                  sellerName: i.sellerName,
+                  createdAt: i.createdAt,
+                  updatedAt: i.updatedAt,
+                ))
+            .toList();
+      }
+
       final response = await _supabase
           .from(ApiEndpoints.sellerInvitations)
           .select(_selectWithJoins)
@@ -150,6 +196,46 @@ class SellerInvitationRemoteDataSourceImpl
   @override
   Future<SellerInvitationModel> acceptInvitation(String invitationId) async {
     try {
+      if (TestConfig.isTestMode) {
+        AppLogger.info(
+            'TEST MODE: Simulating acceptInvitation $invitationId');
+        await Future.delayed(const Duration(milliseconds: 400));
+        final existing = MockData.mockSellerInvitations
+            .where((i) => i.id == invitationId)
+            .toList();
+        final now = DateTime.now();
+        if (existing.isNotEmpty) {
+          final i = existing.first;
+          return SellerInvitationModel(
+            id: i.id,
+            sellerProfileId: i.sellerProfileId,
+            email: i.email,
+            role: i.role,
+            invitedBy: i.invitedBy,
+            status: InvitationStatus.accepted,
+            token: i.token,
+            expiresAt: i.expiresAt,
+            inviterName: i.inviterName,
+            inviterAvatarUrl: i.inviterAvatarUrl,
+            sellerName: i.sellerName,
+            createdAt: i.createdAt,
+            updatedAt: now,
+          );
+        }
+        return SellerInvitationModel(
+          id: invitationId,
+          sellerProfileId: 'seller1',
+          email: 'mock@example.com',
+          role: MemberRole.viewer,
+          invitedBy: 'mock_inviter',
+          status: InvitationStatus.accepted,
+          token: 'mock_token',
+          expiresAt: now.add(const Duration(days: 7)),
+          createdAt: now.subtract(const Duration(days: 1)),
+          updatedAt: now,
+        );
+      }
+
       final currentUser = _supabase.auth.currentUser;
       if (currentUser == null) {
         throw app_exceptions.AuthException(
@@ -222,6 +308,46 @@ class SellerInvitationRemoteDataSourceImpl
   @override
   Future<SellerInvitationModel> rejectInvitation(String invitationId) async {
     try {
+      if (TestConfig.isTestMode) {
+        AppLogger.info(
+            'TEST MODE: Simulating rejectInvitation $invitationId');
+        await Future.delayed(const Duration(milliseconds: 300));
+        final now = DateTime.now();
+        final existing = MockData.mockSellerInvitations
+            .where((i) => i.id == invitationId)
+            .toList();
+        if (existing.isNotEmpty) {
+          final i = existing.first;
+          return SellerInvitationModel(
+            id: i.id,
+            sellerProfileId: i.sellerProfileId,
+            email: i.email,
+            role: i.role,
+            invitedBy: i.invitedBy,
+            status: InvitationStatus.rejected,
+            token: i.token,
+            expiresAt: i.expiresAt,
+            inviterName: i.inviterName,
+            inviterAvatarUrl: i.inviterAvatarUrl,
+            sellerName: i.sellerName,
+            createdAt: i.createdAt,
+            updatedAt: now,
+          );
+        }
+        return SellerInvitationModel(
+          id: invitationId,
+          sellerProfileId: 'seller1',
+          email: 'mock@example.com',
+          role: MemberRole.viewer,
+          invitedBy: 'mock_inviter',
+          status: InvitationStatus.rejected,
+          token: 'mock_token',
+          expiresAt: now.add(const Duration(days: 7)),
+          createdAt: now.subtract(const Duration(days: 1)),
+          updatedAt: now,
+        );
+      }
+
       final response = await _supabase
           .from(ApiEndpoints.sellerInvitations)
           .update({
@@ -244,6 +370,13 @@ class SellerInvitationRemoteDataSourceImpl
   @override
   Future<void> cancelInvitation(String invitationId) async {
     try {
+      if (TestConfig.isTestMode) {
+        AppLogger.info(
+            'TEST MODE: Simulating cancelInvitation $invitationId');
+        await Future.delayed(const Duration(milliseconds: 300));
+        return;
+      }
+
       await _supabase
           .from(ApiEndpoints.sellerInvitations)
           .update({
@@ -262,6 +395,12 @@ class SellerInvitationRemoteDataSourceImpl
   @override
   Future<List<SellerInvitationModel>> getMyInvitations() async {
     try {
+      if (TestConfig.isTestMode) {
+        AppLogger.info('TEST MODE: Returning empty invitations list');
+        await Future.delayed(const Duration(milliseconds: 200));
+        return [];
+      }
+
       final currentUser = _supabase.auth.currentUser;
       if (currentUser == null) return [];
 
