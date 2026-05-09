@@ -13,6 +13,13 @@ abstract class ReelsRepository {
     int pageSize = 10,
   });
 
+  /// Get reels for a single seller (paginated, active video listings).
+  Future<Either<Failure, PaginatedResponse<Reel>>> getSellerReels({
+    required String sellerId,
+    int page = 1,
+    int pageSize = 12,
+  });
+
   /// Like a reel
   Future<Either<Failure, void>> likeReel(String reelId);
 

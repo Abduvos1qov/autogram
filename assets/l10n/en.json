@@ -1,382 +1,434 @@
 {
-  "app_name": "Autogram",
-
-  "common": {
-    "loading": "Loading...",
-    "error": "Error",
-    "retry": "Retry",
-    "cancel": "Cancel",
-    "save": "Save",
-    "delete": "Delete",
-    "edit": "Edit",
-    "done": "Done",
-    "next": "Next",
-    "back": "Back",
-    "close": "Close",
-    "search": "Search",
-    "filter": "Filter",
-    "sort": "Sort",
-    "all": "All",
-    "yes": "Yes",
-    "no": "No",
-    "ok": "OK"
+  "activity": {
+    "filter_all": "All",
+    "filter_listings": "Listings",
+    "filter_members": "Members",
+    "filter_settings": "Settings",
+    "invitation_cancelled": "Invitation cancelled",
+    "listing_boosted": "Listing boosted",
+    "listing_created": "Listing created",
+    "listing_deactivated": "Listing deactivated",
+    "listing_published": "Listing published",
+    "listing_sold": "Listing sold",
+    "listing_updated": "Listing updated",
+    "load_more": "Load more",
+    "member_invited": "Member invited",
+    "member_joined": "Member joined",
+    "member_removed": "Member removed",
+    "member_role_changed": "Role changed",
+    "no_activity": "No activity history",
+    "profile_updated": "Profile updated",
+    "settings_changed": "Settings changed",
+    "subscription_changed": "Subscription changed",
+    "title": "Activity History"
   },
-
+  "app_name": "Autogram",
   "auth": {
-    "welcome": "Welcome!",
-    "login": "Login",
-    "register": "Register",
-    "logout": "Logout",
-    "phone": "Phone number",
-    "phone_hint": "+998 90 123 45 67",
-    "send_code": "Send code",
-    "verify": "Verify",
-    "otp_sent": "Verification code sent",
-    "enter_otp": "Enter code",
-    "resend_code": "Resend code",
-    "resend_in": "Resend in: {seconds}s",
-    "full_name": "Full name",
-    "full_name_hint": "Your name",
     "continue": "Continue",
-    "logout_confirm": "Are you sure you want to logout?",
-
-    "login_screen": {
-      "title": "Sign in to\nyour account",
-      "subtitle": "Enter your email and password to sign in",
-      "email_label": "Email",
-      "email_hint": "email@example.com",
-      "password_label": "Password",
-      "password_hint": "Enter your password",
-      "password_required": "Enter your password",
-      "forgot_password": "Forgot password?",
-      "submit": "Sign in",
-      "or_divider": "Or",
-      "no_account": "Don't have an account? ",
-      "register_link": "Register"
-    },
-
-    "register_screen": {
-      "title": "Register",
-      "subtitle": "Create an account to continue!",
-      "full_name_label": "Full name",
-      "full_name_hint": "Enter your name",
-      "email_label": "Email",
-      "email_hint": "email@example.com",
-      "dob_label": "Date of birth (optional)",
-      "dob_hint": "DD/MM/YYYY",
-      "phone_label": "Phone number (optional)",
-      "phone_hint": "+998 XX XXX XX XX",
-      "password_label": "Password",
-      "password_hint": "Enter a strong password",
-      "confirm_password_label": "Confirm password",
-      "confirm_password_hint": "Re-enter your password",
-      "submit": "Register",
-      "have_account": "Already have an account? ",
-      "login_link": "Sign in"
-    },
-
-    "verification_screen": {
-      "app_bar_title": "Email verification",
-      "title": "Verification code",
-      "subtitle_prefix": "We sent a verification code to ",
-      "subtitle_suffix": "",
-      "submit": "Verify",
-      "resend_label": "Resend code",
-      "resend_in": "Resend in: {seconds}s",
-      "resent_snackbar": "Verification code resent"
-    },
-
-    "username_screen": {
-      "title": "Choose a username",
-      "subtitle": "Other users will be able to find you with this name",
-      "label": "Username",
-      "hint": "username",
-      "helper": "Only letters, numbers and underscore. Minimum 3 characters.",
-      "submit": "Continue",
-      "already_taken": "This username is already taken"
-    },
-
+    "enter_otp": "Enter code",
     "forgot_password_screen": {
-      "step1_title": "Reset password",
-      "step1_subtitle": "Enter your email and we'll send you a verification code",
-      "step1_email_label": "Email",
-      "step1_email_hint": "email@example.com",
-      "step1_submit": "Send code",
       "step1_back_to_login": "Back to sign in",
-      "step2_title": "Verification code",
+      "step1_email_hint": "email@example.com",
+      "step1_email_label": "Email",
+      "step1_submit": "Send code",
+      "step1_subtitle": "Enter your email and we'll send you a verification code",
+      "step1_title": "Reset password",
+      "step2_resend_in": "Resend in: {seconds}s",
+      "step2_resend_label": "Resend code",
+      "step2_resent_snackbar": "Verification code resent",
+      "step2_submit": "Verify",
       "step2_subtitle_prefix": "We sent a verification code to ",
       "step2_subtitle_suffix": "",
-      "step2_submit": "Verify",
-      "step2_resend_label": "Resend code",
-      "step2_resend_in": "Resend in: {seconds}s",
-      "step2_resent_snackbar": "Verification code resent",
-      "step3_title": "New password",
-      "step3_subtitle": "Enter your new password",
-      "step3_new_password_label": "New password",
-      "step3_new_password_hint": "Enter a strong password",
-      "step3_confirm_password_label": "Confirm password",
+      "step2_title": "Verification code",
       "step3_confirm_password_hint": "Re-enter your password",
+      "step3_confirm_password_label": "Confirm password",
+      "step3_new_password_hint": "Enter a strong password",
+      "step3_new_password_label": "New password",
       "step3_submit": "Save password",
-      "success_title": "Password updated!",
+      "step3_subtitle": "Enter your new password",
+      "step3_title": "New password",
       "success_message": "Your password has been updated successfully. You can now sign in with your new password.",
-      "success_submit": "Go to sign in"
+      "success_submit": "Go to sign in",
+      "success_title": "Password updated!"
     },
-
+    "full_name": "Full name",
+    "full_name_hint": "Your name",
+    "login": "Login",
+    "login_screen": {
+      "email_hint": "email@example.com",
+      "email_label": "Email",
+      "forgot_password": "Forgot password?",
+      "no_account": "Don't have an account? ",
+      "or_divider": "Or",
+      "password_hint": "Enter your password",
+      "password_label": "Password",
+      "password_required": "Enter your password",
+      "register_link": "Register",
+      "submit": "Sign in",
+      "subtitle": "Enter your email and password to sign in",
+      "title": "Sign in to\nyour account"
+    },
+    "logout": "Logout",
+    "logout_confirm": "Are you sure you want to logout?",
     "onboarding_screen": {
-      "skip": "Skip",
       "next": "Next",
-      "start": "Get started",
-      "page1_title": "Show with video",
       "page1_description": "Showcase your car through video. Buyers will see it in Reels format.",
-      "page2_title": "Easy search",
+      "page1_title": "Show with video",
       "page2_description": "Find the right car by brand, model, price and other parameters.",
+      "page2_title": "Easy search",
+      "page3_description": "Connect with sellers directly and make deals.",
       "page3_title": "Direct contact",
-      "page3_description": "Connect with sellers directly and make deals."
+      "skip": "Skip",
+      "start": "Get started"
     },
-
+    "otp_sent": "Verification code sent",
+    "phone": "Phone number",
+    "phone_hint": "+998 90 123 45 67",
+    "register": "Register",
+    "register_screen": {
+      "confirm_password_hint": "Re-enter your password",
+      "confirm_password_label": "Confirm password",
+      "dob_hint": "DD/MM/YYYY",
+      "dob_label": "Date of birth (optional)",
+      "email_hint": "email@example.com",
+      "email_label": "Email",
+      "full_name_hint": "Enter your name",
+      "full_name_label": "Full name",
+      "have_account": "Already have an account? ",
+      "login_link": "Sign in",
+      "password_hint": "Enter a strong password",
+      "password_label": "Password",
+      "phone_hint": "+998 XX XXX XX XX",
+      "phone_label": "Phone number (optional)",
+      "submit": "Register",
+      "subtitle": "Create an account to continue!",
+      "title": "Register"
+    },
+    "resend_code": "Resend code",
+    "resend_in": "Resend in: {seconds}s",
+    "send_code": "Send code",
     "splash_screen": {
       "tagline": "World of cars"
-    }
+    },
+    "username_screen": {
+      "already_taken": "This username is already taken",
+      "helper": "Only letters, numbers and underscore. Minimum 3 characters.",
+      "hint": "username",
+      "label": "Username",
+      "submit": "Continue",
+      "subtitle": "Other users will be able to find you with this name",
+      "title": "Choose a username"
+    },
+    "verification_screen": {
+      "app_bar_title": "Email verification",
+      "resend_in": "Resend in: {seconds}s",
+      "resend_label": "Resend code",
+      "resent_snackbar": "Verification code resent",
+      "submit": "Verify",
+      "subtitle_prefix": "We sent a verification code to ",
+      "subtitle_suffix": "",
+      "title": "Verification code"
+    },
+    "verify": "Verify",
+    "welcome": "Welcome!"
   },
-
-  "home": {
-    "title": "Home",
-    "feed": "Feed",
-    "stories": "Stories",
-    "no_posts": "No listings yet",
-    "pull_to_refresh": "Pull to refresh"
+  "body_types": {
+    "convertible": "Convertible",
+    "coupe": "Coupe",
+    "hatchback": "Hatchback",
+    "minivan": "Minivan",
+    "pickup": "Pickup",
+    "sedan": "Sedan",
+    "suv": "SUV",
+    "wagon": "Wagon"
   },
-
-  "reels": {
-    "title": "Reels",
-    "no_videos": "No videos",
-    "video_error": "Video failed to load",
-    "retry_video": "Retry"
+  "chat": {
+    "new_chat": "New chat",
+    "no_messages": "No messages",
+    "send": "Send",
+    "title": "Messages",
+    "type_message": "Type a message..."
   },
-
-  "search": {
-    "title": "Search",
-    "hint": "Search brand or model...",
-    "recent": "Recent searches",
-    "popular": "Popular searches",
-    "clear_recent": "Clear",
-    "no_results": "No results found",
-    "results_count": "{count} results",
-    "filters": "Filters",
-    "apply_filters": "Show results",
-    "clear_filters": "Clear",
-    "price": "Price",
-    "price_range": "Price ({currency})",
-    "brand": "Brand",
-    "model": "Model",
-    "year": "Year",
-    "year_from": "From",
-    "year_to": "To",
-    "mileage": "Mileage",
-    "fuel_type": "Fuel type",
-    "transmission": "Transmission",
-    "body_type": "Body type",
-    "color": "Color",
-    "city": "City",
-    "verified_only": "Verified sellers only",
-    "no_accident": "No accidents",
-    "first_owner": "First owner"
-  },
-
-  "listing": {
-    "details": "Details",
-    "specs": "Specifications",
-    "description": "Description",
-    "seller": "Seller",
-    "similar": "Similar listings",
-    "call": "Call",
-    "message": "Message",
-    "share": "Share",
+  "common": {
+    "all": "All",
+    "back": "Back",
+    "cancel": "Cancel",
+    "close": "Close",
+    "delete": "Delete",
+    "done": "Done",
+    "edit": "Edit",
+    "error": "Error",
+    "filter": "Filter",
+    "loading": "Loading...",
+    "next": "Next",
+    "no": "No",
+    "ok": "OK",
+    "retry": "Retry",
     "save": "Save",
-    "saved": "Saved",
-    "report": "Report",
-    "negotiable": "Negotiable",
-    "views": "views",
-    "likes": "likes",
-    "year": "Year",
-    "mileage": "Mileage",
-    "engine": "Engine",
-    "transmission": "Transmission",
+    "search": "Search",
+    "sort": "Sort",
+    "yes": "Yes"
+  },
+  "conditions": {
+    "excellent": "Excellent",
+    "fair": "Fair",
+    "good": "Good",
+    "new": "New"
+  },
+  "errors": {
+    "auth": "Authentication error",
+    "network": "No internet connection",
+    "not_found": "Not found",
+    "payment_create_failed": "Could not create payment",
+    "payment_gateway_unavailable": "Payment gateway unavailable",
+    "payment_status_failed": "Could not check payment status",
+    "server": "Server error",
+    "unknown": "Unknown error"
+  },
+  "fuel_types": {
+    "diesel": "Diesel",
+    "electric": "Electric",
+    "gas": "Gas",
+    "hybrid": "Hybrid",
+    "petrol": "Petrol"
+  },
+  "home": {
+    "feed": "Feed",
+    "no_posts": "No listings yet",
+    "pull_to_refresh": "Pull to refresh",
+    "stories": "Stories",
+    "title": "Home"
+  },
+  "listing": {
+    "accident": "Accident",
+    "call": "Call",
     "color": "Color",
     "condition": "Condition",
-    "accident": "Accident",
+    "description": "Description",
+    "details": "Details",
+    "engine": "Engine",
+    "features": "Features",
+    "likes": "likes",
+    "message": "Message",
+    "mileage": "Mileage",
+    "negotiable": "Negotiable",
     "owners": "Owners",
-    "features": "Features"
+    "report": "Report",
+    "save": "Save",
+    "saved": "Saved",
+    "seller": "Seller",
+    "share": "Share",
+    "similar": "Similar listings",
+    "specs": "Specifications",
+    "transmission": "Transmission",
+    "views": "views",
+    "year": "Year"
   },
-
-  "seller": {
-    "profile": "Seller profile",
-    "listings": "Listings",
-    "reviews": "Reviews",
-    "sold": "sold",
-    "rating": "Rating",
-    "follow": "Follow",
-    "following": "Following",
-    "verified": "Verified",
-    "location": "Location",
-    "contact": "Contact",
-    "working_hours": "Working hours",
-
-    "storefront": {
-      "stats": {
-        "listings": "Listings",
-        "sold": "Sold",
-        "followers": "Followers",
-        "rating": "Rating"
-      },
-      "actions": {
-        "edit_profile": "Edit profile",
-        "share_profile": "Share",
-        "boost": "Boost",
-        "team": "Team",
-        "seats": "Seats",
-        "subscription": "Subscription",
-        "manage_listings": "Manage listings"
-      },
-      "tabs": {
-        "active": "Active",
-        "sold": "Sold",
-        "about": "About"
-      },
-      "tab_count": "{count}",
-      "empty": {
-        "active_title": "No active listings",
-        "active_message": "Add your first listing and reach buyers.",
-        "active_cta": "Add listing",
-        "sold_title": "No sold listings yet",
-        "sold_message": "Sold listings will appear here."
-      },
-      "about": {
-        "business_type": "Business type",
-        "description": "Description",
-        "no_description": "No description",
-        "address": "Address",
-        "no_address": "No address provided",
-        "contact_phone": "Phone",
-        "telegram": "Telegram",
-        "instagram": "Instagram",
-        "website": "Website",
-        "working_hours": "Working hours",
-        "closed": "Closed",
-        "member_since": "Member since {date}",
-        "subscription_label": "Plan",
-        "expires_at": "Valid until: {date}"
-      },
-      "verified_tooltip": "Verified business",
-      "tier_badge": {
-        "pro": "PRO",
-        "premium": "PREMIUM",
-        "enterprise": "ENTERPRISE"
-      },
-      "share_message": "My Autogram profile — {name}",
-      "no_business_title": "No business profile",
-      "no_business_message": "Create your business profile and start selling.",
-      "no_business_cta": "Become a seller"
+  "notifications": {
+    "empty": "No notifications",
+    "mark_all_read": "Mark all as read",
+    "title": "Notifications"
+  },
+  "payment": {
+    "additional_seats": "Additional seats",
+    "back_to_plans": "Back to plans",
+    "billing_cycle": "Billing cycle",
+    "cancel_button": "Cancel",
+    "cancelled_title": "Payment cancelled",
+    "currency_usd": "$",
+    "currency_uzs": "UZS",
+    "exit_confirm_message": "Your current payment will be cancelled.",
+    "exit_confirm_no": "No, continue",
+    "exit_confirm_title": "Cancel payment?",
+    "exit_confirm_yes": "Yes, cancel",
+    "failed_message": "Please try again",
+    "failed_title": "Payment failed",
+    "gateway_click": "Click",
+    "gateway_octobank": "Octobank",
+    "gateway_payme": "Payme",
+    "gateway_select": "Payment method",
+    "monthly": "Monthly",
+    "pay_button": "Pay",
+    "plan_label": "Plan",
+    "processing": "Verifying payment...",
+    "retry": "Retry",
+    "subtotal": "Subtotal",
+    "success_message": "Your plan has been activated",
+    "success_title": "Payment successful",
+    "summary_title": "Your purchase",
+    "title": "Payment",
+    "total": "Total",
+    "view_subscription": "View subscription",
+    "webview_title": "Click Payment",
+    "yearly": "Yearly"
+  },
+  "profile": {
+    "about": "About",
+    "account_section": "ACCOUNT",
+    "activity_log": "Activity log",
+    "activity_section": "ACTIVITY",
+    "app_version": "Autogram · v1.0.0",
+    "become_seller": "Become a seller",
+    "become_seller_subtitle": "Open a dealer or showroom account",
+    "boost": "Boost",
+    "boost_new": "NEW",
+    "business_section": "BUSINESS",
+    "delete_account": {
+      "cancel": "Cancel",
+      "confirm": "Delete",
+      "message": "Your account and all data will be permanently deleted. This cannot be undone.",
+      "success": "Account deleted",
+      "title": "Delete account"
     },
-
-    "business_info_screen": {
-      "app_bar_title": "Business details",
-      "title": "About business",
-      "subtitle": "Enter information about your business",
-      "business_type_label": "Business type",
-      "business_name_label": "Business name",
-      "business_name_hint": "e.g., Premium Auto",
-      "business_name_required": "Enter business name",
-      "business_name_min_length": "Name must be at least 3 characters",
-      "description_label": "Description (optional)",
-      "description_hint": "A short description of your business",
-      "city_label": "City (optional)",
-      "city_hint": "e.g., Tashkent",
-      "address_label": "Address (optional)",
-      "address_hint": "Exact address",
-      "phone_label": "Phone number (optional)",
-      "phone_hint": "+998 90 123 45 67",
-      "submit": "Continue"
-    },
-
-    "plan_selection": {
-      "app_bar_title": "Choose plan",
-      "headlines": {
-        "free": "Free starter",
-        "pro": "For small dealers",
-        "premium": "For large showrooms",
-        "enterprise": "For dealership networks"
-      },
-      "taglines": {
-        "free": "Sell your first car",
-        "pro": "Ideal for a 3-5 person dealer",
-        "premium": "Full power for a 10-20 person team",
-        "enterprise": "Unlimited scale and a dedicated manager"
-      },
-      "tabs": {
-        "pro": "Pro",
-        "premium": "Premium",
-        "enterprise": "Enterprise"
-      },
-      "stay_on_free": "Continue with the Free plan",
-      "save_percent": "Save {percent}%",
-      "billing_monthly": "Monthly",
-      "billing_yearly": "Yearly (-17%)",
-      "info_text": "Start with the free plan and upgrade when needed",
-      "next_payment_notice": "You will complete payment on the next page",
-      "enterprise_button": "Contact us",
-      "default_button": "Continue",
-      "enterprise_dialog_title": "Enterprise plan",
-      "enterprise_dialog_message": "Enterprise pricing and terms are negotiable. Our personal manager will contact you.",
-      "enterprise_dialog_close": "Close",
-      "enterprise_dialog_contact": "Contact",
-      "enterprise_contact_placeholder": "Contact link will be added soon"
-    },
-
-    "upgrade_success_screen": {
-      "title": "Congratulations!",
-      "subtitle": "You are now an Autogram seller.\nStart posting your listings!",
-      "go_home": "Go to home",
-      "go_profile": "Back to profile"
-    },
-
-    "team_members_screen": {
-      "app_bar_title": "Team",
-      "empty_title": "No team members yet",
-      "empty_message": "Invite employees and manage your team",
-      "members_section": "Members",
-      "pending_section": "Pending invitations",
-      "load_error": "An error occurred"
-    },
-
-    "add_member_screen": {
-      "app_bar_title": "Add member",
-      "email_label": "Email address",
-      "email_hint": "member@example.com",
-      "email_required": "Enter email",
+    "edit": "Edit profile",
+    "edit_screen": {
+      "avatar_camera": "Camera",
+      "avatar_change": "Change photo",
+      "avatar_dialog_title": "Photo source",
+      "avatar_gallery": "Gallery",
+      "avatar_remove": "Remove photo",
+      "cancel_button": "Cancel",
+      "email_hint": "email@example.com",
       "email_invalid": "Invalid email format",
-      "role_label": "Select role",
-      "submit": "Send invitation",
-      "default_success": "Invitation sent"
+      "email_label": "Email",
+      "full_name_hint": "Your first and last name",
+      "full_name_label": "Full name",
+      "full_name_min_length": "At least 2 characters",
+      "full_name_required": "Enter your name",
+      "language_label": "Language",
+      "no_changes": "No changes to save",
+      "phone_label": "Phone",
+      "phone_readonly_note": "To change your phone number, contact support",
+      "save_button": "Save",
+      "success_message": "Profile updated",
+      "title": "Edit profile"
     },
-
-    "member_detail_screen": {
-      "app_bar_title": "Member details",
-      "not_found": "Member not found",
-      "role_section": "Role",
-      "permissions_section": "Permissions",
-      "info_section": "Information",
-      "info_joined": "Joined date",
-      "info_invited": "Invited on",
-      "info_updated": "Last updated",
-      "remove_button": "Remove member",
-      "remove_dialog_title": "Remove member",
-      "remove_dialog_message": "Remove {name} from the team?\nThis action cannot be undone.",
-      "remove_dialog_cancel": "Cancel",
-      "remove_dialog_confirm": "Remove",
-      "default_success": "Success"
+    "help": "Help",
+    "help_center": "Help center",
+    "history": "View history",
+    "language": "Language",
+    "language_dialog_title": "Choose language",
+    "language_en": "English",
+    "language_ru": "Русский",
+    "language_uz": "O'zbekcha",
+    "liked": "Liked",
+    "logout": "Logout",
+    "my_business": "My business",
+    "notification_settings": "Notifications",
+    "notifications": "Notifications",
+    "saved": "Saved",
+    "seat_management": "Seat management",
+    "settings": "Settings",
+    "stats": {
+      "active": "Active",
+      "saved": "Saved",
+      "viewed": "Viewed"
     },
-
+    "storefront": {
+      "action_row": {
+        "about_tooltip": "About business"
+      },
+      "create_sheet": {
+        "boost": "Boost",
+        "edit": "Edit profile",
+        "new_listing": "New listing",
+        "new_listing_coming_soon": "Coming soon",
+        "share": "Share profile",
+        "title": "Create"
+      },
+      "drawer": {
+        "reviews_coming_soon": "Reviews coming soon",
+        "section_account": "ACCOUNT",
+        "section_business": "BUSINESS",
+        "section_help": "HELP",
+        "section_marketplace": "MARKETPLACE"
+      },
+      "empty": {
+        "reels_message": "Reels show your car to more buyers",
+        "reels_title": "No reels yet"
+      },
+      "followers_coming_soon": "Followers list coming soon",
+      "menu_screen": {
+        "title": "Menu"
+      },
+      "plan_limit_reached": "Plan limit — upgrade to Pro",
+      "share_clipboard_toast": "Profile link copied",
+      "top_bar": {
+        "create_tooltip": "Create",
+        "menu_tooltip": "Menu",
+        "notifications_tooltip": "Notifications"
+      }
+    },
+    "subscription": "Subscription",
+    "support_section": "SUPPORT",
+    "team_management": "Team management",
+    "terms": "Terms of use",
+    "title": "Profile",
+    "welcome": "Welcome"
+  },
+  "reels": {
+    "no_videos": "No videos",
+    "retry_video": "Retry",
+    "title": "Reels",
+    "video_error": "Video failed to load"
+  },
+  "saved": {
+    "clear_all": "Clear all",
+    "empty": "No saved items",
+    "empty_desc": "Save listings and they will appear here",
+    "title": "Saved"
+  },
+  "search": {
+    "apply_filters": "Show results",
+    "body_type": "Body type",
+    "brand": "Brand",
+    "city": "City",
+    "clear_filters": "Clear",
+    "clear_recent": "Clear",
+    "color": "Color",
+    "filters": "Filters",
+    "first_owner": "First owner",
+    "fuel_type": "Fuel type",
+    "hint": "Search brand or model...",
+    "mileage": "Mileage",
+    "model": "Model",
+    "no_accident": "No accidents",
+    "no_results": "No results found",
+    "popular": "Popular searches",
+    "price": "Price",
+    "price_range": "Price ({currency})",
+    "recent": "Recent searches",
+    "results_count": "{count} results",
+    "title": "Search",
+    "transmission": "Transmission",
+    "verified_only": "Verified sellers only",
+    "year": "Year",
+    "year_from": "From",
+    "year_to": "To"
+  },
+  "seats": {
+    "available": "available",
+    "buy_more": "Buy more",
+    "contact_manager": "Contact manager",
+    "contact_placeholder": "Coming soon — your manager will reach out shortly.",
+    "current_seats": "Current seats",
+    "enterprise_message": "For additional seats, please contact your dedicated account manager.",
+    "enterprise_title": "Enterprise plan",
+    "free_locked_message": "Additional seats are not available on the Free plan. Upgrade to Pro to add team members.",
+    "free_locked_title": "Free plan",
+    "monthly_total": "Monthly total",
+    "no_additional_seats": "No additional seats",
+    "price_per_seat": "Per seat (monthly)",
+    "purchase_button": "Purchase",
+    "quantity": "Quantity",
+    "title": "Team seats",
+    "unlimited": "Unlimited seats",
+    "unlimited_message": "Your plan includes an unlimited number of team seats.",
+    "unlimited_title": "Unlimited seats",
+    "upgrade_to_pro": "Upgrade to Pro",
+    "used": "used"
+  },
+  "seller": {
     "activity_log_screen": {
       "app_bar_title": "Activity history",
       "filter_all": "All",
@@ -384,353 +436,299 @@
       "filter_members": "Members",
       "filter_settings": "Settings"
     },
-
-    "plans": {
-      "free": {
-        "label": "Free",
-        "audience": "Individual seller",
-        "analytics": "Basic"
-      },
-      "pro": {
-        "label": "Pro",
-        "audience": "Small to mid-size dealer (3-5 staff)",
-        "analytics": "Extended"
-      },
-      "premium": {
-        "label": "Premium",
-        "audience": "Large showroom (10-20 staff)",
-        "analytics": "Premium"
-      },
-      "enterprise": {
-        "label": "Enterprise",
-        "audience": "Network showrooms (30+ staff, multiple branches)",
-        "analytics": "Premium+"
-      }
+    "add_member_screen": {
+      "app_bar_title": "Add member",
+      "default_success": "Invitation sent",
+      "email_hint": "member@example.com",
+      "email_invalid": "Invalid email format",
+      "email_label": "Email address",
+      "email_required": "Enter email",
+      "role_label": "Select role",
+      "submit": "Send invitation"
     },
-
+    "business_info_screen": {
+      "address_hint": "Exact address",
+      "address_label": "Address (optional)",
+      "app_bar_title": "Business details",
+      "business_name_hint": "e.g., Premium Auto",
+      "business_name_label": "Business name",
+      "business_name_min_length": "Name must be at least 3 characters",
+      "business_name_required": "Enter business name",
+      "business_type_label": "Business type",
+      "city_hint": "e.g., Tashkent",
+      "city_label": "City (optional)",
+      "description_hint": "A short description of your business",
+      "description_label": "Description (optional)",
+      "phone_hint": "+998 90 123 45 67",
+      "phone_label": "Phone number (optional)",
+      "submit": "Continue",
+      "subtitle": "Enter information about your business",
+      "title": "About business"
+    },
     "business_types": {
-      "individual": {
-        "label": "Individual",
-        "description": "Selling personal vehicles"
-      },
       "dealer": {
-        "label": "Dealer",
-        "description": "Vehicle trading business"
+        "description": "Vehicle trading business",
+        "label": "Dealer"
+      },
+      "individual": {
+        "description": "Selling personal vehicles",
+        "label": "Individual"
       },
       "showroom": {
-        "label": "Showroom",
-        "description": "Official dealership or exhibition hall"
+        "description": "Official dealership or exhibition hall",
+        "label": "Showroom"
       }
     },
-
+    "contact": "Contact",
+    "follow": "Follow",
+    "following": "Following",
+    "listings": "Listings",
+    "location": "Location",
+    "member_detail_screen": {
+      "app_bar_title": "Member details",
+      "default_success": "Success",
+      "info_invited": "Invited on",
+      "info_joined": "Joined date",
+      "info_section": "Information",
+      "info_updated": "Last updated",
+      "not_found": "Member not found",
+      "permissions_section": "Permissions",
+      "remove_button": "Remove member",
+      "remove_dialog_cancel": "Cancel",
+      "remove_dialog_confirm": "Remove",
+      "remove_dialog_message": "Remove {name} from the team?\nThis action cannot be undone.",
+      "remove_dialog_title": "Remove member",
+      "role_section": "Role"
+    },
     "permissions": {
-      "create_listing": "Create listing",
-      "manage_listings": "Manage listings",
       "boost_listing": "Boost listings",
-      "view_analytics": "View analytics",
+      "chat_with_buyers": "Chat with buyers",
+      "create_listing": "Create listing",
+      "manage_kpi": "Manage KPI",
+      "manage_listings": "Manage listings",
       "manage_members": "Manage members",
       "manage_settings": "Manage settings",
-      "manage_kpi": "Manage KPI",
-      "chat_with_buyers": "Chat with buyers"
+      "view_analytics": "View analytics"
     },
-
+    "plan_selection": {
+      "app_bar_title": "Choose plan",
+      "billing_monthly": "Monthly",
+      "billing_yearly": "Yearly (-17%)",
+      "default_button": "Continue",
+      "enterprise_button": "Contact us",
+      "enterprise_contact_placeholder": "Contact link will be added soon",
+      "enterprise_dialog_close": "Close",
+      "enterprise_dialog_contact": "Contact",
+      "enterprise_dialog_message": "Enterprise pricing and terms are negotiable. Our personal manager will contact you.",
+      "enterprise_dialog_title": "Enterprise plan",
+      "headlines": {
+        "enterprise": "For dealership networks",
+        "free": "Free starter",
+        "premium": "For large showrooms",
+        "pro": "For small dealers"
+      },
+      "info_text": "Start with the free plan and upgrade when needed",
+      "next_payment_notice": "You will complete payment on the next page",
+      "save_percent": "Save {percent}%",
+      "stay_on_free": "Continue with the Free plan",
+      "tabs": {
+        "enterprise": "Enterprise",
+        "premium": "Premium",
+        "pro": "Pro"
+      },
+      "taglines": {
+        "enterprise": "Unlimited scale and a dedicated manager",
+        "free": "Sell your first car",
+        "premium": "Full power for a 10-20 person team",
+        "pro": "Ideal for a 3-5 person dealer"
+      }
+    },
+    "plans": {
+      "enterprise": {
+        "analytics": "Premium+",
+        "audience": "Network showrooms (30+ staff, multiple branches)",
+        "label": "Enterprise"
+      },
+      "free": {
+        "analytics": "Basic",
+        "audience": "Individual seller",
+        "label": "Free"
+      },
+      "premium": {
+        "analytics": "Premium",
+        "audience": "Large showroom (10-20 staff)",
+        "label": "Premium"
+      },
+      "pro": {
+        "analytics": "Extended",
+        "audience": "Small to mid-size dealer (3-5 staff)",
+        "label": "Pro"
+      }
+    },
+    "profile": "Seller profile",
+    "rating": "Rating",
+    "reviews": "Reviews",
+    "sold": "sold",
+    "storefront": {
+      "about": {
+        "address": "Address",
+        "business_type": "Business type",
+        "closed": "Closed",
+        "contact_phone": "Phone",
+        "description": "Description",
+        "expires_at": "Valid until: {date}",
+        "instagram": "Instagram",
+        "member_since": "Member since {date}",
+        "no_address": "No address provided",
+        "no_description": "No description",
+        "subscription_label": "Plan",
+        "telegram": "Telegram",
+        "website": "Website",
+        "working_hours": "Working hours"
+      },
+      "actions": {
+        "boost": "Boost",
+        "edit_profile": "Edit profile",
+        "manage_listings": "Manage listings",
+        "seats": "Seats",
+        "share_profile": "Share",
+        "subscription": "Subscription",
+        "team": "Team"
+      },
+      "empty": {
+        "about_message": "Complete your profile.",
+        "about_title": "No business info",
+        "active_cta": "Add listing",
+        "active_message": "Add your first listing and reach buyers.",
+        "active_title": "No active listings",
+        "sold_message": "Sold listings will appear here.",
+        "sold_title": "No sold listings yet"
+      },
+      "no_business_cta": "Become a seller",
+      "no_business_message": "Create your business profile and start selling.",
+      "no_business_title": "No business profile",
+      "share_message": "My Autogram profile — {name}",
+      "stats": {
+        "followers": "Followers",
+        "listings": "Listings",
+        "rating": "Rating",
+        "sold": "Sold"
+      },
+      "tab_count": "{count}",
+      "tabs": {
+        "about": "About",
+        "active": "Active",
+        "sold": "Sold"
+      },
+      "tier_badge": {
+        "enterprise": "ENTERPRISE",
+        "premium": "PREMIUM",
+        "pro": "PRO"
+      },
+      "verified_tooltip": "Verified business"
+    },
+    "team_members_screen": {
+      "app_bar_title": "Team",
+      "empty_message": "Invite employees and manage your team",
+      "empty_title": "No team members yet",
+      "load_error": "An error occurred",
+      "members_section": "Members",
+      "pending_section": "Pending invitations"
+    },
     "ui": {
+      "cancel_invitation_tooltip": "Cancel",
       "current_badge": "Current",
-      "popular_badge": "Recommended",
-      "unlimited_listings": "Unlimited listings",
-      "listings_count": "{count} listings",
-      "negotiable": "Custom",
+      "days_remaining": "{days} days remaining",
       "free_price": "Free",
+      "listings_count": "{count} listings",
+      "load_more": "Load more",
+      "negotiable": "Custom",
+      "no_activity": "No activity history",
+      "popular_badge": "Recommended",
       "price_per_month": "/mo",
       "price_per_year": "/yr",
-      "load_more": "Load more",
-      "no_activity": "No activity history",
-      "days_remaining": "{days} days remaining",
-      "cancel_invitation_tooltip": "Cancel"
-    }
-  },
-
-  "chat": {
-    "title": "Messages",
-    "no_messages": "No messages",
-    "new_chat": "New chat",
-    "type_message": "Type a message...",
-    "send": "Send"
-  },
-
-  "saved": {
-    "title": "Saved",
-    "empty": "No saved items",
-    "empty_desc": "Save listings and they will appear here",
-    "clear_all": "Clear all"
-  },
-
-  "notifications": {
-    "title": "Notifications",
-    "empty": "No notifications",
-    "mark_all_read": "Mark all as read"
-  },
-
-  "profile": {
-    "title": "Profile",
-    "welcome": "Welcome",
-    "edit": "Edit profile",
-    "settings": "Settings",
-    "saved": "Saved",
-    "liked": "Liked",
-    "history": "View history",
-    "become_seller": "Become a seller",
-    "become_seller_subtitle": "Open a dealer or showroom account",
-    "my_business": "My business",
-    "team_management": "Team management",
-    "seat_management": "Seat management",
-    "notifications": "Notifications",
-    "language": "Language",
-    "help": "Help",
-    "about": "About",
-    "logout": "Logout",
-    "account_section": "ACCOUNT",
-    "activity_section": "ACTIVITY",
-    "business_section": "BUSINESS",
-    "support_section": "SUPPORT",
-    "boost": "Boost",
-    "boost_new": "NEW",
-    "help_center": "Help center",
-    "notification_settings": "Notifications",
-    "terms": "Terms of use",
-    "language_dialog_title": "Choose language",
-    "language_uz": "O'zbekcha",
-    "language_ru": "Русский",
-    "language_en": "English",
-    "app_version": "Autogram · v1.0.0",
-    "stats": {
-      "active": "Active",
-      "saved": "Saved",
-      "viewed": "Viewed"
+      "unlimited_listings": "Unlimited listings"
     },
-    "edit_screen": {
-      "title": "Edit profile",
-      "avatar_change": "Change photo",
-      "avatar_dialog_title": "Photo source",
-      "avatar_camera": "Camera",
-      "avatar_gallery": "Gallery",
-      "avatar_remove": "Remove photo",
-      "full_name_label": "Full name",
-      "full_name_hint": "Your first and last name",
-      "full_name_required": "Enter your name",
-      "full_name_min_length": "At least 2 characters",
-      "email_label": "Email",
-      "email_hint": "email@example.com",
-      "email_invalid": "Invalid email format",
-      "phone_label": "Phone",
-      "phone_readonly_note": "To change your phone number, contact support",
-      "language_label": "Language",
-      "save_button": "Save",
-      "cancel_button": "Cancel",
-      "success_message": "Profile updated",
-      "no_changes": "No changes to save"
+    "upgrade_success_screen": {
+      "go_home": "Go to home",
+      "go_profile": "Back to profile",
+      "subtitle": "You are now an Autogram seller.\nStart posting your listings!",
+      "title": "Congratulations!"
     },
-    "delete_account": {
-      "title": "Delete account",
-      "message": "Your account and all data will be permanently deleted. This cannot be undone.",
-      "confirm": "Delete",
-      "cancel": "Cancel",
-      "success": "Account deleted"
-    }
+    "verified": "Verified",
+    "working_hours": "Working hours"
   },
-
   "settings": {
-    "title": "Settings",
+    "dark_mode": "Dark mode",
+    "language": "Language",
     "notifications": "Notifications",
     "privacy": "Privacy",
-    "language": "Language",
     "theme": "Theme",
-    "dark_mode": "Dark mode"
+    "title": "Settings"
   },
-
-  "errors": {
-    "network": "No internet connection",
-    "server": "Server error",
-    "unknown": "Unknown error",
-    "auth": "Authentication error",
-    "not_found": "Not found",
-    "payment_create_failed": "Could not create payment",
-    "payment_status_failed": "Could not check payment status",
-    "payment_gateway_unavailable": "Payment gateway unavailable"
-  },
-
-  "payment": {
-    "title": "Payment",
-    "summary_title": "Your purchase",
-    "plan_label": "Plan",
-    "billing_cycle": "Billing cycle",
-    "monthly": "Monthly",
-    "yearly": "Yearly",
-    "additional_seats": "Additional seats",
-    "subtotal": "Subtotal",
-    "total": "Total",
-    "currency_uzs": "UZS",
-    "currency_usd": "$",
-    "gateway_select": "Payment method",
-    "gateway_click": "Click",
-    "gateway_payme": "Payme",
-    "gateway_octobank": "Octobank",
-    "pay_button": "Pay",
-    "cancel_button": "Cancel",
-    "webview_title": "Click Payment",
-    "processing": "Verifying payment...",
-    "success_title": "Payment successful",
-    "success_message": "Your plan has been activated",
-    "failed_title": "Payment failed",
-    "failed_message": "Please try again",
-    "cancelled_title": "Payment cancelled",
-    "back_to_plans": "Back to plans",
-    "retry": "Retry",
-    "view_subscription": "View subscription",
-    "exit_confirm_title": "Cancel payment?",
-    "exit_confirm_message": "Your current payment will be cancelled.",
-    "exit_confirm_yes": "Yes, cancel",
-    "exit_confirm_no": "No, continue"
-  },
-
-  "seats": {
-    "title": "Team seats",
-    "current_seats": "Current seats",
-    "used": "used",
-    "available": "available",
-    "unlimited": "Unlimited seats",
-    "buy_more": "Buy more",
-    "quantity": "Quantity",
-    "price_per_seat": "Per seat (monthly)",
-    "monthly_total": "Monthly total",
-    "no_additional_seats": "No additional seats",
-    "purchase_button": "Purchase",
-    "free_locked_title": "Free plan",
-    "free_locked_message": "Additional seats are not available on the Free plan. Upgrade to Pro to add team members.",
-    "upgrade_to_pro": "Upgrade to Pro",
-    "enterprise_title": "Enterprise plan",
-    "enterprise_message": "For additional seats, please contact your dedicated account manager.",
-    "contact_manager": "Contact manager",
-    "contact_placeholder": "Coming soon — your manager will reach out shortly.",
-    "unlimited_title": "Unlimited seats",
-    "unlimited_message": "Your plan includes an unlimited number of team seats."
-  },
-
   "sort_options": {
+    "mileage_low": "Lowest mileage",
     "newest": "Newest first",
     "oldest": "Oldest first",
-    "price_low": "Price: Low to High",
-    "price_high": "Price: High to Low",
     "popular": "Most popular",
-    "mileage_low": "Lowest mileage"
+    "price_high": "Price: High to Low",
+    "price_low": "Price: Low to High"
   },
-
-  "fuel_types": {
-    "petrol": "Petrol",
-    "diesel": "Diesel",
-    "gas": "Gas",
-    "electric": "Electric",
-    "hybrid": "Hybrid"
+  "team": {
+    "add_member": "Add member",
+    "cancel_invitation": "Cancel invitation",
+    "cancel_invitation_confirm": "Do you want to cancel this invitation?",
+    "change_role": "Change role",
+    "email": "Email address",
+    "email_hint": "member@example.com",
+    "expired": "Expired",
+    "expires_in": "{days} days remaining",
+    "invitation_accepted": "Invitation accepted",
+    "invitation_cancelled": "Invitation cancelled",
+    "invitation_rejected": "Invitation rejected",
+    "invitation_sent": "Invitation sent",
+    "invite_member": "Invite member",
+    "invited_on": "Invited on",
+    "joined": "Joined",
+    "last_updated": "Last updated",
+    "member_detail": "Member details",
+    "member_removed": "Member removed",
+    "members": "Members",
+    "members_count": "{count} members",
+    "no_members": "No members yet",
+    "pending_invitations": "Pending invitations",
+    "permissions": "Permissions",
+    "remove_member": "Remove member",
+    "remove_member_confirm": "Do you want to remove this member from the team?",
+    "role_updated": "Role updated",
+    "roles": {
+      "admin": {
+        "description": "Manages team members and listings",
+        "label": "Administrator"
+      },
+      "manager": {
+        "description": "Creates listings and communicates with buyers",
+        "label": "Sales manager"
+      },
+      "marketing": {
+        "description": "Promotes listings and views analytics",
+        "label": "Marketing"
+      },
+      "owner": {
+        "description": "Full access to all features, complete system control",
+        "label": "Owner"
+      },
+      "viewer": {
+        "description": "Views analytics and statistics only",
+        "label": "Viewer"
+      }
+    },
+    "select_role": "Select role",
+    "send_invitation": "Send invitation",
+    "title": "Team"
   },
-
   "transmission_types": {
     "automatic": "Automatic",
     "manual": "Manual"
-  },
-
-  "body_types": {
-    "sedan": "Sedan",
-    "suv": "SUV",
-    "hatchback": "Hatchback",
-    "wagon": "Wagon",
-    "coupe": "Coupe",
-    "convertible": "Convertible",
-    "minivan": "Minivan",
-    "pickup": "Pickup"
-  },
-
-  "conditions": {
-    "new": "New",
-    "excellent": "Excellent",
-    "good": "Good",
-    "fair": "Fair"
-  },
-
-  "team": {
-    "title": "Team",
-    "members": "Members",
-    "members_count": "{count} members",
-    "pending_invitations": "Pending invitations",
-    "no_members": "No members yet",
-    "add_member": "Add member",
-    "invite_member": "Invite member",
-    "email": "Email address",
-    "email_hint": "member@example.com",
-    "select_role": "Select role",
-    "send_invitation": "Send invitation",
-    "invitation_sent": "Invitation sent",
-    "invitation_cancelled": "Invitation cancelled",
-    "invitation_accepted": "Invitation accepted",
-    "invitation_rejected": "Invitation rejected",
-    "cancel_invitation": "Cancel invitation",
-    "cancel_invitation_confirm": "Do you want to cancel this invitation?",
-    "member_detail": "Member details",
-    "change_role": "Change role",
-    "role_updated": "Role updated",
-    "remove_member": "Remove member",
-    "remove_member_confirm": "Do you want to remove this member from the team?",
-    "member_removed": "Member removed",
-    "permissions": "Permissions",
-    "joined": "Joined",
-    "invited_on": "Invited on",
-    "last_updated": "Last updated",
-    "expires_in": "{days} days remaining",
-    "expired": "Expired",
-    "roles": {
-      "owner": {
-        "label": "Owner",
-        "description": "Full access to all features, complete system control"
-      },
-      "admin": {
-        "label": "Administrator",
-        "description": "Manages team members and listings"
-      },
-      "manager": {
-        "label": "Sales manager",
-        "description": "Creates listings and communicates with buyers"
-      },
-      "marketing": {
-        "label": "Marketing",
-        "description": "Promotes listings and views analytics"
-      },
-      "viewer": {
-        "label": "Viewer",
-        "description": "Views analytics and statistics only"
-      }
-    }
-  },
-
-  "activity": {
-    "title": "Activity History",
-    "no_activity": "No activity history",
-    "load_more": "Load more",
-    "filter_all": "All",
-    "filter_listings": "Listings",
-    "filter_members": "Members",
-    "filter_settings": "Settings",
-    "listing_created": "Listing created",
-    "listing_updated": "Listing updated",
-    "listing_published": "Listing published",
-    "listing_deactivated": "Listing deactivated",
-    "listing_sold": "Listing sold",
-    "listing_boosted": "Listing boosted",
-    "member_invited": "Member invited",
-    "member_joined": "Member joined",
-    "member_removed": "Member removed",
-    "member_role_changed": "Role changed",
-    "invitation_cancelled": "Invitation cancelled",
-    "profile_updated": "Profile updated",
-    "settings_changed": "Settings changed",
-    "subscription_changed": "Subscription changed"
   }
 }

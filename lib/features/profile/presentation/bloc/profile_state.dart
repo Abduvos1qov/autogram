@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 
 import '../../../../core/errors/failures.dart';
 import '../../../listing/domain/entities/listing.dart';
+import '../../../reels/domain/entities/reel.dart';
 import '../../../seller/domain/entities/seller_profile.dart';
 import '../../domain/entities/user_profile.dart';
 
@@ -9,7 +10,7 @@ enum ProfileStatus { initial, loading, loaded, updating, deleted, error }
 
 /// Tabs surfaced on the Instagram-style seller storefront. Buyer profiles
 /// render a different layout entirely and ignore this enum.
-enum SellerStorefrontTab { active, sold, about }
+enum SellerStorefrontTab { active, reels, sold }
 
 class ProfileState extends Equatable {
   final ProfileStatus status;
@@ -25,14 +26,21 @@ class ProfileState extends Equatable {
   final List<Listing> activeListings;
   final List<Listing> soldListings;
 
+  /// Reels (video listings) owned by the current seller, populated only for
+  /// sellers. Empty list for buyers.
+  final List<Reel> reels;
+
   /// Pagination cursors per tab. `1` means the first page is loaded;
   /// `hasMore` is `false` once the backend signals end-of-list.
   final int activePage;
   final int soldPage;
+  final int reelsPage;
   final bool activeHasMore;
   final bool soldHasMore;
+  final bool reelsHasMore;
   final bool isLoadingMoreActive;
   final bool isLoadingMoreSold;
+  final bool isLoadingMoreReels;
 
   final SellerStorefrontTab currentTab;
   final Failure? failure;
@@ -43,12 +51,16 @@ class ProfileState extends Equatable {
     this.sellerProfile,
     this.activeListings = const [],
     this.soldListings = const [],
+    this.reels = const [],
     this.activePage = 1,
     this.soldPage = 1,
+    this.reelsPage = 1,
     this.activeHasMore = true,
     this.soldHasMore = true,
+    this.reelsHasMore = true,
     this.isLoadingMoreActive = false,
     this.isLoadingMoreSold = false,
+    this.isLoadingMoreReels = false,
     this.currentTab = SellerStorefrontTab.active,
     this.failure,
   });
@@ -71,12 +83,16 @@ class ProfileState extends Equatable {
     SellerProfile? sellerProfile,
     List<Listing>? activeListings,
     List<Listing>? soldListings,
+    List<Reel>? reels,
     int? activePage,
     int? soldPage,
+    int? reelsPage,
     bool? activeHasMore,
     bool? soldHasMore,
+    bool? reelsHasMore,
     bool? isLoadingMoreActive,
     bool? isLoadingMoreSold,
+    bool? isLoadingMoreReels,
     SellerStorefrontTab? currentTab,
     Failure? failure,
     bool clearFailure = false,
@@ -89,13 +105,17 @@ class ProfileState extends Equatable {
           clearSellerProfile ? null : (sellerProfile ?? this.sellerProfile),
       activeListings: activeListings ?? this.activeListings,
       soldListings: soldListings ?? this.soldListings,
+      reels: reels ?? this.reels,
       activePage: activePage ?? this.activePage,
       soldPage: soldPage ?? this.soldPage,
+      reelsPage: reelsPage ?? this.reelsPage,
       activeHasMore: activeHasMore ?? this.activeHasMore,
       soldHasMore: soldHasMore ?? this.soldHasMore,
+      reelsHasMore: reelsHasMore ?? this.reelsHasMore,
       isLoadingMoreActive:
           isLoadingMoreActive ?? this.isLoadingMoreActive,
       isLoadingMoreSold: isLoadingMoreSold ?? this.isLoadingMoreSold,
+      isLoadingMoreReels: isLoadingMoreReels ?? this.isLoadingMoreReels,
       currentTab: currentTab ?? this.currentTab,
       failure: clearFailure ? null : (failure ?? this.failure),
     );
@@ -108,12 +128,16 @@ class ProfileState extends Equatable {
         sellerProfile,
         activeListings,
         soldListings,
+        reels,
         activePage,
         soldPage,
+        reelsPage,
         activeHasMore,
         soldHasMore,
+        reelsHasMore,
         isLoadingMoreActive,
         isLoadingMoreSold,
+        isLoadingMoreReels,
         currentTab,
         failure,
       ];

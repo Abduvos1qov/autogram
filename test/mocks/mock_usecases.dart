@@ -18,6 +18,7 @@ import 'package:autogram/features/search/domain/usecases/get_brands_usecase.dart
 import 'package:autogram/features/listing/domain/usecases/get_listing_usecase.dart';
 import 'package:autogram/features/listing/domain/usecases/get_seller_usecase.dart';
 import 'package:autogram/features/listing/domain/usecases/get_seller_listings_usecase.dart';
+import 'package:autogram/features/reels/domain/usecases/get_seller_reels_usecase.dart';
 import 'package:autogram/features/profile/domain/usecases/get_profile_usecase.dart';
 import 'package:autogram/features/profile/domain/usecases/update_profile_usecase.dart';
 import 'package:autogram/features/profile/domain/usecases/update_avatar_usecase.dart';
@@ -81,3 +82,7 @@ class MockDeleteAccountUseCase extends Mock implements DeleteAccountUseCase {}
 /// Mock Seller Use Cases
 class MockGetSellerProfileUseCase extends Mock
     implements GetSellerProfileUseCase {}
+
+/// Mock Reels Use Cases
+class MockGetSellerReelsUseCase extends Mock
+    implements GetSellerReelsUseCase {}

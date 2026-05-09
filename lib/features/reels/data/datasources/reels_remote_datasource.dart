@@ -17,6 +17,12 @@ abstract class ReelsRemoteDataSource {
     int pageSize = 10,
   });
 
+  Future<PaginatedResponse<ReelModel>> getSellerReels({
+    required String sellerId,
+    int page = 1,
+    int pageSize = 12,
+  });
+
   Future<void> likeReel(String reelId);
   Future<void> unlikeReel(String reelId);
   Future<void> saveReel(String reelId);
@@ -133,6 +139,107 @@ class ReelsRemoteDataSourceImpl implements ReelsRemoteDataSource {
       ErrorHandler.throwFromPostgrest(e);
     } catch (e) {
       AppLogger.error('Error fetching reels', e);
+      throw ServerException(message: e.toString());
+    }
+  }
+
+  @override
+  Future<PaginatedResponse<ReelModel>> getSellerReels({
+    required String sellerId,
+    int page = 1,
+    int pageSize = 12,
+  }) async {
+    try {
+      AppLogger.info(
+        'Fetching seller reels: sellerId=$sellerId, page=$page, pageSize=$pageSize',
+      );
+
+      if (TestConfig.isTestMode) {
+        AppLogger.info('TEST MODE: Returning mock seller reels');
+        await Future.delayed(const Duration(milliseconds: 500));
+
+        final offset = (page - 1) * pageSize;
+        final filtered = MockData.mockReels
+            .where((r) => r.sellerId == sellerId)
+            .toList();
+        final paginated = filtered.skip(offset).take(pageSize).toList();
+        final reelModels =
+            paginated.map((reel) => ReelModel.fromEntity(reel)).toList();
+
+        return PaginatedResponse.fromList(
+          reelModels,
+          page: page,
+          pageSize: pageSize,
+        );
+      }
+
+      final userId = _supabase.auth.currentUser?.id;
+      final offset = (page - 1) * pageSize;
+
+      final response = await _supabase
+          .from(ApiEndpoints.listings)
+          .select('''
+            *,
+            seller_profiles!inner (
+              id,
+              business_name,
+              logo_url,
+              is_verified
+            ),
+            listing_auto_details (*)
+          ''')
+          .eq('seller_id', sellerId)
+          .eq('status', 'active')
+          .not('video_url', 'is', null)
+          .order('published_at', ascending: false)
+          .range(offset, offset + pageSize - 1);
+
+      final listings = response as List<dynamic>;
+
+      Set<String> likedIds = {};
+      Set<String> savedIds = {};
+
+      if (userId != null && listings.isNotEmpty) {
+        final listingIds = listings.map((l) => l['id'] as String).toList();
+
+        final likes = await _supabase
+            .from(ApiEndpoints.likes)
+            .select('listing_id')
+            .eq('user_id', userId)
+            .inFilter('listing_id', listingIds);
+
+        final saves = await _supabase
+            .from(ApiEndpoints.saves)
+            .select('listing_id')
+            .eq('user_id', userId)
+            .inFilter('listing_id', listingIds);
+
+        likedIds =
+            (likes as List).map((l) => l['listing_id'] as String).toSet();
+        savedIds =
+            (saves as List).map((s) => s['listing_id'] as String).toSet();
+      }
+
+      final reels = listings.map((json) {
+        final item = Map<String, dynamic>.from(json);
+        item['is_liked'] = likedIds.contains(item['id']);
+        item['is_saved'] = savedIds.contains(item['id']);
+        item['is_following'] = false;
+        return ReelModel.fromJson(item);
+      }).toList();
+
+      AppLogger.info('Fetched ${reels.length} seller reels');
+
+      return PaginatedResponse.fromList(
+        reels,
+        page: page,
+        pageSize: pageSize,
+      );
+    } on supabase.PostgrestException catch (e) {
+      AppLogger.error('Database error fetching seller reels', e);
+      ErrorHandler.throwFromPostgrest(e);
+    } catch (e) {
+      AppLogger.error('Error fetching seller reels', e);
       throw ServerException(message: e.toString());
     }
   }

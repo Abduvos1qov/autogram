@@ -7,6 +7,8 @@ import '../../../../core/usecases/usecase.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../listing/domain/entities/listing.dart';
 import '../../../listing/domain/usecases/get_seller_listings_usecase.dart';
+import '../../../reels/domain/entities/reel.dart';
+import '../../../reels/domain/usecases/get_seller_reels_usecase.dart';
 import '../../../seller/domain/entities/seller_profile.dart';
 import '../../../seller/domain/usecases/get_seller_profile_usecase.dart';
 import '../../domain/usecases/delete_account_usecase.dart';
@@ -27,6 +29,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final DeleteAccountUseCase _deleteAccountUseCase;
   final GetSellerProfileUseCase _getSellerProfileUseCase;
   final GetSellerListingsUseCase _getSellerListingsUseCase;
+  final GetSellerReelsUseCase _getSellerReelsUseCase;
 
   ProfileBloc({
     required GetProfileUseCase getProfileUseCase,
@@ -35,12 +38,14 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     required DeleteAccountUseCase deleteAccountUseCase,
     required GetSellerProfileUseCase getSellerProfileUseCase,
     required GetSellerListingsUseCase getSellerListingsUseCase,
+    required GetSellerReelsUseCase getSellerReelsUseCase,
   })  : _getProfileUseCase = getProfileUseCase,
         _updateProfileUseCase = updateProfileUseCase,
         _updateAvatarUseCase = updateAvatarUseCase,
         _deleteAccountUseCase = deleteAccountUseCase,
         _getSellerProfileUseCase = getSellerProfileUseCase,
         _getSellerListingsUseCase = getSellerListingsUseCase,
+        _getSellerReelsUseCase = getSellerReelsUseCase,
         super(const ProfileState()) {
     on<ProfileLoadRequested>(_onLoadRequested);
     on<ProfileRefreshRequested>(_onRefreshRequested);
@@ -65,9 +70,13 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     Emitter<ProfileState> emit,
   ) async {
     AppLogger.info('Refreshing profile');
-    // Don't toggle to `loading` — keep current data visible so the
-    // pull-to-refresh spinner is the only indicator.
-    emit(state.copyWith(clearFailure: true));
+    // Toggle to `loading` so the state stream is guaranteed to emit. Without
+    // this, mock-data refreshes (where every field of the new state equals
+    // the old one) emit nothing and the RefreshIndicator's `firstWhere`
+    // await never resolves. ProfileScreen's loading-view guard checks
+    // `profile == null` so the existing data stays on screen during the
+    // intermediate `loading` state.
+    emit(state.copyWith(status: ProfileStatus.loading, clearFailure: true));
     await _loadAll(emit);
   }
 
@@ -104,16 +113,19 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         clearSellerProfile: true,
         activeListings: const [],
         soldListings: const [],
+        reels: const [],
         activePage: 1,
         soldPage: 1,
+        reelsPage: 1,
         activeHasMore: true,
         soldHasMore: true,
+        reelsHasMore: true,
       ));
       return;
     }
 
-    // Seller flow — fan out three calls in parallel via `Future.wait` so
-    // total latency is `max(s, a, s)` rather than `s + a + s`.
+    // Seller flow — fan out four calls in parallel via `Future.wait` so
+    // total latency is `max(s, a, s, r)` rather than `s + a + s + r`.
     final results = await Future.wait([
       _getSellerProfileUseCase(const NoParams()),
       _getSellerListingsUseCase(GetSellerListingsParams(
@@ -128,6 +140,11 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         pageSize: _kListingsPageSize,
         status: ListingStatus.sold,
       )),
+      _getSellerReelsUseCase(GetSellerReelsParams(
+        sellerId: sellerId,
+        page: 1,
+        pageSize: _kListingsPageSize,
+      )),
     ]);
 
     final sellerResult =
@@ -136,6 +153,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         results[1] as Either<Failure, PaginatedResponse<Listing>>;
     final soldResult =
         results[2] as Either<Failure, PaginatedResponse<Listing>>;
+    final reelsResult =
+        results[3] as Either<Failure, PaginatedResponse<Reel>>;
 
     SellerProfile? sellerProfile;
     sellerResult.fold(
@@ -173,6 +192,18 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       },
     );
 
+    List<Reel> reels = const [];
+    bool reelsHasMore = false;
+    reelsResult.fold(
+      (failure) {
+        AppLogger.warning('Seller reels load failed: ${failure.message}');
+      },
+      (response) {
+        reels = response.data;
+        reelsHasMore = response.hasMore;
+      },
+    );
+
     emit(state.copyWith(
       status: ProfileStatus.loaded,
       profile: profile,
@@ -180,12 +211,16 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       clearSellerProfile: sellerProfile == null,
       activeListings: active,
       soldListings: sold,
+      reels: reels,
       activePage: 1,
       soldPage: 1,
+      reelsPage: 1,
       activeHasMore: activeHasMore,
       soldHasMore: soldHasMore,
+      reelsHasMore: reelsHasMore,
       isLoadingMoreActive: false,
       isLoadingMoreSold: false,
+      isLoadingMoreReels: false,
     ));
   }
 
@@ -299,10 +334,33 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     final sellerId = profile?.sellerProfileId;
     if (profile == null || sellerId == null) return;
 
-    final tab = state.currentTab;
-    if (tab == SellerStorefrontTab.about) return;
+    switch (state.currentTab) {
+      case SellerStorefrontTab.active:
+        await _loadMoreListings(
+          emit,
+          sellerId: sellerId,
+          status: ListingStatus.active,
+        );
+        return;
+      case SellerStorefrontTab.sold:
+        await _loadMoreListings(
+          emit,
+          sellerId: sellerId,
+          status: ListingStatus.sold,
+        );
+        return;
+      case SellerStorefrontTab.reels:
+        await _loadMoreReels(emit, sellerId: sellerId);
+        return;
+    }
+  }
 
-    final isActive = tab == SellerStorefrontTab.active;
+  Future<void> _loadMoreListings(
+    Emitter<ProfileState> emit, {
+    required String sellerId,
+    required ListingStatus status,
+  }) async {
+    final isActive = status == ListingStatus.active;
     final hasMore = isActive ? state.activeHasMore : state.soldHasMore;
     final isLoading =
         isActive ? state.isLoadingMoreActive : state.isLoadingMoreSold;
@@ -321,15 +379,14 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         sellerId: sellerId,
         page: nextPage,
         pageSize: _kListingsPageSize,
-        status:
-            isActive ? ListingStatus.active : ListingStatus.sold,
+        status: status,
       ),
     );
 
     result.fold(
       (failure) {
         AppLogger.warning(
-          'Load more (${tab.name}) failed: ${failure.message}',
+          'Load more (${status.name}) failed: ${failure.message}',
         );
         emit(state.copyWith(
           isLoadingMoreActive: isActive ? false : state.isLoadingMoreActive,
@@ -352,6 +409,39 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
             isLoadingMoreSold: false,
           ));
         }
+      },
+    );
+  }
+
+  Future<void> _loadMoreReels(
+    Emitter<ProfileState> emit, {
+    required String sellerId,
+  }) async {
+    if (!state.reelsHasMore || state.isLoadingMoreReels) return;
+
+    final nextPage = state.reelsPage + 1;
+    emit(state.copyWith(isLoadingMoreReels: true));
+
+    final result = await _getSellerReelsUseCase(
+      GetSellerReelsParams(
+        sellerId: sellerId,
+        page: nextPage,
+        pageSize: _kListingsPageSize,
+      ),
+    );
+
+    result.fold(
+      (failure) {
+        AppLogger.warning('Load more reels failed: ${failure.message}');
+        emit(state.copyWith(isLoadingMoreReels: false));
+      },
+      (response) {
+        emit(state.copyWith(
+          reels: [...state.reels, ...response.data],
+          reelsPage: nextPage,
+          reelsHasMore: response.hasMore,
+          isLoadingMoreReels: false,
+        ));
       },
     );
   }

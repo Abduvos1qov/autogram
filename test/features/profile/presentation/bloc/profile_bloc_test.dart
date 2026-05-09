@@ -10,6 +10,8 @@ import 'package:autogram/features/profile/domain/usecases/update_profile_usecase
 import 'package:autogram/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:autogram/features/profile/presentation/bloc/profile_event.dart';
 import 'package:autogram/features/profile/presentation/bloc/profile_state.dart';
+import 'package:autogram/features/reels/domain/entities/reel.dart';
+import 'package:autogram/features/reels/domain/usecases/get_seller_reels_usecase.dart';
 import 'package:bloc_test/bloc_test.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -31,6 +33,7 @@ void main() {
   late MockDeleteAccountUseCase mockDeleteAccount;
   late MockGetSellerProfileUseCase mockGetSellerProfile;
   late MockGetSellerListingsUseCase mockGetSellerListings;
+  late MockGetSellerReelsUseCase mockGetSellerReels;
 
   setUpAll(() {
     registerFallbackValue(const NoParams());
@@ -38,6 +41,9 @@ void main() {
     registerFallbackValue(UpdateAvatarParams(_FakeFile()));
     registerFallbackValue(
       const GetSellerListingsParams(sellerId: 'seller-001'),
+    );
+    registerFallbackValue(
+      const GetSellerReelsParams(sellerId: 'seller-001'),
     );
   });
 
@@ -48,6 +54,21 @@ void main() {
     mockDeleteAccount = MockDeleteAccountUseCase();
     mockGetSellerProfile = MockGetSellerProfileUseCase();
     mockGetSellerListings = MockGetSellerListingsUseCase();
+    mockGetSellerReels = MockGetSellerReelsUseCase();
+
+    // Default reels stub — most tests don't care about reels and just need
+    // the seller fan-out to succeed.
+    when(() => mockGetSellerReels(any())).thenAnswer(
+      (_) async => Right(
+        PaginatedResponse<Reel>(
+          data: const [],
+          page: 1,
+          pageSize: 12,
+          total: 0,
+          hasMore: false,
+        ),
+      ),
+    );
 
     bloc = ProfileBloc(
       getProfileUseCase: mockGetProfile,
@@ -56,6 +77,7 @@ void main() {
       deleteAccountUseCase: mockDeleteAccount,
       getSellerProfileUseCase: mockGetSellerProfile,
       getSellerListingsUseCase: mockGetSellerListings,
+      getSellerReelsUseCase: mockGetSellerReels,
     );
   });
 
@@ -214,8 +236,8 @@ void main() {
     blocTest<ProfileBloc, ProfileState>(
       'emits nothing when tab is unchanged',
       build: () => bloc,
-      seed: () => const ProfileState(currentTab: SellerStorefrontTab.about),
-      act: (b) => b.add(const ProfileTabChanged(SellerStorefrontTab.about)),
+      seed: () => const ProfileState(currentTab: SellerStorefrontTab.reels),
+      act: (b) => b.add(const ProfileTabChanged(SellerStorefrontTab.reels)),
       expect: () => const <ProfileState>[],
     );
   });
@@ -265,16 +287,20 @@ void main() {
     );
 
     blocTest<ProfileBloc, ProfileState>(
-      'no-op on the about tab (no listings to paginate)',
+      'no-op on reels tab when there are no more pages',
       build: () => bloc,
       seed: () => ProfileState(
         status: ProfileStatus.loaded,
         profile: ProfileFixtures.sellerUser,
         sellerProfile: ProfileFixtures.sellerProfile,
-        currentTab: SellerStorefrontTab.about,
+        currentTab: SellerStorefrontTab.reels,
+        reelsHasMore: false,
       ),
       act: (b) => b.add(const ProfileLoadMoreListings()),
       expect: () => const <ProfileState>[],
+      verify: (_) {
+        verifyNever(() => mockGetSellerReels(any()));
+      },
     );
   });
 

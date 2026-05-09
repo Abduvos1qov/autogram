@@ -18,9 +18,13 @@ import '../features/home/presentation/screens/home_screen.dart';
 import '../features/listing/presentation/screens/listing_detail_screen.dart';
 import '../features/notifications/presentation/screens/notification_settings_screen.dart';
 import '../features/notifications/presentation/screens/notifications_screen.dart';
+import '../features/profile/presentation/screens/about_seller_screen.dart';
 import '../features/profile/presentation/screens/edit_profile_screen.dart';
 import '../features/profile/presentation/screens/history_screen.dart';
 import '../features/profile/presentation/screens/profile_screen.dart';
+import '../features/profile/presentation/screens/storefront_menu_screen.dart';
+import '../features/profile/domain/entities/user_profile.dart';
+import '../features/seller/domain/entities/seller_profile.dart';
 import '../features/reels/presentation/screens/reels_screen.dart';
 import '../features/saved/presentation/screens/liked_screen.dart';
 import '../features/saved/presentation/screens/saved_screen.dart';
@@ -280,6 +284,41 @@ GoRouter createRouter(AuthBloc authBloc) {
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const AboutScreen(),
       ),
+      GoRoute(
+        path: RoutePaths.aboutSeller,
+        name: RouteNames.aboutSeller,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const AboutSellerScreen(),
+      ),
+      GoRoute(
+        path: RoutePaths.profileFollowers,
+        name: RouteNames.profileFollowers,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const _FollowersStubScreen(),
+      ),
+      GoRoute(
+        path: RoutePaths.storefrontMenu,
+        name: RouteNames.storefrontMenu,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) {
+          // The storefront passes both the user and seller via `extra` so the
+          // menu can render the header without re-fetching from the bloc.
+          final extra = state.extra as Map<String, Object?>;
+          return StorefrontMenuScreen(
+            profile: extra['profile']! as UserProfile,
+            seller: extra['seller']! as SellerProfile,
+          );
+        },
+      ),
+      GoRoute(
+        // Plan-management entry point. Until a dedicated SubscriptionScreen
+        // ships, route through to the existing upgrade flow so the drawer
+        // tile doesn't dead-end.
+        path: RoutePaths.subscription,
+        name: RouteNames.subscription,
+        parentNavigatorKey: _rootNavigatorKey,
+        redirect: (context, state) => RoutePaths.upgrade,
+      ),
 
       // Seller upgrade routes
       GoRoute(
@@ -380,5 +419,28 @@ class GoRouterRefreshStream extends ChangeNotifier {
     stream.listen((_) {
       notifyListeners();
     });
+  }
+}
+
+/// Placeholder for the followers list. The followers feature is queued for
+/// a follow-up phase — until then the route resolves to a friendly empty
+/// state instead of dead-ending the stat tap.
+class _FollowersStubScreen extends StatelessWidget {
+  const _FollowersStubScreen();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(),
+      body: const Center(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 32),
+          child: Text(
+            'Followers — coming soon',
+            textAlign: TextAlign.center,
+          ),
+        ),
+      ),
+    );
   }
 }

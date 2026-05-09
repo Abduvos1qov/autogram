@@ -20,7 +20,7 @@ class ProfileLoadingView extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: topInset + AppSpacing.md),
-            // Cover/header block (matches `SellerCoverHeader` height).
+            // Identity-block placeholder.
             Container(
               height: 200,
               margin: const EdgeInsets.fromLTRB(

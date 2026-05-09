@@ -49,7 +49,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
           // Initial state: hit the bloc and show loading. Avoids the
           // single-frame blank flash the original screen had between
           // `initState` and the first `loading` emit.
-          if (state.status == ProfileStatus.initial || state.isLoading) {
+          //
+          // The `state.profile == null` guard keeps the loaded view on
+          // screen during pull-to-refresh — the bloc briefly toggles back
+          // to `loading` to force a stream emit (so the RefreshIndicator
+          // resolves) but we don't want to flash the loading shimmer.
+          if (state.profile == null &&
+              (state.status == ProfileStatus.initial || state.isLoading)) {
             return const ProfileLoadingView();
           }
 

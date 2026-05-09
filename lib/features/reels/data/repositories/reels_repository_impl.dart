@@ -30,6 +30,21 @@ class ReelsRepositoryImpl with RepositoryMixin implements ReelsRepository {
   }
 
   @override
+  Future<Either<Failure, PaginatedResponse<Reel>>> getSellerReels({
+    required String sellerId,
+    int page = 1,
+    int pageSize = 12,
+  }) {
+    return safeRemoteCall(_networkInfo, () async {
+      return await _remoteDataSource.getSellerReels(
+        sellerId: sellerId,
+        page: page,
+        pageSize: pageSize,
+      );
+    });
+  }
+
+  @override
   Future<Either<Failure, void>> likeReel(String reelId) {
     return safeRemoteCall(_networkInfo, () async {
       await _remoteDataSource.likeReel(reelId);

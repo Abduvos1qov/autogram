@@ -34,6 +34,9 @@ abstract class RouteNames {
   static const boost = 'boost';
   static const help = 'help';
   static const about = 'about';
+  static const aboutSeller = 'aboutSeller';
+  static const profileFollowers = 'profileFollowers';
+  static const storefrontMenu = 'storefrontMenu';
 
   // Seller routes
   static const upgrade = 'upgrade';
@@ -87,6 +90,9 @@ abstract class RoutePaths {
   static const boost = '/boost';
   static const help = '/help';
   static const about = '/about';
+  static const aboutSeller = '/profile/about';
+  static const profileFollowers = '/profile/followers';
+  static const storefrontMenu = '/profile/menu';
 
   // Seller paths
   static const upgrade = '/upgrade';

@@ -38,6 +38,7 @@ import '../features/reels/data/datasources/reels_remote_datasource.dart';
 import '../features/reels/data/repositories/reels_repository_impl.dart';
 import '../features/reels/domain/repositories/reels_repository.dart';
 import '../features/reels/domain/usecases/get_reels_usecase.dart';
+import '../features/reels/domain/usecases/get_seller_reels_usecase.dart';
 import '../features/reels/domain/usecases/like_reel_usecase.dart';
 import '../features/reels/domain/usecases/save_reel_usecase.dart';
 import '../features/reels/presentation/bloc/reels_bloc.dart';
@@ -275,6 +276,7 @@ void _initReels() {
 
   // Use cases
   sl.registerLazySingleton(() => GetReelsUseCase(sl()));
+  sl.registerLazySingleton(() => GetSellerReelsUseCase(sl()));
   sl.registerLazySingleton(() => LikeReelUseCase(sl()));
   sl.registerLazySingleton(() => SaveReelUseCase(sl()));
 
@@ -515,6 +517,7 @@ void _initProfile() {
         deleteAccountUseCase: sl(),
         getSellerProfileUseCase: sl(),
         getSellerListingsUseCase: sl(),
+        getSellerReelsUseCase: sl(),
       ));
 }
 

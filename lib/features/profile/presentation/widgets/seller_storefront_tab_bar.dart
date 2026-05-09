@@ -1,25 +1,19 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_typography.dart';
 import '../bloc/profile_state.dart';
 
 /// Sticky tab bar — designed for use inside a `SliverPersistentHeader(pinned: true)`.
-/// Renders three icon-only tabs (Active | Sold | About) Instagram-style, with
-/// an optional numeric count next to the active/sold icons. The active tab
-/// gets a 2px underline.
+/// Renders three icon-only tabs (Active | Reels | Sold) Instagram-style.
+/// The active tab gets a 2px primary-color underline.
 class SellerStorefrontTabBar extends StatelessWidget {
   final SellerStorefrontTab currentTab;
   final ValueChanged<SellerStorefrontTab> onTabChanged;
-  final int? activeCount;
-  final int? soldCount;
 
   const SellerStorefrontTabBar({
     super.key,
     required this.currentTab,
     required this.onTabChanged,
-    this.activeCount,
-    this.soldCount,
   });
 
   @override
@@ -35,24 +29,21 @@ class SellerStorefrontTabBar extends StatelessWidget {
                 child: _TabButton(
                   icon: Icons.grid_on_rounded,
                   isActive: currentTab == SellerStorefrontTab.active,
-                  count: activeCount,
                   onTap: () => onTabChanged(SellerStorefrontTab.active),
+                ),
+              ),
+              Expanded(
+                child: _TabButton(
+                  icon: Icons.play_circle_outline_rounded,
+                  isActive: currentTab == SellerStorefrontTab.reels,
+                  onTap: () => onTabChanged(SellerStorefrontTab.reels),
                 ),
               ),
               Expanded(
                 child: _TabButton(
                   icon: Icons.sell_outlined,
                   isActive: currentTab == SellerStorefrontTab.sold,
-                  count: soldCount,
                   onTap: () => onTabChanged(SellerStorefrontTab.sold),
-                ),
-              ),
-              Expanded(
-                child: _TabButton(
-                  icon: Icons.info_outline_rounded,
-                  isActive: currentTab == SellerStorefrontTab.about,
-                  count: null,
-                  onTap: () => onTabChanged(SellerStorefrontTab.about),
                 ),
               ),
             ],
@@ -71,13 +62,11 @@ class SellerStorefrontTabBar extends StatelessWidget {
 class _TabButton extends StatelessWidget {
   final IconData icon;
   final bool isActive;
-  final int? count;
   final VoidCallback onTap;
 
   const _TabButton({
     required this.icon,
     required this.isActive,
-    required this.count,
     required this.onTap,
   });
 
@@ -99,24 +88,7 @@ class _TabButton extends StatelessWidget {
             child: Stack(
               alignment: Alignment.center,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(icon, size: 20, color: color),
-                    if (count != null) ...[
-                      const SizedBox(width: 6),
-                      Text(
-                        '$count',
-                        style: AppTypography.labelMediumStyle.copyWith(
-                          color: color,
-                          fontWeight: isActive
-                              ? AppTypography.bold
-                              : AppTypography.medium,
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
+                Icon(icon, size: 26, color: color),
                 if (isActive)
                   Positioned(
                     bottom: 0,
