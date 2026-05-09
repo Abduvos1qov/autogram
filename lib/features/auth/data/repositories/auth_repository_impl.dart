@@ -1,5 +1,7 @@
 import 'package:dartz/dartz.dart';
 
+import '../../../../core/config/test_config.dart';
+import '../../../../core/data/mock_data.dart';
 import '../../../../core/errors/error_handler.dart';
 import '../../../../core/errors/failures.dart';
 import '../../../../core/mixins/repository_mixin.dart';
@@ -138,21 +140,37 @@ class AuthRepositoryImpl with RepositoryMixin implements AuthRepository {
         final user = await _remoteDataSource.getCurrentUser();
         if (user != null) {
           await _localDataSource.cacheUser(user);
+          _syncTestModeFromUser(user);
           return Right(user);
         }
       }
 
       // Fall back to cache
       final cachedUser = await _localDataSource.getCachedUser();
+      _syncTestModeFromUser(cachedUser);
       return Right(cachedUser);
     } catch (e) {
       // On error, try cache
       final cachedUser = await _localDataSource.getCachedUser();
       if (cachedUser != null) {
+        _syncTestModeFromUser(cachedUser);
         return Right(cachedUser);
       }
       return Left(ErrorHandler.handleException(e));
     }
+  }
+
+  /// In test mode, the in-memory `MockData` profile resets to the buyer
+  /// default on every cold start. If we recover a cached user from a
+  /// previous session (e.g., the user was signed in as
+  /// `seller@autogram.uz`), re-apply the activation so the rest of the app
+  /// (Profile screen, etc.) sees the right buyer/seller state. No-op
+  /// outside test mode.
+  void _syncTestModeFromUser(User? user) {
+    if (!TestConfig.isTestMode) return;
+    final email = user?.email;
+    if (email == null || email.isEmpty) return;
+    MockData.activateTestAccount(email);
   }
 
   @override

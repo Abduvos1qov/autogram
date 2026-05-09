@@ -10,6 +10,7 @@ import '../../features/seller/domain/entities/activity_log.dart';
 import '../../features/seller/domain/entities/seller_invitation.dart';
 import '../../features/seller/domain/entities/seller_member.dart';
 import '../../features/seller/domain/entities/seller_profile.dart';
+import '../config/test_config.dart';
 import '../services/permission_service.dart';
 
 /// Mock data for testing the app without backend.
@@ -18,13 +19,15 @@ import '../services/permission_service.dart';
 /// modified by datasources in test mode to simulate persistent state. Reset
 /// them via [resetMutableState] in tests that need a clean slate.
 class MockData {
-  /// Default profile used to initialize [currentUserProfile].
-  static UserProfile _defaultUserProfile() => UserProfile(
-        id: 'user-001',
-        phone: '+998901234567',
-        email: 'test@autogram.uz',
-        fullName: 'Test Foydalanuvchi',
-        avatarUrl: null,
+  /// Default buyer profile — anonymous bootstrap state before sign-in.
+  static UserProfile _buyerProfile({String email = 'buyer@autogram.uz'}) =>
+      UserProfile(
+        id: 'user-buyer',
+        phone: '+998901111111',
+        email: email,
+        fullName: 'Sardor Aliyev',
+        avatarUrl:
+            'https://ui-avatars.com/api/?name=Sardor+Aliyev&size=200&background=1E5FFF&color=fff',
         role: 'buyer',
         isVerified: true,
         isActive: true,
@@ -34,7 +37,34 @@ class MockData {
         updatedAt: DateTime.now(),
       );
 
-  /// Mutable profile — datasources mutate this to simulate updates in test mode.
+  /// Default seller profile — pre-linked to `seller1` (AutoStar Salon)
+  /// fixtures so listings and team data resolve without extra wiring.
+  static UserProfile _sellerUserProfile(
+          {String email = 'seller@autogram.uz'}) =>
+      UserProfile(
+        id: 'user2', // matches mockUsers[1] (Aziza), so chats/listings line up
+        phone: '+998909876543',
+        email: email,
+        fullName: 'Aziza Karimova',
+        avatarUrl:
+            'https://ui-avatars.com/api/?name=Aziza+Karimova&size=200&background=10B981&color=fff',
+        role: 'seller',
+        isVerified: true,
+        isActive: true,
+        language: 'uz',
+        sellerProfileId: 'seller1',
+        createdAt: DateTime(2024, 1, 1),
+        updatedAt: DateTime.now(),
+      );
+
+  /// Legacy alias retained so existing call sites keep compiling. Defaults
+  /// to the buyer profile.
+  static UserProfile _defaultUserProfile() => _buyerProfile();
+
+  /// Mutable profile — datasources mutate this to simulate updates in test
+  /// mode. Sign-in / OTP-verify in `auth_remote_datasource` calls
+  /// [activateTestAccount] to rewrite this and [currentSellerProfile] based
+  /// on which test email was used.
   static UserProfile currentUserProfile = _defaultUserProfile();
 
   /// Default seller profile used after the user goes through the upgrade flow
@@ -124,6 +154,29 @@ class MockData {
       updatedAt: DateTime.now(),
     );
     return seller;
+  }
+
+  /// Wire mock state to the test account selected at sign-in. Routes
+  /// [TestConfig.sellerTestEmails] to the AutoStar Salon storefront and
+  /// every other email to the buyer profile. No-op outside test mode.
+  ///
+  /// Called from `auth_remote_datasource` (signIn / verifyOtp) and from
+  /// `auth_repository_impl.getCurrentUser` after a cached-user fetch, so
+  /// app restarts also restore the right state.
+  static void activateTestAccount(String email) {
+    if (!TestConfig.isTestMode) return;
+    final lower = email.toLowerCase();
+    if (TestConfig.isSellerTestEmail(lower)) {
+      currentUserProfile = _sellerUserProfile(email: lower);
+      currentSellerProfile = _buildSellerProfileFor(
+        userId: currentUserProfile.id,
+        businessName: 'AutoStar Salon',
+        businessType: BusinessType.dealer,
+      );
+    } else {
+      currentUserProfile = _buyerProfile(email: lower);
+      currentSellerProfile = null;
+    }
   }
 
   /// Default notifications used to initialize [currentNotifications].

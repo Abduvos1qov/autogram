@@ -45,6 +45,27 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   AuthRemoteDataSourceImpl({required supabase.SupabaseClient supabaseClient})
       : _supabase = supabaseClient;
 
+  /// Build a [UserModel] that mirrors the activated `MockData` test
+  /// profile. Call **after** `MockData.activateTestAccount(email)` so the
+  /// returned User and the in-memory profile are in sync.
+  UserModel _buildMockUserModel(String email) {
+    final profile = MockData.currentUserProfile;
+    return UserModel(
+      id: profile.id,
+      phone: profile.phone,
+      email: profile.email ?? email,
+      fullName: profile.fullName,
+      avatarUrl: profile.avatarUrl,
+      username: email.split('@').first,
+      role: profile.role == 'seller' ? UserRole.seller : UserRole.buyer,
+      isVerified: profile.isVerified,
+      isActive: profile.isActive,
+      language: profile.language,
+      createdAt: profile.createdAt,
+      updatedAt: profile.updatedAt,
+    );
+  }
+
   @override
   Future<void> signUp({
     required String email,
@@ -129,26 +150,13 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
               message: 'Noto\'g\'ri email yoki parol',
             );
           }
-          final mockUser = MockData.getUserByEmail(email);
-          if (mockUser != null) {
-            return UserModel.fromEntity(mockUser);
-          }
         }
 
-        // Newly signed-up email — synthesize a user (mirrors verifyOtp).
-        final now = DateTime.now();
-        return UserModel(
-          id: 'mock_${email.hashCode.abs()}',
-          email: email,
-          fullName: 'Test User',
-          username: email.split('@').first,
-          role: UserRole.buyer,
-          isVerified: true,
-          isActive: true,
-          language: 'uz',
-          createdAt: now,
-          updatedAt: now,
-        );
+        // Wire mock state (UserProfile + SellerProfile) to the email used.
+        // Seller emails activate the storefront fixture; everything else
+        // flows through the buyer profile.
+        MockData.activateTestAccount(email);
+        return _buildMockUserModel(email);
       }
 
       final response = await _supabase.auth.signInWithPassword(
@@ -232,25 +240,11 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           );
         }
 
-        final mockUser = MockData.getUserByEmail(email);
-        if (mockUser != null) {
-          return UserModel.fromEntity(mockUser).copyWith(isVerified: true);
-        }
-
-        // Newly registered email — synthesize a fresh user awaiting username.
-        final now = DateTime.now();
-        return UserModel(
-          id: 'mock_${email.hashCode.abs()}',
-          email: email,
-          fullName: 'Test User',
-          username: null,
-          role: UserRole.buyer,
-          isVerified: true,
-          isActive: true,
-          language: 'uz',
-          createdAt: now,
-          updatedAt: now,
-        );
+        // Same activation path as `signIn` — keep the two flows in sync so a
+        // user who registered with `seller@autogram.uz` lands in the
+        // storefront just like a sign-in would.
+        MockData.activateTestAccount(email);
+        return _buildMockUserModel(email);
       }
 
       final response = await _supabase.auth.verifyOTP(
@@ -523,6 +517,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     try {
       if (TestConfig.isTestMode) {
         AppLogger.info('TEST MODE: Simulating logout');
+        // Reset mock state so the next sign-in starts from a clean buyer
+        // profile (otherwise a seller → logout → sign-in-as-buyer would
+        // still show seller storefront data).
+        MockData.resetMutableState();
         return;
       }
       await _supabase.auth.signOut();
