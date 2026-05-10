@@ -7,6 +7,7 @@ import '../../features/notifications/domain/entities/notification.dart';
 import '../../features/profile/domain/entities/user_profile.dart';
 import '../../features/reels/domain/entities/reel.dart';
 import '../../features/seller/domain/entities/activity_log.dart';
+import '../../features/seller/domain/entities/contact_phone.dart';
 import '../../features/seller/domain/entities/seller_invitation.dart';
 import '../../features/seller/domain/entities/seller_member.dart';
 import '../../features/seller/domain/entities/seller_profile.dart';
@@ -77,7 +78,7 @@ class MockData {
     String? description,
     String? city,
     String? address,
-    List<String>? contactPhones,
+    List<ContactPhone>? contactPhones,
   }) {
     final now = DateTime.now();
     return SellerProfile(
@@ -85,13 +86,20 @@ class MockData {
       userId: userId,
       businessName: businessName,
       businessType: businessType,
+      username: 'autostar_uz',
       description: description ?? 'Eng yaxshi avtomobillar — yangi va ishlatilgan.',
       logoUrl: 'https://ui-avatars.com/api/?name=${Uri.encodeComponent(businessName)}&size=200&background=10B981&color=fff',
       coverUrl: 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1200&q=80',
       address: address ?? 'Sergeli ko\'chasi 15',
       city: city ?? 'Toshkent',
       district: 'Sergeli',
-      contactPhones: contactPhones ?? const ['+998901234567', '+998971234567'],
+      contactPhones: contactPhones ??
+          const [
+            ContactPhone(phone: '+998901234567', label: ContactPhoneLabel.sales),
+            ContactPhone(phone: '+998971234567', label: ContactPhoneLabel.office),
+          ],
+      contactPersonName: 'Aziza Karimova',
+      contactPersonRole: 'Sotuv menejeri',
       telegram: '@autostar_uz',
       instagram: '@autostar_uz',
       website: 'https://autostar.uz',
@@ -136,7 +144,7 @@ class MockData {
     String? description,
     String? city,
     String? address,
-    List<String>? contactPhones,
+    List<ContactPhone>? contactPhones,
   }) {
     final seller = _buildSellerProfileFor(
       userId: currentUserProfile.id,

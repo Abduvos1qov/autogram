@@ -12,6 +12,7 @@ abstract class ProfileRepository {
   Future<Either<Failure, UserProfile>> updateProfile({
     String? fullName,
     String? email,
+    String? username,
     String? language,
   });
   Future<Either<Failure, String>> updateAvatar(File imageFile);

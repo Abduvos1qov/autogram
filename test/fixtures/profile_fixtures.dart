@@ -1,5 +1,6 @@
 import 'package:autogram/features/listing/domain/entities/listing.dart';
 import 'package:autogram/features/profile/domain/entities/user_profile.dart';
+import 'package:autogram/features/seller/domain/entities/contact_phone.dart';
 import 'package:autogram/features/seller/domain/entities/seller_profile.dart';
 
 /// Fixtures for Profile, Seller, and Listing entities used across tests.
@@ -76,7 +77,9 @@ class ProfileFixtures {
         district: 'Sergeli',
         latitude: 41.2,
         longitude: 69.2,
-        contactPhones: const ['+998909876543'],
+        contactPhones: const [
+          ContactPhone(phone: '+998909876543', label: ContactPhoneLabel.sales),
+        ],
         telegram: '@testavto',
         instagram: '@testavto',
         website: 'https://testavto.uz',

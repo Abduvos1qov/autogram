@@ -1,3 +1,4 @@
+import '../../domain/entities/contact_phone.dart';
 import '../../domain/entities/seller_profile.dart';
 
 /// Seller profile data model
@@ -8,6 +9,7 @@ class SellerProfileModel extends SellerProfile {
     required super.userId,
     required super.businessName,
     required super.businessType,
+    super.username,
     super.description,
     super.logoUrl,
     super.coverUrl,
@@ -17,8 +19,12 @@ class SellerProfileModel extends SellerProfile {
     super.latitude,
     super.longitude,
     super.contactPhones,
+    super.contactPersonName,
+    super.contactPersonRole,
     super.telegram,
     super.instagram,
+    super.facebook,
+    super.youtube,
     super.website,
     super.workingHours,
     required super.isVerified,
@@ -37,7 +43,9 @@ class SellerProfileModel extends SellerProfile {
       id: json['id'] as String,
       userId: json['user_id'] as String,
       businessName: json['business_name'] as String,
-      businessType: BusinessType.fromString(json['business_type'] as String? ?? 'individual'),
+      businessType: BusinessType.fromString(
+          json['business_type'] as String? ?? 'individual'),
+      username: json['username'] as String?,
       description: json['description'] as String?,
       logoUrl: json['logo_url'] as String?,
       coverUrl: json['cover_url'] as String?,
@@ -46,19 +54,22 @@ class SellerProfileModel extends SellerProfile {
       district: json['district'] as String?,
       latitude: (json['latitude'] as num?)?.toDouble(),
       longitude: (json['longitude'] as num?)?.toDouble(),
-      contactPhones: (json['contact_phones'] as List<dynamic>?)
-              ?.map((e) => e as String)
-              .toList() ??
-          [],
+      contactPhones: _parseContactPhones(json['contact_phones']),
+      contactPersonName: json['contact_person_name'] as String?,
+      contactPersonRole: json['contact_person_role'] as String?,
       telegram: json['telegram'] as String?,
       instagram: json['instagram'] as String?,
+      facebook: json['facebook'] as String?,
+      youtube: json['youtube'] as String?,
       website: json['website'] as String?,
-      workingHours: _parseWorkingHours(json['working_hours'] as Map<String, dynamic>?),
+      workingHours:
+          _parseWorkingHours(json['working_hours'] as Map<String, dynamic>?),
       isVerified: json['is_verified'] as bool? ?? false,
       verifiedAt: json['verified_at'] != null
           ? DateTime.parse(json['verified_at'] as String)
           : null,
-      subscriptionPlan: SubscriptionPlan.fromString(json['subscription_type'] as String? ?? 'free'),
+      subscriptionPlan: SubscriptionPlan.fromString(
+          json['subscription_type'] as String? ?? 'free'),
       subscriptionExpiresAt: json['subscription_expires_at'] != null
           ? DateTime.parse(json['subscription_expires_at'] as String)
           : null,
@@ -70,7 +81,22 @@ class SellerProfileModel extends SellerProfile {
     );
   }
 
-  static Map<String, WorkingHours> _parseWorkingHours(Map<String, dynamic>? json) {
+  /// Polymorphic decoder. Accepts:
+  ///   - new JSONB shape: `[{phone, label, custom_label?}, ...]`
+  ///   - legacy text[] shape: `["+998901234567", ...]` — falls back to the
+  ///     `other` label so a pre-migration row never crashes the model.
+  static List<ContactPhone> _parseContactPhones(dynamic raw) {
+    if (raw is! List) return const [];
+    final result = <ContactPhone>[];
+    for (final element in raw) {
+      final parsed = ContactPhone.fromAny(element);
+      if (parsed != null) result.add(parsed);
+    }
+    return result;
+  }
+
+  static Map<String, WorkingHours> _parseWorkingHours(
+      Map<String, dynamic>? json) {
     if (json == null) return {};
 
     return json.map((key, value) {
@@ -92,6 +118,7 @@ class SellerProfileModel extends SellerProfile {
       'user_id': userId,
       'business_name': businessName,
       'business_type': businessType.name,
+      'username': username,
       'description': description,
       'logo_url': logoUrl,
       'cover_url': coverUrl,
@@ -100,18 +127,22 @@ class SellerProfileModel extends SellerProfile {
       'district': district,
       'latitude': latitude,
       'longitude': longitude,
-      'contact_phones': contactPhones,
+      'contact_phones': contactPhones.map((c) => c.toMap()).toList(),
+      'contact_person_name': contactPersonName,
+      'contact_person_role': contactPersonRole,
       'telegram': telegram,
       'instagram': instagram,
+      'facebook': facebook,
+      'youtube': youtube,
       'website': website,
       'working_hours': workingHours.map((key, value) => MapEntry(
-        key,
-        {
-          'open': value.open,
-          'close': value.close,
-          'is_closed': value.isClosed,
-        },
-      )),
+            key,
+            {
+              'open': value.open,
+              'close': value.close,
+              'is_closed': value.isClosed,
+            },
+          )),
       'is_verified': isVerified,
       'verified_at': verifiedAt?.toIso8601String(),
       'subscription_type': subscriptionPlan.name,
@@ -129,6 +160,7 @@ class SellerProfileModel extends SellerProfile {
       userId: entity.userId,
       businessName: entity.businessName,
       businessType: entity.businessType,
+      username: entity.username,
       description: entity.description,
       logoUrl: entity.logoUrl,
       coverUrl: entity.coverUrl,
@@ -138,8 +170,12 @@ class SellerProfileModel extends SellerProfile {
       latitude: entity.latitude,
       longitude: entity.longitude,
       contactPhones: entity.contactPhones,
+      contactPersonName: entity.contactPersonName,
+      contactPersonRole: entity.contactPersonRole,
       telegram: entity.telegram,
       instagram: entity.instagram,
+      facebook: entity.facebook,
+      youtube: entity.youtube,
       website: entity.website,
       workingHours: entity.workingHours,
       isVerified: entity.isVerified,

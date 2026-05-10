@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 
 import '../../../../core/errors/failures.dart';
 import '../../../../core/usecases/usecase.dart';
+import '../entities/contact_phone.dart';
 import '../entities/seller_profile.dart';
 import '../repositories/seller_repository.dart';
 
@@ -15,13 +16,19 @@ class UpgradeToSellerUseCase implements UseCase<SellerProfile, UpgradeToSellerPa
 
   @override
   Future<Either<Failure, SellerProfile>> call(UpgradeToSellerParams params) {
+    // During the upgrade flow the user just types phone numbers without
+    // categorising them — wrap each one in a default-label ContactPhone so the
+    // repository signature matches.
+    final phones = params.contactPhones
+        ?.map((p) => ContactPhone(phone: p, label: ContactPhoneLabel.mobile))
+        .toList();
     return _repository.createSellerProfile(
       businessName: params.businessName,
       businessType: params.businessType,
       description: params.description,
       address: params.address,
       city: params.city,
-      contactPhones: params.contactPhones,
+      contactPhones: phones,
     );
   }
 }

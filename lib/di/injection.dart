@@ -77,6 +77,7 @@ import '../features/seller/data/datasources/seller_remote_datasource.dart';
 import '../features/seller/data/repositories/seller_repository_impl.dart';
 import '../features/seller/domain/repositories/seller_repository.dart';
 import '../features/seller/domain/usecases/get_seller_profile_usecase.dart';
+import '../features/seller/domain/usecases/update_seller_profile_usecase.dart';
 import '../features/seller/domain/usecases/upgrade_to_seller_usecase.dart';
 import '../features/seller/presentation/bloc/seller_bloc.dart';
 
@@ -144,6 +145,15 @@ import '../features/payment/domain/usecases/get_payment_status_usecase.dart';
 import '../features/payment/domain/usecases/watch_payment_status_usecase.dart';
 import '../features/payment/presentation/bloc/payment_bloc.dart';
 
+// Settings (account credentials)
+import '../features/settings/data/datasources/account_remote_datasource.dart';
+import '../features/settings/data/repositories/account_repository_impl.dart';
+import '../features/settings/domain/repositories/account_repository.dart';
+import '../features/settings/domain/usecases/change_email_usecase.dart';
+import '../features/settings/domain/usecases/change_password_usecase.dart';
+import '../features/settings/domain/usecases/change_phone_usecase.dart';
+import '../features/settings/presentation/bloc/account_settings_bloc.dart';
+
 final sl = GetIt.instance;
 
 Future<void> initDependencies() async {
@@ -169,6 +179,7 @@ Future<void> initDependencies() async {
   _initProfile();
   _initNotifications();
   _initPayment();
+  _initSettings();
 }
 
 Future<void> _initCore() async {
@@ -397,6 +408,7 @@ void _initSeller() {
   // Use cases
   sl.registerLazySingleton(() => UpgradeToSellerUseCase(sl()));
   sl.registerLazySingleton(() => GetSellerProfileUseCase(sl()));
+  sl.registerLazySingleton(() => UpdateSellerProfileUseCase(sl()));
 
   // BLoC
   sl.registerFactory(() => SellerBloc(
@@ -518,6 +530,7 @@ void _initProfile() {
         getSellerProfileUseCase: sl(),
         getSellerListingsUseCase: sl(),
         getSellerReelsUseCase: sl(),
+        updateSellerProfileUseCase: sl(),
       ));
 }
 
@@ -584,5 +597,26 @@ void _initPayment() {
         watchPaymentStatusUseCase: sl(),
         cancelPaymentUseCase: sl(),
         gatewayService: sl(),
+      ));
+}
+
+void _initSettings() {
+  sl.registerLazySingleton<AccountRemoteDataSource>(
+    () => AccountRemoteDataSourceImpl(supabaseClient: sl()),
+  );
+  sl.registerLazySingleton<AccountRepository>(
+    () => AccountRepositoryImpl(remoteDataSource: sl(), networkInfo: sl()),
+  );
+  sl.registerLazySingleton(() => RequestEmailChangeUseCase(sl()));
+  sl.registerLazySingleton(() => VerifyEmailChangeUseCase(sl()));
+  sl.registerLazySingleton(() => ChangePasswordUseCase(sl()));
+  sl.registerLazySingleton(() => RequestPhoneChangeUseCase(sl()));
+  sl.registerLazySingleton(() => VerifyPhoneChangeUseCase(sl()));
+  sl.registerFactory(() => AccountSettingsBloc(
+        requestEmailChangeUseCase: sl(),
+        verifyEmailChangeUseCase: sl(),
+        changePasswordUseCase: sl(),
+        requestPhoneChangeUseCase: sl(),
+        verifyPhoneChangeUseCase: sl(),
       ));
 }

@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 
 import '../../../../core/errors/failures.dart';
+import '../entities/contact_phone.dart';
 import '../entities/seller_profile.dart';
 
 /// Seller repository interface
@@ -17,11 +18,12 @@ abstract class SellerRepository {
     String? description,
     String? address,
     String? city,
-    List<String>? contactPhones,
+    List<ContactPhone>? contactPhones,
   });
 
   /// Update seller profile
   Future<Either<Failure, SellerProfile>> updateSellerProfile({
+    String? username,
     String? businessName,
     BusinessType? businessType,
     String? description,
@@ -32,9 +34,13 @@ abstract class SellerRepository {
     String? district,
     double? latitude,
     double? longitude,
-    List<String>? contactPhones,
+    List<ContactPhone>? contactPhones,
+    String? contactPersonName,
+    String? contactPersonRole,
     String? telegram,
     String? instagram,
+    String? facebook,
+    String? youtube,
     String? website,
     Map<String, WorkingHours>? workingHours,
   });

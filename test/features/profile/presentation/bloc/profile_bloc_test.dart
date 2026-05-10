@@ -12,6 +12,7 @@ import 'package:autogram/features/profile/presentation/bloc/profile_event.dart';
 import 'package:autogram/features/profile/presentation/bloc/profile_state.dart';
 import 'package:autogram/features/reels/domain/entities/reel.dart';
 import 'package:autogram/features/reels/domain/usecases/get_seller_reels_usecase.dart';
+import 'package:autogram/features/seller/domain/usecases/update_seller_profile_usecase.dart';
 import 'package:bloc_test/bloc_test.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -34,6 +35,7 @@ void main() {
   late MockGetSellerProfileUseCase mockGetSellerProfile;
   late MockGetSellerListingsUseCase mockGetSellerListings;
   late MockGetSellerReelsUseCase mockGetSellerReels;
+  late MockUpdateSellerProfileUseCase mockUpdateSellerProfile;
 
   setUpAll(() {
     registerFallbackValue(const NoParams());
@@ -45,6 +47,7 @@ void main() {
     registerFallbackValue(
       const GetSellerReelsParams(sellerId: 'seller-001'),
     );
+    registerFallbackValue(const UpdateSellerProfileParams());
   });
 
   setUp(() {
@@ -55,6 +58,7 @@ void main() {
     mockGetSellerProfile = MockGetSellerProfileUseCase();
     mockGetSellerListings = MockGetSellerListingsUseCase();
     mockGetSellerReels = MockGetSellerReelsUseCase();
+    mockUpdateSellerProfile = MockUpdateSellerProfileUseCase();
 
     // Default reels stub — most tests don't care about reels and just need
     // the seller fan-out to succeed.
@@ -78,6 +82,7 @@ void main() {
       getSellerProfileUseCase: mockGetSellerProfile,
       getSellerListingsUseCase: mockGetSellerListings,
       getSellerReelsUseCase: mockGetSellerReels,
+      updateSellerProfileUseCase: mockUpdateSellerProfile,
     );
   });
 

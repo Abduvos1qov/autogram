@@ -48,6 +48,16 @@ class AboutSellerScreen extends StatelessWidget {
             onInstagramTap: (handle) => _launch(
               'https://instagram.com/${handle.replaceAll('@', '')}',
             ),
+            onFacebookTap: (handle) => _launch(
+              handle.startsWith('http')
+                  ? handle
+                  : 'https://facebook.com/${handle.replaceAll('@', '')}',
+            ),
+            onYoutubeTap: (handle) => _launch(
+              handle.startsWith('http')
+                  ? handle
+                  : 'https://youtube.com/${handle.startsWith('@') ? handle : '@$handle'}',
+            ),
             onWebsiteTap: (url) => _launch(
               url.startsWith('http') ? url : 'https://$url',
             ),

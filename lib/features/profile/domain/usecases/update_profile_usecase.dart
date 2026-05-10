@@ -9,16 +9,18 @@ import '../repositories/profile_repository.dart';
 class UpdateProfileParams extends Equatable {
   final String? fullName;
   final String? email;
+  final String? username;
   final String? language;
 
   const UpdateProfileParams({
     this.fullName,
     this.email,
+    this.username,
     this.language,
   });
 
   @override
-  List<Object?> get props => [fullName, email, language];
+  List<Object?> get props => [fullName, email, username, language];
 }
 
 class UpdateProfileUseCase implements UseCase<UserProfile, UpdateProfileParams> {
@@ -31,6 +33,7 @@ class UpdateProfileUseCase implements UseCase<UserProfile, UpdateProfileParams> 
     return _repository.updateProfile(
       fullName: params.fullName,
       email: params.email,
+      username: params.username,
       language: params.language,
     );
   }

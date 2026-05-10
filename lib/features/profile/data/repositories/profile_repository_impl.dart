@@ -30,12 +30,14 @@ class ProfileRepositoryImpl with RepositoryMixin implements ProfileRepository {
   Future<Either<Failure, UserProfile>> updateProfile({
     String? fullName,
     String? email,
+    String? username,
     String? language,
   }) {
     return safeRemoteCall(_networkInfo, () async {
       return await _remoteDataSource.updateProfile(
         fullName: fullName,
         email: email,
+        username: username,
         language: language,
       );
     });

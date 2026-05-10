@@ -124,15 +124,15 @@ class StorefrontMenuScreen extends StatelessWidget {
                   onTap: () => context.push(RoutePaths.editProfile),
                 ),
                 ProfileMenuTile(
+                  icon: Icons.manage_accounts_outlined,
+                  title: 'profile.account_settings'.tr(),
+                  onTap: () => context.push(RoutePaths.accountSettings),
+                ),
+                ProfileMenuTile(
                   icon: Icons.notifications_outlined,
                   title: 'profile.notification_settings'.tr(),
                   onTap: () =>
                       context.push(RoutePaths.notificationSettings),
-                ),
-                ProfileMenuTile(
-                  icon: Icons.settings_outlined,
-                  title: 'profile.settings'.tr(),
-                  onTap: () => context.push(RoutePaths.settings),
                 ),
               ],
             ),

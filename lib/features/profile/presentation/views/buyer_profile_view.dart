@@ -69,6 +69,11 @@ class BuyerProfileView extends StatelessWidget {
                 onTap: () => context.push(RoutePaths.editProfile),
               ),
               ProfileMenuTile(
+                icon: Icons.manage_accounts_outlined,
+                title: 'profile.account_settings'.tr(),
+                onTap: () => context.push(RoutePaths.accountSettings),
+              ),
+              ProfileMenuTile(
                 icon: Icons.bookmark_outline,
                 title: 'profile.saved'.tr(),
                 onTap: () => context.push(RoutePaths.saved),

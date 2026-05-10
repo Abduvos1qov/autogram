@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../seller/domain/entities/contact_phone.dart';
 import '../../../seller/domain/entities/seller_profile.dart';
 
 /// "About" tab content. Pure-presentation; data is read straight from the
@@ -14,6 +15,8 @@ class SellerStorefrontAbout extends StatelessWidget {
   final ValueChanged<String>? onPhoneTap;
   final ValueChanged<String>? onTelegramTap;
   final ValueChanged<String>? onInstagramTap;
+  final ValueChanged<String>? onFacebookTap;
+  final ValueChanged<String>? onYoutubeTap;
   final ValueChanged<String>? onWebsiteTap;
   final ValueChanged<({double lat, double lng})>? onMapTap;
 
@@ -23,6 +26,8 @@ class SellerStorefrontAbout extends StatelessWidget {
     this.onPhoneTap,
     this.onTelegramTap,
     this.onInstagramTap,
+    this.onFacebookTap,
+    this.onYoutubeTap,
     this.onWebsiteTap,
     this.onMapTap,
   });
@@ -72,6 +77,8 @@ class SellerStorefrontAbout extends StatelessWidget {
         if (seller.contactPhones.isNotEmpty ||
             seller.telegram != null ||
             seller.instagram != null ||
+            seller.facebook != null ||
+            seller.youtube != null ||
             seller.website != null)
           _Section(
             title: 'seller.storefront.about.contact_phone'.tr(),
@@ -80,9 +87,12 @@ class SellerStorefrontAbout extends StatelessWidget {
                 for (final phone in seller.contactPhones)
                   _ContactRow(
                     icon: Icons.phone_outlined,
-                    label: phone,
+                    label: phone.phone,
+                    sublabel: _phoneLabel(phone),
                     color: AppColors.success,
-                    onTap: onPhoneTap == null ? null : () => onPhoneTap!(phone),
+                    onTap: onPhoneTap == null
+                        ? null
+                        : () => onPhoneTap!(phone.phone),
                   ),
                 if (seller.telegram != null && seller.telegram!.isNotEmpty)
                   _ContactRow(
@@ -101,6 +111,24 @@ class SellerStorefrontAbout extends StatelessWidget {
                     onTap: onInstagramTap == null
                         ? null
                         : () => onInstagramTap!(seller.instagram!),
+                  ),
+                if (seller.youtube != null && seller.youtube!.isNotEmpty)
+                  _ContactRow(
+                    icon: Icons.play_arrow_rounded,
+                    label: seller.youtube!,
+                    color: const Color(0xFFFF0000),
+                    onTap: onYoutubeTap == null
+                        ? null
+                        : () => onYoutubeTap!(seller.youtube!),
+                  ),
+                if (seller.facebook != null && seller.facebook!.isNotEmpty)
+                  _ContactRow(
+                    icon: Icons.facebook_rounded,
+                    label: seller.facebook!,
+                    color: AppColors.facebook,
+                    onTap: onFacebookTap == null
+                        ? null
+                        : () => onFacebookTap!(seller.facebook!),
                   ),
                 if (seller.website != null && seller.website!.isNotEmpty)
                   _ContactRow(
@@ -152,6 +180,17 @@ class SellerStorefrontAbout extends StatelessWidget {
   }
 
   String _formatYear(DateTime date) => date.year.toString();
+
+  /// Resolves the user-facing chip text for a contact phone — `customLabel`
+  /// when present, otherwise the localized canned label.
+  static String _phoneLabel(ContactPhone phone) {
+    if (phone.label == ContactPhoneLabel.other &&
+        phone.customLabel != null &&
+        phone.customLabel!.isNotEmpty) {
+      return phone.customLabel!;
+    }
+    return phone.label.labelKey.tr();
+  }
 }
 
 class _Section extends StatelessWidget {
@@ -297,12 +336,14 @@ class _AddressBlock extends StatelessWidget {
 class _ContactRow extends StatelessWidget {
   final IconData icon;
   final String label;
+  final String? sublabel;
   final Color color;
   final VoidCallback? onTap;
 
   const _ContactRow({
     required this.icon,
     required this.label,
+    this.sublabel,
     required this.color,
     required this.onTap,
   });
@@ -329,11 +370,24 @@ class _ContactRow extends StatelessWidget {
               ),
               const SizedBox(width: 12),
               Expanded(
-                child: Text(
-                  label,
-                  style: AppTypography.bodyMedium(context).copyWith(
-                    fontWeight: AppTypography.medium,
-                  ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      label,
+                      style: AppTypography.bodyMedium(context).copyWith(
+                        fontWeight: AppTypography.medium,
+                      ),
+                    ),
+                    if (sublabel != null && sublabel!.isNotEmpty)
+                      Text(
+                        sublabel!,
+                        style: AppTypography.bodySmall(context).copyWith(
+                          color: AppColors.textTertiaryOf(context),
+                        ),
+                      ),
+                  ],
                 ),
               ),
               if (onTap != null)

@@ -8,6 +8,7 @@ import '../../../../core/data/mock_data.dart';
 import '../../../../core/errors/error_handler.dart';
 import '../../../../core/errors/exceptions.dart' as app_exceptions;
 import '../../../../core/utils/logger.dart';
+import '../../domain/entities/contact_phone.dart';
 import '../../domain/entities/seller_profile.dart';
 import '../../domain/repositories/seller_repository.dart';
 import '../models/seller_profile_model.dart';
@@ -22,7 +23,7 @@ abstract class SellerRemoteDataSource {
     String? description,
     String? address,
     String? city,
-    List<String>? contactPhones,
+    List<ContactPhone>? contactPhones,
   });
   Future<SellerProfileModel> updateSellerProfile(Map<String, dynamic> updates);
   Future<List<SubscriptionPlanDetails>> getSubscriptionPlans();
@@ -81,7 +82,7 @@ class SellerRemoteDataSourceImpl implements SellerRemoteDataSource {
     String? description,
     String? address,
     String? city,
-    List<String>? contactPhones,
+    List<ContactPhone>? contactPhones,
   }) async {
     if (TestConfig.isTestMode) {
       AppLogger.info('TEST MODE: Creating seller profile for $businessName');
@@ -111,7 +112,8 @@ class SellerRemoteDataSourceImpl implements SellerRemoteDataSource {
         'description': description,
         'address': address,
         'city': city,
-        'contact_phones': contactPhones ?? [],
+        'contact_phones':
+            (contactPhones ?? const []).map((c) => c.toMap()).toList(),
         'is_verified': false,
         'subscription_type': 'free',
         'total_listings': 0,
@@ -163,7 +165,16 @@ class SellerRemoteDataSourceImpl implements SellerRemoteDataSource {
           message: 'No seller profile to update',
         );
       }
+      List<ContactPhone>? newPhones;
+      final rawPhones = updates['contact_phones'];
+      if (rawPhones is List) {
+        newPhones = [
+          for (final element in rawPhones)
+            if (ContactPhone.fromAny(element) case final phone?) phone,
+        ];
+      }
       final updated = current.copyWith(
+        username: updates['username'] as String? ?? current.username,
         businessName: updates['business_name'] as String? ?? current.businessName,
         description: updates['description'] as String? ?? current.description,
         logoUrl: updates['logo_url'] as String? ?? current.logoUrl,
@@ -173,11 +184,14 @@ class SellerRemoteDataSourceImpl implements SellerRemoteDataSource {
         district: updates['district'] as String? ?? current.district,
         telegram: updates['telegram'] as String? ?? current.telegram,
         instagram: updates['instagram'] as String? ?? current.instagram,
+        facebook: updates['facebook'] as String? ?? current.facebook,
+        youtube: updates['youtube'] as String? ?? current.youtube,
         website: updates['website'] as String? ?? current.website,
-        contactPhones: (updates['contact_phones'] as List?)
-                ?.map((e) => e.toString())
-                .toList() ??
-            current.contactPhones,
+        contactPhones: newPhones ?? current.contactPhones,
+        contactPersonName:
+            updates['contact_person_name'] as String? ?? current.contactPersonName,
+        contactPersonRole:
+            updates['contact_person_role'] as String? ?? current.contactPersonRole,
         updatedAt: DateTime.now(),
       );
       MockData.currentSellerProfile = updated;

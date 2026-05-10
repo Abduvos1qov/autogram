@@ -3,6 +3,7 @@ import 'package:dartz/dartz.dart';
 import '../../../../core/errors/failures.dart';
 import '../../../../core/mixins/repository_mixin.dart';
 import '../../../../core/network/network_info.dart';
+import '../../domain/entities/contact_phone.dart';
 import '../../domain/entities/seller_profile.dart';
 import '../../domain/repositories/seller_repository.dart';
 import '../datasources/seller_remote_datasource.dart';
@@ -31,7 +32,7 @@ class SellerRepositoryImpl with RepositoryMixin implements SellerRepository {
     String? description,
     String? address,
     String? city,
-    List<String>? contactPhones,
+    List<ContactPhone>? contactPhones,
   }) {
     return safeRemoteCall(_networkInfo, () async {
       return await _remoteDataSource.createSellerProfile(
@@ -47,6 +48,7 @@ class SellerRepositoryImpl with RepositoryMixin implements SellerRepository {
 
   @override
   Future<Either<Failure, SellerProfile>> updateSellerProfile({
+    String? username,
     String? businessName,
     BusinessType? businessType,
     String? description,
@@ -57,15 +59,20 @@ class SellerRepositoryImpl with RepositoryMixin implements SellerRepository {
     String? district,
     double? latitude,
     double? longitude,
-    List<String>? contactPhones,
+    List<ContactPhone>? contactPhones,
+    String? contactPersonName,
+    String? contactPersonRole,
     String? telegram,
     String? instagram,
+    String? facebook,
+    String? youtube,
     String? website,
     Map<String, WorkingHours>? workingHours,
   }) {
     return safeRemoteCall(_networkInfo, () async {
       final updates = <String, dynamic>{};
 
+      if (username != null) updates['username'] = username;
       if (businessName != null) updates['business_name'] = businessName;
       if (businessType != null) updates['business_type'] = businessType.name;
       if (description != null) updates['description'] = description;
@@ -76,9 +83,20 @@ class SellerRepositoryImpl with RepositoryMixin implements SellerRepository {
       if (district != null) updates['district'] = district;
       if (latitude != null) updates['latitude'] = latitude;
       if (longitude != null) updates['longitude'] = longitude;
-      if (contactPhones != null) updates['contact_phones'] = contactPhones;
+      if (contactPhones != null) {
+        updates['contact_phones'] =
+            contactPhones.map((c) => c.toMap()).toList();
+      }
+      if (contactPersonName != null) {
+        updates['contact_person_name'] = contactPersonName;
+      }
+      if (contactPersonRole != null) {
+        updates['contact_person_role'] = contactPersonRole;
+      }
       if (telegram != null) updates['telegram'] = telegram;
       if (instagram != null) updates['instagram'] = instagram;
+      if (facebook != null) updates['facebook'] = facebook;
+      if (youtube != null) updates['youtube'] = youtube;
       if (website != null) updates['website'] = website;
       if (workingHours != null) {
         updates['working_hours'] = workingHours.map((key, value) => MapEntry(

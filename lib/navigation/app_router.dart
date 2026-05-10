@@ -38,8 +38,15 @@ import '../features/seller/presentation/screens/add_member_screen.dart';
 import '../features/seller/presentation/screens/member_detail_screen.dart';
 import '../features/seller/presentation/screens/activity_log_screen.dart';
 import '../features/seller/domain/entities/activity_log.dart';
+import '../features/settings/presentation/bloc/account_settings_bloc.dart';
 import '../features/settings/presentation/screens/about_screen.dart';
+import '../features/settings/presentation/screens/account_settings_screen.dart';
+import '../features/settings/presentation/screens/change_email_screen.dart';
+import '../features/settings/presentation/screens/change_password_screen.dart';
+import '../features/settings/presentation/screens/change_phone_screen.dart';
 import '../features/settings/presentation/screens/help_screen.dart';
+import '../di/injection.dart' as di;
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../features/payment/payment.dart';
 import 'navigation_shell.dart';
 import 'route_names.dart';
@@ -253,6 +260,44 @@ GoRouter createRouter(AuthBloc authBloc) {
         name: RouteNames.editProfile,
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const EditProfileScreen(),
+      ),
+      GoRoute(
+        path: RoutePaths.accountSettings,
+        name: RouteNames.accountSettings,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => BlocProvider(
+          create: (_) => di.sl<AccountSettingsBloc>(),
+          child: const AccountSettingsScreen(),
+        ),
+        routes: [
+          GoRoute(
+            path: 'change-email',
+            name: RouteNames.changeEmail,
+            parentNavigatorKey: _rootNavigatorKey,
+            builder: (context, state) => BlocProvider(
+              create: (_) => di.sl<AccountSettingsBloc>(),
+              child: const ChangeEmailScreen(),
+            ),
+          ),
+          GoRoute(
+            path: 'change-password',
+            name: RouteNames.changePassword,
+            parentNavigatorKey: _rootNavigatorKey,
+            builder: (context, state) => BlocProvider(
+              create: (_) => di.sl<AccountSettingsBloc>(),
+              child: const ChangePasswordScreen(),
+            ),
+          ),
+          GoRoute(
+            path: 'change-phone',
+            name: RouteNames.changePhone,
+            parentNavigatorKey: _rootNavigatorKey,
+            builder: (context, state) => BlocProvider(
+              create: (_) => di.sl<AccountSettingsBloc>(),
+              child: const ChangePhoneScreen(),
+            ),
+          ),
+        ],
       ),
       GoRoute(
         path: RoutePaths.history,

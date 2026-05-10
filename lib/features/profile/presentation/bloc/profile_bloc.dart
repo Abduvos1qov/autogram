@@ -11,6 +11,7 @@ import '../../../reels/domain/entities/reel.dart';
 import '../../../reels/domain/usecases/get_seller_reels_usecase.dart';
 import '../../../seller/domain/entities/seller_profile.dart';
 import '../../../seller/domain/usecases/get_seller_profile_usecase.dart';
+import '../../../seller/domain/usecases/update_seller_profile_usecase.dart';
 import '../../domain/usecases/delete_account_usecase.dart';
 import '../../domain/usecases/get_profile_usecase.dart';
 import '../../domain/usecases/update_avatar_usecase.dart';
@@ -30,6 +31,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final GetSellerProfileUseCase _getSellerProfileUseCase;
   final GetSellerListingsUseCase _getSellerListingsUseCase;
   final GetSellerReelsUseCase _getSellerReelsUseCase;
+  final UpdateSellerProfileUseCase _updateSellerProfileUseCase;
 
   ProfileBloc({
     required GetProfileUseCase getProfileUseCase,
@@ -39,6 +41,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     required GetSellerProfileUseCase getSellerProfileUseCase,
     required GetSellerListingsUseCase getSellerListingsUseCase,
     required GetSellerReelsUseCase getSellerReelsUseCase,
+    required UpdateSellerProfileUseCase updateSellerProfileUseCase,
   })  : _getProfileUseCase = getProfileUseCase,
         _updateProfileUseCase = updateProfileUseCase,
         _updateAvatarUseCase = updateAvatarUseCase,
@@ -46,6 +49,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         _getSellerProfileUseCase = getSellerProfileUseCase,
         _getSellerListingsUseCase = getSellerListingsUseCase,
         _getSellerReelsUseCase = getSellerReelsUseCase,
+        _updateSellerProfileUseCase = updateSellerProfileUseCase,
         super(const ProfileState()) {
     on<ProfileLoadRequested>(_onLoadRequested);
     on<ProfileRefreshRequested>(_onRefreshRequested);
@@ -54,6 +58,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<ProfileDeleteRequested>(_onDeleteRequested);
     on<ProfileTabChanged>(_onTabChanged);
     on<ProfileLoadMoreListings>(_onLoadMoreListings);
+    on<ProfileSellerInfoUpdateRequested>(_onSellerInfoUpdateRequested);
   }
 
   Future<void> _onLoadRequested(
@@ -235,6 +240,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       UpdateProfileParams(
         fullName: event.fullName,
         email: event.email,
+        username: event.username,
         language: event.language,
       ),
     );
@@ -252,6 +258,63 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         emit(state.copyWith(
           status: ProfileStatus.loaded,
           profile: profile,
+        ));
+      },
+    );
+  }
+
+  Future<void> _onSellerInfoUpdateRequested(
+    ProfileSellerInfoUpdateRequested event,
+    Emitter<ProfileState> emit,
+  ) async {
+    if (!event.hasChanges) return;
+    if (state.sellerProfile == null) {
+      // Buyer or seller-flagged user without a SellerProfile row — nothing
+      // to update; silently no-op so the UI doesn't have to gate the
+      // dispatch.
+      AppLogger.warning(
+        'Seller info update requested without a SellerProfile — ignoring',
+      );
+      return;
+    }
+
+    AppLogger.info('Updating seller profile (social/bio)');
+    emit(state.copyWith(status: ProfileStatus.updating, clearFailure: true));
+
+    final result = await _updateSellerProfileUseCase(
+      UpdateSellerProfileParams(
+        username: event.username,
+        description: event.description,
+        website: event.website,
+        telegram: event.telegram,
+        instagram: event.instagram,
+        facebook: event.facebook,
+        youtube: event.youtube,
+        address: event.address,
+        city: event.city,
+        district: event.district,
+        contactPersonName: event.contactPersonName,
+        contactPersonRole: event.contactPersonRole,
+        contactPhones: event.contactPhones,
+        workingHours: event.workingHours,
+      ),
+    );
+
+    result.fold(
+      (failure) {
+        AppLogger.error(
+          'Failed to update seller profile: ${failure.message}',
+        );
+        emit(state.copyWith(
+          status: ProfileStatus.error,
+          failure: failure,
+        ));
+      },
+      (sellerProfile) {
+        AppLogger.info('Seller profile updated');
+        emit(state.copyWith(
+          status: ProfileStatus.loaded,
+          sellerProfile: sellerProfile,
         ));
       },
     );

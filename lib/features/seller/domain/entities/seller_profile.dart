@@ -1,5 +1,7 @@
 import 'package:equatable/equatable.dart';
 
+import 'contact_phone.dart';
+
 /// Seller profile entity
 
 class SellerProfile extends Equatable {
@@ -7,6 +9,11 @@ class SellerProfile extends Equatable {
   final String userId;
   final String businessName;
   final BusinessType businessType;
+
+  /// Public @handle for the storefront URL (`/seller/<username>`). Unique across
+  /// all sellers. Lowercase alphanumeric + underscore, 3–30 chars. Backend
+  /// migration TODO — may be null until column lands.
+  final String? username;
   final String? description;
   final String? logoUrl;
   final String? coverUrl;
@@ -15,9 +22,20 @@ class SellerProfile extends Equatable {
   final String? district;
   final double? latitude;
   final double? longitude;
-  final List<String> contactPhones;
+
+  /// Public-facing contact phones with per-row labels (sales/office/whatsapp…).
+  /// Replaces the legacy `List<String>`; data layer parses both shapes for
+  /// backward compatibility.
+  final List<ContactPhone> contactPhones;
+
+  /// Optional contact-person identity rendered next to the contact block on the
+  /// storefront. Both fields are independent — name without role is fine.
+  final String? contactPersonName;
+  final String? contactPersonRole;
   final String? telegram;
   final String? instagram;
+  final String? facebook;
+  final String? youtube;
   final String? website;
   final Map<String, WorkingHours> workingHours;
   final bool isVerified;
@@ -35,6 +53,7 @@ class SellerProfile extends Equatable {
     required this.userId,
     required this.businessName,
     required this.businessType,
+    this.username,
     this.description,
     this.logoUrl,
     this.coverUrl,
@@ -44,8 +63,12 @@ class SellerProfile extends Equatable {
     this.latitude,
     this.longitude,
     this.contactPhones = const [],
+    this.contactPersonName,
+    this.contactPersonRole,
     this.telegram,
     this.instagram,
+    this.facebook,
+    this.youtube,
     this.website,
     this.workingHours = const {},
     required this.isVerified,
@@ -77,6 +100,7 @@ class SellerProfile extends Equatable {
     String? userId,
     String? businessName,
     BusinessType? businessType,
+    String? username,
     String? description,
     String? logoUrl,
     String? coverUrl,
@@ -85,9 +109,13 @@ class SellerProfile extends Equatable {
     String? district,
     double? latitude,
     double? longitude,
-    List<String>? contactPhones,
+    List<ContactPhone>? contactPhones,
+    String? contactPersonName,
+    String? contactPersonRole,
     String? telegram,
     String? instagram,
+    String? facebook,
+    String? youtube,
     String? website,
     Map<String, WorkingHours>? workingHours,
     bool? isVerified,
@@ -105,6 +133,7 @@ class SellerProfile extends Equatable {
       userId: userId ?? this.userId,
       businessName: businessName ?? this.businessName,
       businessType: businessType ?? this.businessType,
+      username: username ?? this.username,
       description: description ?? this.description,
       logoUrl: logoUrl ?? this.logoUrl,
       coverUrl: coverUrl ?? this.coverUrl,
@@ -114,8 +143,12 @@ class SellerProfile extends Equatable {
       latitude: latitude ?? this.latitude,
       longitude: longitude ?? this.longitude,
       contactPhones: contactPhones ?? this.contactPhones,
+      contactPersonName: contactPersonName ?? this.contactPersonName,
+      contactPersonRole: contactPersonRole ?? this.contactPersonRole,
       telegram: telegram ?? this.telegram,
       instagram: instagram ?? this.instagram,
+      facebook: facebook ?? this.facebook,
+      youtube: youtube ?? this.youtube,
       website: website ?? this.website,
       workingHours: workingHours ?? this.workingHours,
       isVerified: isVerified ?? this.isVerified,
@@ -136,6 +169,7 @@ class SellerProfile extends Equatable {
         userId,
         businessName,
         businessType,
+        username,
         description,
         logoUrl,
         coverUrl,
@@ -145,8 +179,12 @@ class SellerProfile extends Equatable {
         latitude,
         longitude,
         contactPhones,
+        contactPersonName,
+        contactPersonRole,
         telegram,
         instagram,
+        facebook,
+        youtube,
         website,
         workingHours,
         isVerified,

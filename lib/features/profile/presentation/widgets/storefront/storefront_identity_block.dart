@@ -8,23 +8,24 @@ import '../../../../../core/widgets/media/avatar.dart';
 import '../../../../seller/domain/entities/seller_profile.dart';
 import 'storefront_stats_row.dart';
 
-/// IG-style identity block — avatar (left, xxl 96dp) with 4 inline stats
-/// (right). Below the row: business name + verified icon, business type,
+/// IG-style identity block — compact avatar (left) with 3 inline stats
+/// (right). Below the row: the user's display name (large), business type,
 /// expandable bio, optional address line.
+///
+/// The seller's `businessName` is intentionally NOT shown here — it already
+/// owns the centered title in the top app bar, so repeating it would just
+/// add visual weight without information.
 class StorefrontIdentityBlock extends StatelessWidget {
   final SellerProfile seller;
   final String? displayName;
   final int listingsCount;
   final int followersCount;
-  final int soldCount;
   final double? rating;
   final String listingsLabel;
   final String followersLabel;
-  final String soldLabel;
   final String ratingLabel;
   final VoidCallback? onListingsTap;
   final VoidCallback? onFollowersTap;
-  final VoidCallback? onSoldTap;
   final VoidCallback? onRatingTap;
   final String verifiedTooltip;
 
@@ -33,17 +34,14 @@ class StorefrontIdentityBlock extends StatelessWidget {
     required this.seller,
     required this.listingsCount,
     required this.followersCount,
-    required this.soldCount,
     required this.rating,
     required this.listingsLabel,
     required this.followersLabel,
-    required this.soldLabel,
     required this.ratingLabel,
     required this.verifiedTooltip,
     this.displayName,
     this.onListingsTap,
     this.onFollowersTap,
-    this.onSoldTap,
     this.onRatingTap,
   });
 
@@ -51,6 +49,7 @@ class StorefrontIdentityBlock extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final hasDisplayName = displayName != null && displayName!.isNotEmpty;
     return Padding(
       padding: const EdgeInsets.fromLTRB(
         AppSpacing.lg,
@@ -69,68 +68,56 @@ class StorefrontIdentityBlock extends StatelessWidget {
                 child: AppAvatar(
                   imageUrl: seller.logoUrl,
                   name: seller.businessName,
-                  size: AvatarSize.xxl,
+                  size: AvatarSize.xl,
                 ),
               ),
-              const SizedBox(width: 20),
+              const SizedBox(width: 18),
               Expanded(
                 child: StorefrontStatsRow(
                   listingsCount: listingsCount,
                   followersCount: followersCount,
-                  soldCount: soldCount,
                   rating: rating,
                   listingsLabel: listingsLabel,
                   followersLabel: followersLabel,
-                  soldLabel: soldLabel,
                   ratingLabel: ratingLabel,
                   onListingsTap: onListingsTap,
                   onFollowersTap: onFollowersTap,
-                  onSoldTap: onSoldTap,
                   onRatingTap: onRatingTap,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 12),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Flexible(
-                child: Text(
-                  seller.businessName,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: AppTypography.titleLarge(context).copyWith(
-                    fontWeight: AppTypography.bold,
-                    height: 1.2,
+          const SizedBox(height: 14),
+          if (hasDisplayName) ...[
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Flexible(
+                  child: Text(
+                    displayName!,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTypography.titleLarge(context).copyWith(
+                      fontWeight: AppTypography.bold,
+                      height: 1.2,
+                    ),
                   ),
                 ),
-              ),
-              if (seller.isVerified) ...[
-                const SizedBox(width: 4),
-                Tooltip(
-                  message: verifiedTooltip,
-                  child: const Icon(
-                    Icons.verified_rounded,
-                    color: AppColors.verifiedColor,
-                    size: 18,
+                if (seller.isVerified) ...[
+                  const SizedBox(width: 4),
+                  Tooltip(
+                    message: verifiedTooltip,
+                    child: const Icon(
+                      Icons.verified_rounded,
+                      color: AppColors.verifiedColor,
+                      size: 18,
+                    ),
                   ),
-                ),
+                ],
               ],
-            ],
-          ),
-          if (displayName != null && displayName!.isNotEmpty) ...[
-            const SizedBox(height: 2),
-            Text(
-              displayName!,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: AppTypography.bodyMedium(context).copyWith(
-                color: AppColors.textSecondaryOf(context),
-              ),
             ),
+            const SizedBox(height: 4),
           ],
-          const SizedBox(height: 4),
           Text(
             seller.businessType.labelKey.tr(),
             style: AppTypography.bodySmall(context).copyWith(
@@ -169,7 +156,7 @@ class _AvatarRing extends StatelessWidget {
         gradient: AppColors.storyGradient,
       ),
       child: Container(
-        padding: const EdgeInsets.all(2),
+        padding: const EdgeInsets.all(2.5),
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: AppColors.surfaceOf(context),

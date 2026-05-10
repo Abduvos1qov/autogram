@@ -14,6 +14,7 @@ abstract class ProfileRemoteDataSource {
   Future<UserProfileModel> updateProfile({
     String? fullName,
     String? email,
+    String? username,
     String? language,
   });
 
@@ -33,6 +34,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
         phone: profile.phone,
         email: profile.email,
         fullName: profile.fullName,
+        username: profile.username,
         avatarUrl: profile.avatarUrl,
         role: profile.role,
         isVerified: profile.isVerified,
@@ -68,6 +70,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   Future<UserProfileModel> updateProfile({
     String? fullName,
     String? email,
+    String? username,
     String? language,
   }) async {
     if (TestConfig.isTestMode) {
@@ -76,6 +79,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       MockData.currentUserProfile = MockData.currentUserProfile.copyWith(
         fullName: fullName,
         email: email,
+        username: username,
         language: language,
         updatedAt: DateTime.now(),
       );
@@ -90,6 +94,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
     final updates = <String, dynamic>{};
     if (fullName != null) updates['full_name'] = fullName;
     if (email != null) updates['email'] = email;
+    if (username != null) updates['username'] = username;
     if (language != null) updates['language'] = language;
     updates['updated_at'] = DateTime.now().toIso8601String();
 

@@ -24,6 +24,10 @@ import 'package:autogram/features/profile/domain/usecases/update_profile_usecase
 import 'package:autogram/features/profile/domain/usecases/update_avatar_usecase.dart';
 import 'package:autogram/features/profile/domain/usecases/delete_account_usecase.dart';
 import 'package:autogram/features/seller/domain/usecases/get_seller_profile_usecase.dart';
+import 'package:autogram/features/seller/domain/usecases/update_seller_profile_usecase.dart';
+import 'package:autogram/features/settings/domain/usecases/change_email_usecase.dart';
+import 'package:autogram/features/settings/domain/usecases/change_password_usecase.dart';
+import 'package:autogram/features/settings/domain/usecases/change_phone_usecase.dart';
 
 /// Mock Auth Use Cases
 class MockSignInUseCase extends Mock implements SignInUseCase {}
@@ -83,6 +87,24 @@ class MockDeleteAccountUseCase extends Mock implements DeleteAccountUseCase {}
 class MockGetSellerProfileUseCase extends Mock
     implements GetSellerProfileUseCase {}
 
+class MockUpdateSellerProfileUseCase extends Mock
+    implements UpdateSellerProfileUseCase {}
+
 /// Mock Reels Use Cases
 class MockGetSellerReelsUseCase extends Mock
     implements GetSellerReelsUseCase {}
+
+/// Mock Settings Use Cases (account credential management)
+class MockRequestEmailChangeUseCase extends Mock
+    implements RequestEmailChangeUseCase {}
+
+class MockVerifyEmailChangeUseCase extends Mock
+    implements VerifyEmailChangeUseCase {}
+
+class MockChangePasswordUseCase extends Mock implements ChangePasswordUseCase {}
+
+class MockRequestPhoneChangeUseCase extends Mock
+    implements RequestPhoneChangeUseCase {}
+
+class MockVerifyPhoneChangeUseCase extends Mock
+    implements VerifyPhoneChangeUseCase {}

@@ -25,6 +25,10 @@ abstract class RouteNames {
 
   // Profile routes
   static const editProfile = 'editProfile';
+  static const accountSettings = 'accountSettings';
+  static const changeEmail = 'changeEmail';
+  static const changePassword = 'changePassword';
+  static const changePhone = 'changePhone';
   static const settings = 'settings';
   static const saved = 'saved';
   static const notifications = 'notifications';
@@ -81,6 +85,10 @@ abstract class RoutePaths {
 
   // Profile paths
   static const editProfile = '/profile/edit';
+  static const accountSettings = '/profile/account-settings';
+  static const changeEmail = '/profile/account-settings/change-email';
+  static const changePassword = '/profile/account-settings/change-password';
+  static const changePhone = '/profile/account-settings/change-phone';
   static const settings = '/settings';
   static const saved = '/saved';
   static const notifications = '/notifications';

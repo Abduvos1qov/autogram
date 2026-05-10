@@ -7,6 +7,10 @@ class UserProfile extends Equatable {
   final String phone;
   final String? email;
   final String fullName;
+
+  /// Public @handle. Lowercase alphanumeric + underscore, 3–30 chars. Unique.
+  /// Backend column TODO — may be null until migration lands.
+  final String? username;
   final String? avatarUrl;
   final String role;
   final bool isVerified;
@@ -21,6 +25,7 @@ class UserProfile extends Equatable {
     required this.phone,
     this.email,
     required this.fullName,
+    this.username,
     this.avatarUrl,
     required this.role,
     required this.isVerified,
@@ -39,6 +44,7 @@ class UserProfile extends Equatable {
     String? phone,
     String? email,
     String? fullName,
+    String? username,
     String? avatarUrl,
     String? role,
     bool? isVerified,
@@ -53,6 +59,7 @@ class UserProfile extends Equatable {
       phone: phone ?? this.phone,
       email: email ?? this.email,
       fullName: fullName ?? this.fullName,
+      username: username ?? this.username,
       avatarUrl: avatarUrl ?? this.avatarUrl,
       role: role ?? this.role,
       isVerified: isVerified ?? this.isVerified,
@@ -70,6 +77,7 @@ class UserProfile extends Equatable {
         phone,
         email,
         fullName,
+        username,
         avatarUrl,
         role,
         isVerified,

@@ -131,14 +131,9 @@ class _SellerStorefrontViewState extends State<SellerStorefrontView> {
                       isVerified: seller.isVerified,
                       createTooltip:
                           'profile.storefront.top_bar.create_tooltip'.tr(),
-                      notificationsTooltip:
-                          'profile.storefront.top_bar.notifications_tooltip'
-                              .tr(),
                       menuTooltip:
                           'profile.storefront.top_bar.menu_tooltip'.tr(),
                       onCreate: () => _showCreateSheet(context, seller),
-                      onNotifications: () =>
-                          context.push(RoutePaths.notifications),
                       onMenu: () => context.push(
                         RoutePaths.storefrontMenu,
                         extra: <String, Object?>{
@@ -162,13 +157,11 @@ class _SellerStorefrontViewState extends State<SellerStorefrontView> {
                       displayName: widget.user.fullName,
                       listingsCount: seller.stats.activeListings,
                       followersCount: seller.stats.followersCount,
-                      soldCount: seller.stats.totalSold,
                       rating: seller.stats.avgRating,
                       listingsLabel:
                           'seller.storefront.stats.listings'.tr(),
                       followersLabel:
                           'seller.storefront.stats.followers'.tr(),
-                      soldLabel: 'seller.storefront.stats.sold'.tr(),
                       ratingLabel:
                           'seller.storefront.stats.rating'.tr(),
                       verifiedTooltip:
@@ -180,10 +173,6 @@ class _SellerStorefrontViewState extends State<SellerStorefrontView> {
                       onFollowersTap: () => _toast(
                         context,
                         'profile.storefront.followers_coming_soon'.tr(),
-                      ),
-                      onSoldTap: () => _switchTab(
-                        context,
-                        SellerStorefrontTab.sold,
                       ),
                       onRatingTap: () => _toast(
                         context,
